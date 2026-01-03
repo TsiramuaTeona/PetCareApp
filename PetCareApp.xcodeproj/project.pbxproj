@@ -6,15 +6,24 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E418029B2F0957F300758D9F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = E418029A2F0957F300758D9F /* FirebaseAuth */; };
+		E418029D2F0957F300758D9F /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E418029C2F0957F300758D9F /* FirebaseCore */; };
+		E418029F2F0957F300758D9F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = E418029E2F0957F300758D9F /* FirebaseDatabase */; };
+		E41802A12F0957F300758D9F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A02F0957F300758D9F /* FirebaseFirestore */; };
+		E41802A62F09623100758D9F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A52F09623100758D9F /* GoogleSignIn */; };
+		E41802A82F09623100758D9F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A72F09623100758D9F /* GoogleSignInSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		E41800A62F092E8300758D9F /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E418024A2F0956AD00758D9F /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PetCareApp.app; path = "/Users/teonatsiramua/Documents/Projects/iOS/TBC/PetCareApp/build/Debug-iphoneos/PetCareApp.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E41800B82F092E8600758D9F /* Exceptions for "PetCareApp" folder in "PetCareApp" target */ = {
+		E41800C22F092EE400758D9F /* Exceptions for "PetCareApp" folder in "PetCareApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = E41800A52F092E8300758D9F /* PetCareApp */;
 		};
@@ -24,7 +33,7 @@
 		E41800A82F092E8300758D9F /* PetCareApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				E41800B82F092E8600758D9F /* Exceptions for "PetCareApp" folder in "PetCareApp" target */,
+				E41800C22F092EE400758D9F /* Exceptions for "PetCareApp" folder in "PetCareApp" target */,
 			);
 			path = PetCareApp;
 			sourceTree = "<group>";
@@ -36,6 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E41802A62F09623100758D9F /* GoogleSignIn in Frameworks */,
+				E418029F2F0957F300758D9F /* FirebaseDatabase in Frameworks */,
+				E41802A12F0957F300758D9F /* FirebaseFirestore in Frameworks */,
+				E41802A82F09623100758D9F /* GoogleSignInSwift in Frameworks */,
+				E418029D2F0957F300758D9F /* FirebaseCore in Frameworks */,
+				E418029B2F0957F300758D9F /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,16 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				E41800A82F092E8300758D9F /* PetCareApp */,
-				E41800A72F092E8300758D9F /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		E41800A72F092E8300758D9F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E41800A62F092E8300758D9F /* PetCareApp.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,9 +84,15 @@
 			);
 			name = PetCareApp;
 			packageProductDependencies = (
+				E418029A2F0957F300758D9F /* FirebaseAuth */,
+				E418029C2F0957F300758D9F /* FirebaseCore */,
+				E418029E2F0957F300758D9F /* FirebaseDatabase */,
+				E41802A02F0957F300758D9F /* FirebaseFirestore */,
+				E41802A52F09623100758D9F /* GoogleSignIn */,
+				E41802A72F09623100758D9F /* GoogleSignInSwift */,
 			);
 			productName = PetCareApp;
-			productReference = E41800A62F092E8300758D9F /* PetCareApp.app */;
+			productReference = E418024A2F0956AD00758D9F /* PetCareApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -107,8 +119,12 @@
 			);
 			mainGroup = E418009D2F092E8300758D9F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				E41802A42F09623100758D9F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = E41800A72F092E8300758D9F /* Products */;
+			productRefGroup = E418009D2F092E8300758D9F;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -145,13 +161,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PetCareApp/Info.plist;
+				INFOPLIST_FILE = PetCareApp/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -176,13 +192,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PetCareApp/Info.plist;
+				INFOPLIST_FILE = PetCareApp/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -341,6 +357,58 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+		E41802A42F09623100758D9F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E418029A2F0957F300758D9F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		E418029C2F0957F300758D9F /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		E418029E2F0957F300758D9F /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		E41802A02F0957F300758D9F /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		E41802A52F09623100758D9F /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802A42F09623100758D9F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		E41802A72F09623100758D9F /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802A42F09623100758D9F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E418009E2F092E8300758D9F /* Project object */;
 }
