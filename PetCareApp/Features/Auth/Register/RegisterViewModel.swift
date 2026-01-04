@@ -1,5 +1,5 @@
 //
-//  LoginViewModel.swift
+//  RegisterViewModel.swift
 //  PetCareApp
 //
 //  Created by Teona Tsiramua on 03.01.26.
@@ -9,12 +9,12 @@
 import Foundation
 import Combine
 
-enum LoginField: Hashable {
-    case email, password
+enum RegisterField: Hashable {
+    case email, password, confirmPassword
 }
 
 @MainActor
-final class LoginViewModel: ObservableObject {
+final class RegisterViewModel: ObservableObject {
     // MARK: - Properties
     
     @Published var email = "" {
@@ -29,14 +29,18 @@ final class LoginViewModel: ObservableObject {
         }
     }
     
-    @Published var fieldErrors: [LoginField: AuthError] = [:]
+    @Published var confirmPassword = "" {
+        didSet {
+            clearError(for: .confirmPassword)
+        }
+    }
+    
+    @Published var showSuccessAlert: Bool = false
+    @Published var fieldErrors: [RegisterField: AuthError] = [:]
     @Published var isLoading = false
     @Published var formError: String?
     
     private let authService: AuthServiceProtocol
-    let loginSucceeded = PassthroughSubject<Void, Never>()
-    
-    var onGoogleSignInRequested: (() -> Void)?
     
     // MARK: - Initializer
     
@@ -46,7 +50,7 @@ final class LoginViewModel: ObservableObject {
     
     // MARK: - Methods
     
-    func login() async {
+    func register() async {
         formError = nil
         guard validateForm() else { return }
         
@@ -54,26 +58,10 @@ final class LoginViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            try await authService.signIn(email: email, password: password)
-            loginSucceeded.send()
+            try await authService.signUp(email: email, password: password)
+            showSuccessAlert = true
         } catch {
             formError = error.localizedDescription
-        }
-    }
-    
-    func googleButtonTapped() {
-        formError = nil
-        onGoogleSignInRequested?()
-    }
-    
-    func handleGoogleSignInResult(_ result: Result<Void, Error>) {
-        isLoading = false
-        
-        switch result {
-        case .success:
-            loginSucceeded.send()
-        case .failure(_):
-            formError = AuthError.googleSignCancelled.localizedDescription
         }
     }
     
@@ -82,14 +70,18 @@ final class LoginViewModel: ObservableObject {
             fieldErrors[.email] = error
         }
         
-        if let error = FieldValidator.required(password) {
+        if let error = FieldValidator.password(password) {
             fieldErrors[.password] = error
+        }
+        
+        if password != confirmPassword {
+            fieldErrors[.confirmPassword] = AuthError.passwordsDontMatch
         }
         
         return fieldErrors.isEmpty
     }
     
-    private func clearError(for field: LoginField) {
+    private func clearError(for field: RegisterField) {
         fieldErrors[field] = nil
         fieldErrors.removeValue(forKey: field)
         formError = nil

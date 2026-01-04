@@ -33,9 +33,26 @@ final class AuthCoordinator: Coordinator {
         self.container = container
     }
     
-    // MARK: - Methods
+    // MARK: - Public Methods
     
     func start() {
+        showLoginFlow()
+    }
+    
+    func handle(_ destination: Destination) {
+        switch destination {
+        case .register:
+            showRegisterView()
+        case .resetPassword:
+            showResetPasswordView()
+        default:
+            break
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func showLoginFlow() {
         let viewModel = container.makeLoginViewModel()
         
         viewModel.onGoogleSignInRequested = { [weak self, weak viewModel] in
@@ -51,26 +68,44 @@ final class AuthCoordinator: Coordinator {
             .store(in: &subscriptions)
         
         let view = LoginView(viewModel: viewModel)
-        let viewController = UIHostingController(rootView: view)
+            .environment(\.navigate) { [weak self] destination in
+                self?.handle(destination)
+            }
         
+        let viewController = UIHostingController(rootView: view)
         navigationController.setViewControllers([viewController], animated: false)
+        
+        navigationController.navigationBar.isHidden = true
+    }
+    
+    private func showRegisterView() {
+        let viewModel = container.makeRegisterViewModel()
+        let view = RegisterView(viewModel: viewModel)
+        let viewController = UIHostingController(rootView: view)
+        navigationController.pushViewController(viewController, animated: true)
+    }
+    
+    private func showResetPasswordView() {
+        let viewModel = container.makeResetPasswordViewModel()
+        let view = ResetPasswordView(viewModel: viewModel)
+        let viewController = UIHostingController(rootView: view)
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     @MainActor
     private func performGoogleSignIn(viewModel: LoginViewModel?) async {
         guard
             let viewModel,
-            let clientID = FirebaseApp.app()?.options.clientID,
-            let rootViewController = navigationController.viewControllers.first
+            let clientID = FirebaseApp.app()?.options.clientID
         else { return }
+        
+        let presenter = navigationController.topViewController ?? navigationController
         
         do {
             let config = GIDConfiguration(clientID: clientID)
             GIDSignIn.sharedInstance.configuration = config
             
-            let result = try await GIDSignIn.sharedInstance.signIn(
-                withPresenting: rootViewController
-            )
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
             
             guard let idToken = result.user.idToken?.tokenString else {
                 throw AuthError.unknown("Missing ID token")

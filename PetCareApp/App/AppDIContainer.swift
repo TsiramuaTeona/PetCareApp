@@ -19,4 +19,12 @@ final class AppDIContainer {
     func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(authService: authService)
     }
+    
+    func makeRegisterViewModel() -> RegisterViewModel {
+        return RegisterViewModel(authService: authService)
+    }
+    
+    func makeResetPasswordViewModel() -> ResetPasswordViewModel {
+        return ResetPasswordViewModel(authService: authService)
+    }
 }

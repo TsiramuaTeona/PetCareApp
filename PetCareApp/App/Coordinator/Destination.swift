@@ -8,6 +8,9 @@
 
 enum Destination {
     case login
+    case register
+    case resetPassword
+
     case mainTabs
     
     case selectTab(MainTab)

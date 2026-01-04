@@ -84,8 +84,8 @@ final class AuthService: AuthServiceProtocol {
             return .invalidEmail
         case .weakPassword:
             return .weakPassword
-        case .wrongPassword:
-            return .wrongPassword
+        case .invalidCredential:
+            return .invalidCredential
         case .userNotFound:
             return .userNotFound
         case .emailAlreadyInUse:

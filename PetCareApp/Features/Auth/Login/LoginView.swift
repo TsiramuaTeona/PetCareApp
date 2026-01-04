@@ -10,32 +10,97 @@ import SwiftUI
 struct LoginView: View {
     // MARK: - Properties
     
-    @Environment(\.navigate) private var navigate
-    
     @StateObject var viewModel: LoginViewModel
+    @Environment(\.navigate) private var navigate
     
     // MARK: - Body
     
     var body: some View {
-        VStack {
-            Text("Login View")
-                .font(.largeTitle)
-                .padding()
+        ScrollView {
+            VStack(spacing: 16) {
+                AuthHeader(title: "Welcome Back")
+                formSection
+            }
+            .padding(24)
+        }
+        .background(.mainBackground)
+        .scrollDismissesKeyboard(.interactively)
+    }
+    
+    // MARK: - Subviews
+    
+    @ViewBuilder
+    private var formSection: some View {
+        VStack(alignment: .trailing, spacing: 8) {
+            AuthTextField(
+                title: "Email Address",
+                placeholder: "name@example.com",
+                text: $viewModel.email,
+                keyboardType: .emailAddress,
+                errorMessage: viewModel.fieldErrors[.email]?.localizedDescription
+            )
             
-            Button(action: {
-                navigate(.mainTabs)
-            }) {
-                Text("Log In")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(.blue)
-                    .cornerRadius(10)
+            AuthTextField(
+                title: "Password",
+                placeholder: "Enter your password",
+                text: $viewModel.password,
+                isSecure: true,
+                errorMessage: viewModel.fieldErrors[.password]?.localizedDescription
+            )
+            
+            Button {
+                navigate(.resetPassword)
+            } label: {
+                Text("Forgot Password?")
+                    .font(.appCaption)
+                    .foregroundColor(.brandSecondary)
             }
             
-            Button("Sign in with Google") {
-                viewModel.googleButtonTapped()
+            ErrorView(message: viewModel.formError)
+        }
+        
+        Spacer()
+        
+        PrimaryButton(
+            title: "Log In",
+            isLoading: viewModel.isLoading,
+        ) {
+            Task {
+                await viewModel.login()
             }
+        }
+        
+        HStack {
+            Rectangle()
+                .frame(height: 0.5)
+                .foregroundColor(.textSecondary)
+            
+            Text("Or Continue with")
+                .font(.appCaption)
+                .foregroundColor(.textSecondary)
+            
+            Rectangle()
+                .frame(height: 0.5)
+                .foregroundColor(.textSecondary)
+        }
+        .padding(.vertical, 8)
+        
+        SocialButton(
+            title: "Google",
+            iconName: "Google",
+            action: viewModel.googleButtonTapped
+        )
+        
+        Button {
+            navigate(.register)
+        } label: {
+            HStack {
+                Text("Don't have an account?")
+                Text("Sign Up")
+                    .font(.appButton)
+            }
+            .font(.appBody)
+            .foregroundColor(.brandSecondary)
         }
     }
 }

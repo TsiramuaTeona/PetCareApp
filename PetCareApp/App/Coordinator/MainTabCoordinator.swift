@@ -16,7 +16,6 @@ final class MainTabCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     
     private let container: AppDIContainer
-    
     private let tabBarController = UITabBarController()
     
     // MARK: - Initializer
@@ -29,13 +28,28 @@ final class MainTabCoordinator: Coordinator {
         self.container = container
     }
     
-    // MARK: - Methods
+    // MARK: - Public Methods
     
     func start() {
         setupTabs()
         navigationController.setViewControllers([tabBarController], animated: true)
         navigationController.isNavigationBarHidden = true
     }
+    
+    func handle(_ destination: Destination) {
+        switch destination {
+        case .petDetails(let petId):
+            showPetDetails(petId: petId)
+        case .scanner(let onScan):
+            showScanner(onScan: onScan)
+        case .selectTab(let tab):
+            tabBarController.selectedIndex = tab.rawValue
+        default:
+            break
+        }
+    }
+    
+    // MARK: - Private Methods
     
     private func setupTabs() {
         let controllers = MainTab.allCases.map { tab -> UINavigationController in
@@ -77,31 +91,23 @@ final class MainTabCoordinator: Coordinator {
         }
     }
     
-    // MARK: - Navigation Handling Method
-    
-    func handle(_ destination: Destination) {
+    private func showPetDetails(petId: String) {
         guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
         
-        switch destination {
-        case .petDetails(let petId):
-            let view = PetDetailsView(petId: petId)
-                .environment(\.navigate) { [weak self] destination in
-                    self?.handle(destination)
-                }
-            let viewController = UIHostingController(rootView: view)
-            currentNavigation.pushViewController(viewController, animated: true)
-            
-        case .scanner(let onScan):
-            let scannerViewController = ScannerViewController(
-                //                onScan: onScan
-            )
-            currentNavigation.present(scannerViewController, animated: true)
-            
-        case .selectTab(let tab):
-            tabBarController.selectedIndex = tab.rawValue
-            
-        default:
-            break
-        }
+        let view = PetDetailsView(petId: petId)
+            .environment(\.navigate) { [weak self] destination in
+                self?.handle(destination)
+            }
+        let viewController = UIHostingController(rootView: view)
+        currentNavigation.pushViewController(viewController, animated: true)
+    }
+    
+    private func showScanner(onScan: @escaping (String) -> Void) {
+        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        
+        let scannerViewController = ScannerViewController(
+            //                onScan: onScan
+        )
+        currentNavigation.present(scannerViewController, animated: true)
     }
 }

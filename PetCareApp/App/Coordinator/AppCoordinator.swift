@@ -28,7 +28,7 @@ final class AppCoordinator: Coordinator {
         self.container = container
     }
     
-    // MARK: - Methods
+    // MARK: - Public Methods
     
     func start() {
         window.rootViewController = navigationController
@@ -43,25 +43,32 @@ final class AppCoordinator: Coordinator {
     
     func handle(_ destination: Destination) {
         switch destination {
-            
         case .login:
-            let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
-            authCoordinator.onFinish = { [weak self] in
-                self?.childDidFinish(authCoordinator)
-                self?.handle(.mainTabs)
-            }
-            childCoordinators.append(authCoordinator)
-            authCoordinator.start()
-            
+            authFlow()
         case .mainTabs:
-            navigationController.viewControllers = []
-            
-            let mainTabCoordinator = MainTabCoordinator(navigationController: navigationController, container: container)
-            childCoordinators.append(mainTabCoordinator)
-            mainTabCoordinator.start()
-            
+            mainTabsFlow()
         default:
             break
         }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func authFlow() {
+        let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
+        authCoordinator.onFinish = { [weak self] in
+            self?.childDidFinish(authCoordinator)
+            self?.handle(.mainTabs)
+        }
+        childCoordinators.append(authCoordinator)
+        authCoordinator.start()
+    }
+    
+    private func mainTabsFlow() {
+        navigationController.viewControllers = []
+        
+        let mainTabCoordinator = MainTabCoordinator(navigationController: navigationController, container: container)
+        childCoordinators.append(mainTabCoordinator)
+        mainTabCoordinator.start()
     }
 }
