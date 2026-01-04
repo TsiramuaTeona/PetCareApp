@@ -6,22 +6,37 @@
 //
 
 
+import FirebaseFirestore
+
 protocol PetServiceProtocol {
-    func fetchPets(householdId: String) async throws -> [Pet]
-    func deletePet(_ petId: String) async throws
+    func addPet(_ pet: Pet) async throws
+    func getPets(forHousehold householdId: String) async throws -> [Pet]
+    func updatePet(_ pet: Pet) async throws
+    func deletePet(petId: String) async throws
 }
 
 final class PetService: PetServiceProtocol {
-    func fetchPets(householdId: String) async throws -> [Pet] {
-        //TODO: Implement actual network call to fetch pets
-        
-        return [
-            Pet(id: "1", name: "Buddy"),
-            Pet(id: "2", name: "Mittens")
-        ]
+    private let db = Firestore.firestore()
+    private let collection = "pets"
+    
+    func addPet(_ pet: Pet) async throws {
+        try db.collection(collection).addDocument(from: pet)
     }
     
-    func deletePet(_ petId: String) async throws {
-        //TODO: Implement actual network call to delete pet
+    func getPets(forHousehold householdId: String) async throws -> [Pet] {
+        let snapshot = try await db.collection(collection)
+            .whereField("householdId", isEqualTo: householdId)
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { try? $0.data(as: Pet.self) }
+    }
+    
+    func updatePet(_ pet: Pet) async throws {
+        guard let id = pet.id else { return }
+        try db.collection(collection).document(id).setData(from: pet, merge: true)
+    }
+    
+    func deletePet(petId: String) async throws {
+        try await db.collection(collection).document(petId).delete()
     }
 }

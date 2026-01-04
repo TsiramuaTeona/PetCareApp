@@ -17,7 +17,7 @@ struct RegisterView: View {
     // MARK: - Body
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            VStack(spacing: 6) {
                 AuthHeader(
                     title: "Create Account",
                     subtitle: "Enter your details to get started."
@@ -39,6 +39,12 @@ struct RegisterView: View {
     
     @ViewBuilder
     private var formSection: some View {
+        AuthTextField(
+            title: "Full Name",
+            placeholder: "Name Surname",
+            text: $viewModel.fullName,
+            errorMessage: viewModel.fieldErrors[.fullName]?.localizedDescription
+        )
         
         AuthTextField(
             title: "Email Address",
@@ -65,8 +71,6 @@ struct RegisterView: View {
         )
         
         ErrorView(message: viewModel.formError)
-        
-        Spacer()
         
         PrimaryButton(
             title: "Sign Up",

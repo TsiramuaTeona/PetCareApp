@@ -11,6 +11,7 @@ final class AppDIContainer {
     // MARK: - Services
 
     lazy var authService: AuthServiceProtocol = AuthService()
+    lazy var userService: UserServiceProtocol = UserService()
     lazy var householdService: HouseholdServiceProtocol = HouseholdService()
     lazy var petService: PetServiceProtocol = PetService()
 
@@ -21,7 +22,10 @@ final class AppDIContainer {
     }
     
     func makeRegisterViewModel() -> RegisterViewModel {
-        return RegisterViewModel(authService: authService)
+        return RegisterViewModel(
+            authService: authService,
+            userService: userService
+        )
     }
     
     func makeResetPasswordViewModel() -> ResetPasswordViewModel {

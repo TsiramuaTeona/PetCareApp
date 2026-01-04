@@ -9,6 +9,7 @@
 import UIKit
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 import GoogleSignIn
 import Combine
 
@@ -104,24 +105,40 @@ final class AuthCoordinator: Coordinator {
         do {
             let config = GIDConfiguration(clientID: clientID)
             GIDSignIn.sharedInstance.configuration = config
-            
             let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
             
             guard let idToken = result.user.idToken?.tokenString else {
                 throw AuthError.unknown("Missing ID token")
             }
-            
             let accessToken = result.user.accessToken.tokenString
             
-            try await container.authService.signInWithGoogle(
+            let isNewUser = try await container.authService.signInWithGoogle(
                 idToken: idToken,
                 accessToken: accessToken
             )
+            
+            if isNewUser {
+                try await createGoogleUserProfile()
+            }
             
             viewModel.handleGoogleSignInResult(.success(()))
             
         } catch {
             viewModel.handleGoogleSignInResult(.failure(error))
         }
+    }
+    
+    private func createGoogleUserProfile() async throws {
+        guard let firebaseUser = Auth.auth().currentUser else { return }
+        
+        let newProfile = UserProfile(
+            id: firebaseUser.uid,
+            email: firebaseUser.email ?? "",
+            fullName: firebaseUser.displayName,
+            householdId: nil,
+            createdAt: Date()
+        )
+        
+        try await container.userService.createUserProfile(user: newProfile)
     }
 }

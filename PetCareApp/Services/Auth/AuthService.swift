@@ -13,7 +13,7 @@ import GoogleSignIn
 protocol AuthServiceProtocol {
     var currentUserId: String? { get }
     func signIn(email: String, password: String) async throws
-    func signInWithGoogle(idToken: String, accessToken: String) async throws
+    func signInWithGoogle(idToken: String, accessToken: String) async throws -> Bool
     func signUp(email: String, password: String) async throws
     func signOut() throws
     func resetPassword(email: String) async throws
@@ -32,14 +32,16 @@ final class AuthService: AuthServiceProtocol {
         }
     }
     
-    func signInWithGoogle(idToken: String, accessToken: String) async throws {
+    func signInWithGoogle(idToken: String, accessToken: String) async throws -> Bool {
         let credential = GoogleAuthProvider.credential(
             withIDToken: idToken,
             accessToken: accessToken
         )
         
         do {
-            try await Auth.auth().signIn(with: credential)
+            let authResult = try await Auth.auth().signIn(with: credential)
+            
+            return authResult.additionalUserInfo?.isNewUser ?? false
         } catch {
             throw mapFirebaseError(error)
         }

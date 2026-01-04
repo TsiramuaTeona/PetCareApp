@@ -10,12 +10,18 @@ import Foundation
 import Combine
 
 enum RegisterField: Hashable {
-    case email, password, confirmPassword
+    case fullName, email, password, confirmPassword
 }
 
 @MainActor
 final class RegisterViewModel: ObservableObject {
     // MARK: - Properties
+    
+    @Published var fullName = "" {
+        didSet {
+            clearError(for: .fullName)
+        }
+    }
     
     @Published var email = "" {
         didSet {
@@ -41,11 +47,16 @@ final class RegisterViewModel: ObservableObject {
     @Published var formError: String?
     
     private let authService: AuthServiceProtocol
+    private let userService: UserServiceProtocol
     
     // MARK: - Initializer
     
-    init(authService: AuthServiceProtocol) {
+    init(
+        authService: AuthServiceProtocol,
+        userService: UserServiceProtocol
+    ) {
         self.authService = authService
+        self.userService = userService
     }
     
     // MARK: - Methods
@@ -59,6 +70,19 @@ final class RegisterViewModel: ObservableObject {
         
         do {
             try await authService.signUp(email: email, password: password)
+            
+            if let uid = authService.currentUserId {
+                let newProfile = UserProfile(
+                    id: uid,
+                    email: email,
+                    fullName: fullName,
+                    householdId: nil,
+                    createdAt: Date()
+                )
+                try await userService.createUserProfile(user: newProfile)
+            }
+            
+            try? authService.signOut()
             showSuccessAlert = true
         } catch {
             formError = error.localizedDescription
@@ -66,6 +90,10 @@ final class RegisterViewModel: ObservableObject {
     }
     
     private func validateForm() -> Bool {
+        if let error = FieldValidator.required(fullName) {
+            fieldErrors[.fullName] = error
+        }
+        
         if let error = FieldValidator.email(email) {
             fieldErrors[.email] = error
         }
@@ -74,8 +102,8 @@ final class RegisterViewModel: ObservableObject {
             fieldErrors[.password] = error
         }
         
-        if password != confirmPassword {
-            fieldErrors[.confirmPassword] = AuthError.passwordsDontMatch
+        if let error = FieldValidator.password(confirmPassword) {
+            fieldErrors[.confirmPassword] = error
         }
         
         return fieldErrors.isEmpty
