@@ -7,16 +7,17 @@
 
 
 final class AppDIContainer {
-
+    
     // MARK: - Services
-
+    
     lazy var authService: AuthServiceProtocol = AuthService()
     lazy var userService: UserServiceProtocol = UserService()
     lazy var householdService: HouseholdServiceProtocol = HouseholdService()
     lazy var petService: PetServiceProtocol = PetService()
-
+    lazy var petPhotoStorageService: PetPhotoStorageServiceProtocol = PetPhotoStorageService()
+    
     // MARK: - ViewModels
-
+    
     func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(authService: authService)
     }
@@ -30,5 +31,13 @@ final class AppDIContainer {
     
     func makeResetPasswordViewModel() -> ResetPasswordViewModel {
         return ResetPasswordViewModel(authService: authService)
+    }
+    
+    func makeAddPetViewModel(householdId: String) -> AddPetViewModel {
+        return AddPetViewModel(
+            householdId: householdId,
+            petService: petService,
+            photoStorageService: petPhotoStorageService
+        )
     }
 }

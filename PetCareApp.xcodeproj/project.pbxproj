@@ -13,6 +13,7 @@
 		E41802A12F0957F300758D9F /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A02F0957F300758D9F /* FirebaseFirestore */; };
 		E41802A62F09623100758D9F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A52F09623100758D9F /* GoogleSignIn */; };
 		E41802A82F09623100758D9F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A72F09623100758D9F /* GoogleSignInSwift */; };
+		E41804342F0BF47C00758D9F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E41804332F0BF47C00758D9F /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 				E418029F2F0957F300758D9F /* FirebaseDatabase in Frameworks */,
 				E41802A12F0957F300758D9F /* FirebaseFirestore in Frameworks */,
 				E41802A82F09623100758D9F /* GoogleSignInSwift in Frameworks */,
+				E41804342F0BF47C00758D9F /* FirebaseStorage in Frameworks */,
 				E418029D2F0957F300758D9F /* FirebaseCore in Frameworks */,
 				E418029B2F0957F300758D9F /* FirebaseAuth in Frameworks */,
 			);
@@ -90,6 +92,7 @@
 				E41802A02F0957F300758D9F /* FirebaseFirestore */,
 				E41802A52F09623100758D9F /* GoogleSignIn */,
 				E41802A72F09623100758D9F /* GoogleSignInSwift */,
+				E41804332F0BF47C00758D9F /* FirebaseStorage */,
 			);
 			productName = PetCareApp;
 			productReference = E418024A2F0956AD00758D9F /* PetCareApp.app */;
@@ -407,6 +410,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E41802A42F09623100758D9F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		E41804332F0BF47C00758D9F /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

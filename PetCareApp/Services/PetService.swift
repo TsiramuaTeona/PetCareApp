@@ -9,7 +9,8 @@
 import FirebaseFirestore
 
 protocol PetServiceProtocol {
-    func addPet(_ pet: Pet) async throws
+    func addPet(_ pet: Pet) async throws -> String
+    func updatePetPhoto(petId: String, photoUrl: String) async throws
     func getPets(forHousehold householdId: String) async throws -> [Pet]
     func updatePet(_ pet: Pet) async throws
     func deletePet(petId: String) async throws
@@ -19,8 +20,16 @@ final class PetService: PetServiceProtocol {
     private let db = Firestore.firestore()
     private let collection = "pets"
     
-    func addPet(_ pet: Pet) async throws {
-        try db.collection(collection).addDocument(from: pet)
+    func addPet(_ pet: Pet) async throws -> String  {
+        let ref = db.collection(collection).document()
+        try ref.setData(from: pet)
+        return ref.documentID
+    }
+    
+    func updatePetPhoto(petId: String, photoUrl: String) async throws {
+        try await db.collection(collection).document(petId).updateData([
+            "photoUrl": photoUrl
+        ])
     }
     
     func getPets(forHousehold householdId: String) async throws -> [Pet] {

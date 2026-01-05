@@ -7,5 +7,9 @@
 
 
 import Foundation
+import Combine
 
-final class HomeViewModel {}
+@MainActor
+final class HomeViewModel: ObservableObject {
+ 
+}

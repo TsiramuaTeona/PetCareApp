@@ -1,5 +1,5 @@
 //
-//  AuthTextField.swift
+//  PrimaryTextField.swift
 //  PetCareApp
 //
 //  Created by Teona Tsiramua on 03.01.26.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct AuthTextField: View {
+struct PrimaryTextField: View {
     // MARK: - Properties
     
     let title: String

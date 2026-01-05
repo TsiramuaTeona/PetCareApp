@@ -20,6 +20,10 @@ struct HomeView: View {
                 navigate(.petDetails(petId: "123"))
             }
             
+            Button("Add Pet") {
+                navigate(.addPet(householdId: "household_456"))
+            }
+            
             Button("Add Vaccine") {
                 navigate(.scanner { code in
                     print("Scanned code: \(code)")

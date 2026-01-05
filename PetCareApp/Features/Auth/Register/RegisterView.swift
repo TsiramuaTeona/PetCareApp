@@ -39,14 +39,14 @@ struct RegisterView: View {
     
     @ViewBuilder
     private var formSection: some View {
-        AuthTextField(
+        PrimaryTextField(
             title: "Full Name",
             placeholder: "Name Surname",
             text: $viewModel.fullName,
             errorMessage: viewModel.fieldErrors[.fullName]?.localizedDescription
         )
         
-        AuthTextField(
+        PrimaryTextField(
             title: "Email Address",
             placeholder: "name@example.com",
             text: $viewModel.email,
@@ -54,7 +54,7 @@ struct RegisterView: View {
             errorMessage: viewModel.fieldErrors[.email]?.localizedDescription
         )
         
-        AuthTextField(
+        PrimaryTextField(
             title: "Password",
             placeholder: "Create password",
             text: $viewModel.password,
@@ -62,7 +62,7 @@ struct RegisterView: View {
             errorMessage: viewModel.fieldErrors[.password]?.localizedDescription
         )
         
-        AuthTextField(
+        PrimaryTextField(
             title: "Confirm Password",
             placeholder: "Confirm password",
             text: $viewModel.confirmPassword,

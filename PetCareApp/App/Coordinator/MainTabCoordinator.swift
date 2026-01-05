@@ -40,6 +40,8 @@ final class MainTabCoordinator: Coordinator {
         switch destination {
         case .petDetails(let petId):
             showPetDetails(petId: petId)
+        case .addPet(let householdId):
+            showAddPet(householdId: householdId)
         case .scanner(let onScan):
             showScanner(onScan: onScan)
         case .selectTab(let tab):
@@ -99,6 +101,22 @@ final class MainTabCoordinator: Coordinator {
                 self?.handle(destination)
             }
         let viewController = UIHostingController(rootView: view)
+        viewController.hidesBottomBarWhenPushed = true
+        currentNavigation.pushViewController(viewController, animated: true)
+    }
+    
+    private func showAddPet(householdId: String) {
+        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        
+        let viewModel = container.makeAddPetViewModel(householdId: householdId)
+        
+        let view = AddPetView(viewModel: viewModel)
+            .environment(\.navigate) { [weak self] destination in
+                self?.handle(destination)
+            }
+        
+        let viewController = UIHostingController(rootView: view)
+        viewController.hidesBottomBarWhenPushed = true
         currentNavigation.pushViewController(viewController, animated: true)
     }
     

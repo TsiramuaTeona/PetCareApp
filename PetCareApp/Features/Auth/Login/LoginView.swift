@@ -32,7 +32,7 @@ struct LoginView: View {
     @ViewBuilder
     private var formSection: some View {
         VStack(alignment: .trailing, spacing: 8) {
-            AuthTextField(
+            PrimaryTextField(
                 title: "Email Address",
                 placeholder: "name@example.com",
                 text: $viewModel.email,
@@ -40,7 +40,7 @@ struct LoginView: View {
                 errorMessage: viewModel.fieldErrors[.email]?.localizedDescription
             )
             
-            AuthTextField(
+            PrimaryTextField(
                 title: "Password",
                 placeholder: "Enter your password",
                 text: $viewModel.password,

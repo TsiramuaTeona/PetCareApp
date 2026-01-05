@@ -16,5 +16,6 @@ enum Destination {
     case selectTab(MainTab)
     
     case petDetails(petId: String)
+    case addPet(householdId: String)
     case scanner(onScan: (String) -> Void)
 }

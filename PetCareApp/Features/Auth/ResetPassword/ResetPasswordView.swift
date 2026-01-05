@@ -42,7 +42,7 @@ struct ResetPasswordView: View {
     
     @ViewBuilder
     private var formSection: some View {
-        AuthTextField(
+        PrimaryTextField(
             title: "Email Address",
             placeholder: "name@example.com",
             text: $viewModel.email,
