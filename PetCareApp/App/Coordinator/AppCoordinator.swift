@@ -7,8 +7,18 @@
 
 
 import UIKit
+import Combine
 
 final class AppCoordinator: Coordinator {
+    // MARK: - Flow State
+    
+    private enum Flow {
+        case auth
+        case main
+    }
+    
+    private var currentFlow: Flow?
+    
     // MARK: - Properties
     
     var navigationController: UINavigationController
@@ -16,6 +26,7 @@ final class AppCoordinator: Coordinator {
     private let window: UIWindow
     
     private let container: AppDIContainer
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initializer
     
@@ -34,41 +45,59 @@ final class AppCoordinator: Coordinator {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         
-        if container.authService.currentUserId == nil {
-            handle(.login)
-        } else {
-            handle(.mainTabs)
-        }
-    }
-    
-    func handle(_ destination: Destination) {
-        switch destination {
-        case .login:
-            authFlow()
-        case .mainTabs:
-            mainTabsFlow()
-        default:
-            break
-        }
+        observeAuthState()
     }
     
     // MARK: - Private Methods
     
-    private func authFlow() {
-        let authCoordinator = AuthCoordinator(navigationController: navigationController, container: container)
-        authCoordinator.onFinish = { [weak self] in
-            self?.childDidFinish(authCoordinator)
-            self?.handle(.mainTabs)
-        }
+    private func observeAuthState() {
+        container.authService.userSessionPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] user in
+                guard let self else { return }
+                
+                if user != nil {
+                    self.showMainFlowIfNeeded()
+                } else {
+                    self.showAuthFlowIfNeeded()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showAuthFlowIfNeeded() {
+        guard currentFlow != .auth else { return }
+        currentFlow = .auth
+        showAuthFlow()
+    }
+    
+    private func showMainFlowIfNeeded() {
+        guard currentFlow != .main else { return }
+        currentFlow = .main
+        showMainFlow()
+    }
+    
+    private func showAuthFlow() {
+        childCoordinators.removeAll()
+        
+        let authCoordinator = AuthCoordinator(
+            navigationController: navigationController,
+            container: container
+        )
+        
         childCoordinators.append(authCoordinator)
         authCoordinator.start()
     }
     
-    private func mainTabsFlow() {
-        navigationController.viewControllers = []
+    private func showMainFlow() {
+        childCoordinators.removeAll()
         
-        let mainTabCoordinator = MainTabCoordinator(navigationController: navigationController, container: container)
-        childCoordinators.append(mainTabCoordinator)
-        mainTabCoordinator.start()
+        let mainCoordinator = MainTabCoordinator(
+            navigationController: navigationController,
+            container: container
+        )
+        
+        childCoordinators.append(mainCoordinator)
+        mainCoordinator.start()
     }
 }

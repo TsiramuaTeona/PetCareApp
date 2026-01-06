@@ -25,7 +25,7 @@ final class PetPhotoStorageService: PetPhotoStorageServiceProtocol {
         let ref = storage
             .child("petPhotos")
             .child(petId)
-            .child("profile.jpg")
+            .child("\(UUID().uuidString).jpg")
         
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"

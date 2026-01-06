@@ -12,7 +12,8 @@ enum MainTab: Int, CaseIterable {
     case home
     case map
     case shop
-
+    case profile
+    
     var title: String {
         switch self {
         case .home:
@@ -21,9 +22,11 @@ enum MainTab: Int, CaseIterable {
             return "Vets"
         case .shop:
             return "Shop"
+        case .profile:
+            return "Profile"
         }
     }
-
+    
     var icon: UIImage? {
         switch self {
         case .home:
@@ -32,6 +35,8 @@ enum MainTab: Int, CaseIterable {
             return UIImage(systemName: "map")
         case .shop:
             return UIImage(systemName: "cart")
+        case .profile:
+            return UIImage(systemName: "person.circle")
         }
     }
 }

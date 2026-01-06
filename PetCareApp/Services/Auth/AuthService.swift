@@ -7,11 +7,16 @@
 
 
 import Foundation
+import Combine
 import FirebaseAuth
 import GoogleSignIn
 
 protocol AuthServiceProtocol {
+    var currentUser: User? { get }
     var currentUserId: String? { get }
+    
+    var userSessionPublisher: AnyPublisher<User?, Never> { get }
+    
     func signIn(email: String, password: String) async throws
     func signInWithGoogle(idToken: String, accessToken: String) async throws -> Bool
     func signUp(email: String, password: String) async throws
@@ -20,8 +25,27 @@ protocol AuthServiceProtocol {
 }
 
 final class AuthService: AuthServiceProtocol {
-    var currentUserId: String? {
-        Auth.auth().currentUser?.uid
+    var userSessionPublisher: AnyPublisher<User?, Never> {
+        userSessionSubject.eraseToAnyPublisher()
+    }
+    
+    private let userSessionSubject = CurrentValueSubject<User?, Never>(Auth.auth().currentUser)
+    private var handle: AuthStateDidChangeListenerHandle?
+    
+    
+    var currentUser: User? { Auth.auth().currentUser }
+    var currentUserId: String? { Auth.auth().currentUser?.uid }
+    
+    init() {
+        handle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            self?.userSessionSubject.send(user)
+        }
+    }
+    
+    deinit {
+        if let handle = handle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
     }
     
     func signIn(email: String, password: String) async throws {

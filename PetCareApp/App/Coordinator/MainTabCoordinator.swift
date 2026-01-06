@@ -75,7 +75,8 @@ final class MainTabCoordinator: Coordinator {
     private func rootViewController(for tab: MainTab) -> UIViewController {
         switch tab {
         case .home:
-            let view = HomeView()
+            let viewModel = container.makeHomeViewModel()
+            let view = HomeView(viewModel: viewModel)
                 .environment(\.navigate) { [weak self] destination in
                     self?.handle(destination)
                 }
@@ -90,6 +91,14 @@ final class MainTabCoordinator: Coordinator {
                     self?.handle(destination)
                 }
             return UIHostingController(rootView: view)
+            
+        case .profile:
+            let viewModel = container.makeProfileViewModel()
+            let view = ProfileView(viewModel: viewModel)
+                .environment(\.navigate) { [weak self] destination in
+                    self?.handle(destination)
+                }
+            return UIHostingController(rootView: view)
         }
     }
     
@@ -97,10 +106,8 @@ final class MainTabCoordinator: Coordinator {
         guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
         
         let view = PetDetailsView(petId: petId)
-            .environment(\.navigate) { [weak self] destination in
-                self?.handle(destination)
-            }
         let viewController = UIHostingController(rootView: view)
+        
         viewController.hidesBottomBarWhenPushed = true
         currentNavigation.pushViewController(viewController, animated: true)
     }
@@ -109,11 +116,7 @@ final class MainTabCoordinator: Coordinator {
         guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
         
         let viewModel = container.makeAddPetViewModel(householdId: householdId)
-        
         let view = AddPetView(viewModel: viewModel)
-            .environment(\.navigate) { [weak self] destination in
-                self?.handle(destination)
-            }
         
         let viewController = UIHostingController(rootView: view)
         viewController.hidesBottomBarWhenPushed = true

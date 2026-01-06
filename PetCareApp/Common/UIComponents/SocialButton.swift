@@ -13,15 +13,22 @@ struct SocialButton: View {
     
     let title: String
     let iconName: String
+    let isLoading: Bool
     let action: () -> Void
     
     // MARK: - Body
     
     var body: some View {
         Button(action: action) {
-            HStack {
-                Image(iconName)
-                Text(title)
+            if isLoading {
+                ProgressView()
+                    .tint(.textPrimary)
+            } else {
+               
+                HStack {
+                    Image(iconName)
+                    Text(title)
+                }
             }
         }
         .font(.appBody)
@@ -30,6 +37,7 @@ struct SocialButton: View {
         .background(Color(.systemGray6))
         .foregroundColor(.textPrimary)
         .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .shadow(color: .textPrimary.opacity(0.2), radius: 4, x: 0, y: 2)
+        .disabled(isLoading)
     }
 }

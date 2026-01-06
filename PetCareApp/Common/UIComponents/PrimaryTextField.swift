@@ -36,7 +36,7 @@ struct PrimaryTextField: View {
                         .autocorrectionDisabled()
                 } else {
                     TextField(placeholder, text: $text)
-                        .textInputAutocapitalization(.never)
+                        .textInputAutocapitalization(.words)
                         .keyboardType(keyboardType)
                         .autocorrectionDisabled()
                 }

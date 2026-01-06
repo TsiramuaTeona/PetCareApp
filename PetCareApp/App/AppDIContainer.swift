@@ -33,6 +33,23 @@ final class AppDIContainer {
         return ResetPasswordViewModel(authService: authService)
     }
     
+    func makeHomeViewModel() -> HomeViewModel {
+        return HomeViewModel(
+            authService: authService,
+            userService: userService,
+            householdService: householdService,
+            petService: petService
+        )
+    }
+    
+    func makeProfileViewModel() -> ProfileViewModel {
+        return ProfileViewModel(
+            authService: authService,
+            userService: userService,
+            householdService: householdService
+        )
+    }
+    
     func makeAddPetViewModel(householdId: String) -> AddPetViewModel {
         return AddPetViewModel(
             householdId: householdId,

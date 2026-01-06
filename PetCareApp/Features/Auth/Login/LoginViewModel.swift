@@ -34,7 +34,6 @@ final class LoginViewModel: ObservableObject {
     @Published var formError: String?
     
     private let authService: AuthServiceProtocol
-    let loginSucceeded = PassthroughSubject<Void, Never>()
     
     var onGoogleSignInRequested: (() -> Void)?
     
@@ -55,7 +54,6 @@ final class LoginViewModel: ObservableObject {
         
         do {
             try await authService.signIn(email: email, password: password)
-            loginSucceeded.send()
         } catch {
             formError = error.localizedDescription
         }
@@ -63,6 +61,7 @@ final class LoginViewModel: ObservableObject {
     
     func googleButtonTapped() {
         formError = nil
+        isLoading = true
         onGoogleSignInRequested?()
     }
     
@@ -71,7 +70,7 @@ final class LoginViewModel: ObservableObject {
         
         switch result {
         case .success:
-            loginSucceeded.send()
+            break
         case .failure(_):
             formError = AuthError.googleSignCancelled.localizedDescription
         }

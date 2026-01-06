@@ -20,6 +20,12 @@ struct AddPetView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         ScrollView {
             VStack(spacing: 16) {
                 photoPickerSection
@@ -28,6 +34,7 @@ struct AddPetView: View {
             .padding(.horizontal, 24)
         }
         .background(.mainBackground)
+        .navigationBarHidden(false)
         .navigationTitle("Add New Family Member")
         .scrollDismissesKeyboard(.interactively)
         .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
@@ -64,8 +71,10 @@ struct AddPetView: View {
         }
         .onChange(of: selectedItem) { _, item in
             Task {
-                if let data = try? await item?.loadTransferable(type: Data.self) {
-                    viewModel.photoData = data
+                if let data = try? await item?.loadTransferable(type: Data.self),
+                   let uiImage = UIImage(data: data),
+                   let compressedData = uiImage.jpegData(compressionQuality: 0.6) {
+                    viewModel.photoData = compressedData
                 }
             }
         }

@@ -11,6 +11,8 @@ import FirebaseFirestore
 protocol HouseholdServiceProtocol {
     func createHousehold(name: String, adminId: String) async throws -> Household
     func joinHousehold(code: String, userId: String) async throws -> Household
+    func getHousehold(id: String) async throws -> Household
+    func leaveHousehold(id: String, userId: String) async throws
 }
 
 final class HouseholdService: HouseholdServiceProtocol {
@@ -18,7 +20,11 @@ final class HouseholdService: HouseholdServiceProtocol {
     private let db = Firestore.firestore()
     
     func createHousehold(name: String, adminId: String) async throws -> Household {
+        let batch = db.batch()
+        
+        let householdRef = db.collection("households").document()
         let joinCode = generateJoinCode()
+        let newHouseholdId = householdRef.documentID
         
         let household = Household(
             id: nil,
@@ -29,11 +35,14 @@ final class HouseholdService: HouseholdServiceProtocol {
             createdAt: Date()
         )
         
-        let ref = try db.collection("households").addDocument(from: household)
+        try batch.setData(from: household, forDocument: householdRef)
         
-        var savedHousehold = household
-        savedHousehold.id = ref.documentID
-        return savedHousehold
+        let userRef = db.collection("users").document(adminId)
+        batch.updateData(["householdId": newHouseholdId], forDocument: userRef)
+        
+        try await batch.commit()
+        
+        return household
     }
     
     func joinHousehold(code: String, userId: String) async throws -> Household {
@@ -46,11 +55,34 @@ final class HouseholdService: HouseholdServiceProtocol {
         }
         
         let householdRef = document.reference
-        try await householdRef.updateData([
-            "memberIds": FieldValue.arrayUnion([userId])
-        ])
+        let householdId = document.documentID
+        let batch = db.batch()
+        
+        batch.updateData(["memberIds": FieldValue.arrayUnion([userId])], forDocument: householdRef)
+        
+        let userRef = db.collection("users").document(userId)
+        batch.updateData(["householdId": householdId], forDocument: userRef)
+        
+        try await batch.commit()
         
         return try document.data(as: Household.self)
+    }
+    
+    func getHousehold(id: String) async throws -> Household {
+        let snapshot = try await db.collection("households").document(id).getDocument()
+        return try snapshot.data(as: Household.self)
+    }
+    
+    func leaveHousehold(id: String, userId: String) async throws {
+        let batch = db.batch()
+        
+        let householdRef = db.collection("households").document(id)
+        batch.updateData(["memberIds": FieldValue.arrayRemove([userId])], forDocument: householdRef)
+        
+        let userRef = db.collection("users").document(userId)
+        batch.updateData(["householdId": FieldValue.delete()], forDocument: userRef)
+        
+        try await batch.commit()
     }
     
     private func generateJoinCode() -> String {

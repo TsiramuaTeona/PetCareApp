@@ -88,6 +88,7 @@ struct LoginView: View {
         SocialButton(
             title: "Google",
             iconName: "Google",
+            isLoading: viewModel.isLoading,
             action: viewModel.googleButtonTapped
         )
         

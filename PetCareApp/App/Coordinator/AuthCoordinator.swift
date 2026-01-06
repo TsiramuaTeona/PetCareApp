@@ -11,7 +11,6 @@ import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
-import Combine
 
 final class AuthCoordinator: Coordinator {
     // MARK: - Properties
@@ -19,10 +18,6 @@ final class AuthCoordinator: Coordinator {
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
     private let container: AppDIContainer
-    
-    private var subscriptions = Set<AnyCancellable>()
-    
-    var onFinish: (() -> Void)?
     
     // MARK: - Initializer
     
@@ -61,12 +56,6 @@ final class AuthCoordinator: Coordinator {
                 await self?.performGoogleSignIn(viewModel: viewModel)
             }
         }
-        
-        viewModel.loginSucceeded
-            .sink { [weak self] in
-                self?.onFinish?()
-            }
-            .store(in: &subscriptions)
         
         let view = LoginView(viewModel: viewModel)
             .environment(\.navigate) { [weak self] destination in

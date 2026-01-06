@@ -82,7 +82,6 @@ final class RegisterViewModel: ObservableObject {
                 try await userService.createUserProfile(user: newProfile)
             }
             
-            try? authService.signOut()
             showSuccessAlert = true
         } catch {
             formError = error.localizedDescription
@@ -102,7 +101,7 @@ final class RegisterViewModel: ObservableObject {
             fieldErrors[.password] = error
         }
         
-        if let error = FieldValidator.password(confirmPassword) {
+        if let error = FieldValidator.confirmPassword(confirmPassword, password: password) {
             fieldErrors[.confirmPassword] = error
         }
         

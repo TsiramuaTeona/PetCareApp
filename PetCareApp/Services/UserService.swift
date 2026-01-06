@@ -11,7 +11,7 @@ import FirebaseFirestore
 protocol UserServiceProtocol {
     func createUserProfile(user: UserProfile) async throws
     func getUser(userId: String) async throws -> UserProfile
-    func updateUserHousehold(userId: String, householdId: String) async throws
+    func updateUserHousehold(userId: String, householdId: String?) async throws
 }
 
 final class UserService: UserServiceProtocol {
@@ -27,9 +27,11 @@ final class UserService: UserServiceProtocol {
         return try snapshot.data(as: UserProfile.self)
     }
     
-    func updateUserHousehold(userId: String, householdId: String) async throws {
-        try await db.collection("users").document(userId).updateData([
-            "householdId": householdId
-        ])
+    func updateUserHousehold(userId: String, householdId: String?) async throws {
+        let data: [String: Any] = [
+            "householdId": householdId ?? FieldValue.delete()
+        ]
+        
+        try await db.collection("users").document(userId).updateData(data)
     }
 }
