@@ -83,7 +83,8 @@ final class MainTabCoordinator: Coordinator {
             return UIHostingController(rootView: view)
             
         case .map:
-            return MapViewController()
+            let viewModel = container.makeMapViewModel()
+            return MapViewController(viewModel: viewModel, locationService: container.locationService)
             
         case .shop:
             let view = ShopView()

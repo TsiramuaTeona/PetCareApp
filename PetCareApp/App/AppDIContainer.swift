@@ -15,6 +15,8 @@ final class AppDIContainer {
     lazy var householdService: HouseholdServiceProtocol = HouseholdService()
     lazy var petService: PetServiceProtocol = PetService()
     lazy var petPhotoStorageService: PetPhotoStorageServiceProtocol = PetPhotoStorageService()
+    lazy var mapService: MapServiceProtocol = MapService()
+    lazy var locationService: LocationServiceProtocol = LocationService()
     
     // MARK: - ViewModels
     
@@ -56,5 +58,9 @@ final class AppDIContainer {
             petService: petService,
             photoStorageService: petPhotoStorageService
         )
+    }
+    
+    func makeMapViewModel() -> MapViewModel {
+        return MapViewModel(mapService: mapService)
     }
 }
