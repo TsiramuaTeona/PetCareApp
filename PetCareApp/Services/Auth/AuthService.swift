@@ -11,6 +11,8 @@ import Combine
 import FirebaseAuth
 import GoogleSignIn
 
+// MARK: - AuthServiceProtocol
+
 protocol AuthServiceProtocol {
     var currentUser: User? { get }
     var currentUserId: String? { get }
@@ -24,7 +26,11 @@ protocol AuthServiceProtocol {
     func resetPassword(email: String) async throws
 }
 
+// MARK: - AuthService
+
 final class AuthService: AuthServiceProtocol {
+    // MARK: - Properties
+    
     var userSessionPublisher: AnyPublisher<User?, Never> {
         userSessionSubject.eraseToAnyPublisher()
     }
@@ -36,17 +42,23 @@ final class AuthService: AuthServiceProtocol {
     var currentUser: User? { Auth.auth().currentUser }
     var currentUserId: String? { Auth.auth().currentUser?.uid }
     
+    // MARK: - Initializer
+    
     init() {
         handle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.userSessionSubject.send(user)
         }
     }
     
+    // MARK: - Methods
+    
     deinit {
         if let handle = handle {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
+    
+    // MARK: - Public Methods
     
     func signIn(email: String, password: String) async throws {
         do {
@@ -95,6 +107,8 @@ final class AuthService: AuthServiceProtocol {
             throw mapFirebaseError(error)
         }
     }
+    
+    // MARK: - Private Methods
     
     private func mapFirebaseError(_ error: Error) -> AuthError {
         guard let nsError = error as NSError? else {

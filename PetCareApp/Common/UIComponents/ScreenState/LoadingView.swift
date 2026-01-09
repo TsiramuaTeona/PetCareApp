@@ -10,11 +10,13 @@ import SwiftUI
 
 struct LoadingView: View {
     // MARK: - Properties
+    
     @State private var isAnimating = false
     var pawCount: Int = 3
     var size: CGFloat = 24
     
     // MARK: - Body
+    
     var body: some View {
         VStack(spacing: 20) {
             HStack(spacing: 15) {

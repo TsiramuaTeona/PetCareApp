@@ -9,16 +9,24 @@
 import SwiftUI
 import Combine
 
+// MARK: - Image Cache
+
 class ImageCache {
     static let shared = NSCache<NSString, UIImage>()
 }
 
+// MARK: - Image Loader
+
 @MainActor
 class ImageLoader: ObservableObject {
+    // MARK: - Properties
+    
     @Published var image: UIImage?
     @Published var isLoading = false
     
     private var urlString: String?
+    
+    // MARK: - Methods
     
     func load(from urlString: String?) {
         guard let urlString = urlString, let url = URL(string: urlString) else {

@@ -9,15 +9,23 @@
 import Foundation
 import FirebaseStorage
 
+// MARK: - ImageStorageServiceProtocol
+
 protocol ImageStorageServiceProtocol {
     func uploadPetImage(petId: String, data: Data) async throws -> String
     func uploadUserProfileImage(userId: String, data: Data) async throws -> String
 }
 
+// MARK: - ImageStorageService
+
 final class ImageStorageService: ImageStorageServiceProtocol {
 
+    // MARK: - Properties
+    
     private let storage = Storage.storage().reference()
 
+    // MARK: - Methods
+    
     private func uploadImage(path: String, imageData: Data) async throws -> String {
         let ref = storage.child(path).child("\(UUID().uuidString).jpg")
 

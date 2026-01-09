@@ -8,6 +8,8 @@
 
 import FirebaseFirestore
 
+// MARK: - HouseholdServiceProtocol
+
 protocol HouseholdServiceProtocol {
     func createHousehold(name: String, adminId: String) async throws -> Household
     func joinHousehold(code: String, userId: String) async throws -> Household
@@ -15,9 +17,14 @@ protocol HouseholdServiceProtocol {
     func leaveHousehold(id: String, userId: String) async throws
 }
 
+// MARK: - HouseholdService
+
 final class HouseholdService: HouseholdServiceProtocol {
+    // MARK: - Properties
     
     private let db = Firestore.firestore()
+    
+    // MARK: - Public Methods
     
     func createHousehold(name: String, adminId: String) async throws -> Household {
         let batch = db.batch()
@@ -84,6 +91,8 @@ final class HouseholdService: HouseholdServiceProtocol {
         
         try await batch.commit()
     }
+    
+    // MARK: - Private Methods
     
     private func generateJoinCode() -> String {
         let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct HeaderView: View {
+    // MARK: - Body
+    
     var body: some View {
         HStack(alignment: .center) {
             Image("AppLogo")

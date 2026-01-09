@@ -56,6 +56,8 @@ struct ImageView: View {
         }
     }
     
+    // MARK: - Subviews
+    
     private var placeholderView: some View {
         Image(systemName: placeholderSystemImage)
             .resizable()

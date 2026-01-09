@@ -8,6 +8,8 @@
 
 import FirebaseFirestore
 
+// MARK: - PetServiceProtocol
+
 protocol PetServiceProtocol {
     func addPet(_ pet: Pet) async throws -> String
     func updatePetPhoto(petId: String, photoUrl: String) async throws
@@ -17,9 +19,15 @@ protocol PetServiceProtocol {
     func deletePet(petId: String) async throws
 }
 
+// MARK: - PetService
+
 final class PetService: PetServiceProtocol {
+    // MARK: - Properties
+    
     private let db = Firestore.firestore()
     private let collection = "pets"
+    
+    // MARK: - Methods
     
     func addPet(_ pet: Pet) async throws -> String  {
         let ref = db.collection(collection).document()
