@@ -12,7 +12,7 @@ import Combine
 @MainActor
 final class ProfileViewModel: ObservableObject {
     
-    // MARK: - Properties
+    // MARK: - Published Properties
     
     @Published var user: UserProfile?
     @Published var household: Household?
@@ -21,23 +21,39 @@ final class ProfileViewModel: ObservableObject {
     @Published var joinCodeInput: String = ""
     
     @Published private(set) var state: ScreenState = .loading
-    @Published var activeAlert: ActiveAlert?
+    @Published var alert: AppAlert?
     
-    enum ActiveAlert: Identifiable {
-        case error(String)
-        case success(String)
-        var id: String {
-            switch self {
-            case .error(let message): return message
-            case .success(let message): return message
-            }
-        }
-    }
+    // MARK: - Private Properties
     
     private let authService: AuthServiceProtocol
     private let userService: UserServiceProtocol
     private let householdService: HouseholdServiceProtocol
     
+    // MARK: - Computed Properties
+    
+    var isUserInHousehold: Bool {
+        household != nil
+    }
+    
+    var userFullName: String {
+        user?.fullName ?? "User"
+    }
+    
+    var userEmail: String {
+        user?.email ?? "No Email"
+    }
+    
+    var householdName: String {
+        household?.name ?? "No Household"
+    }
+    
+    var householdMemberCount: Int {
+        household?.memberIds.count ?? 0
+    }
+    
+    var householdJoinCode: String {
+        household?.joinCode ?? "N/A"
+    }
     
     // MARK: - Initializer
     
@@ -63,10 +79,9 @@ final class ProfileViewModel: ObservableObject {
             self.user = userProfile
             
             if let householdId = userProfile.householdId {
-                let household = try await householdService.getHousehold(id: householdId)
-                self.household = household
+                household = try await householdService.getHousehold(id: householdId)
             } else {
-                self.household = nil
+                household = nil
             }
             
             state = .loaded
@@ -76,77 +91,91 @@ final class ProfileViewModel: ObservableObject {
     }
     
     func createHousehold() async {
-        guard !newHouseholdName.isEmpty else { return }
-        guard let userId = user?.id else { return }
+        guard !newHouseholdName.isEmpty, let userId = user?.id else { return }
         
         state = .loading
         
         do {
-            let newHouse = try await householdService.createHousehold(name: newHouseholdName, adminId: userId)
+            let newHouse = try await householdService.createHousehold(
+                name: newHouseholdName,
+                adminId: userId
+            )
             
             if let houseId = newHouse.id {
-                try await userService.updateUserHousehold(userId: userId, householdId: houseId)
+                try await userService.updateUserHousehold(
+                    userId: userId,
+                    householdId: houseId
+                )
             }
             
             await loadProfile()
             newHouseholdName = ""
-            activeAlert = .success("Household created! Share code: \(newHouse.joinCode)")
+            
+            alert = .success("Household created! Share code: \(newHouse.joinCode)")
             state = .loaded
             
         } catch {
-            activeAlert = .error(error.localizedDescription)
+            alert = .error(error.localizedDescription)
+            state = .loaded
         }
     }
     
     func joinHousehold() async {
-        guard !joinCodeInput.isEmpty else { return }
-        guard let userId = user?.id else { return }
+        guard !joinCodeInput.isEmpty, let userId = user?.id else { return }
         
         state = .loading
         
         do {
-            let house = try await householdService.joinHousehold(code: joinCodeInput.uppercased(), userId: userId)
+            let house = try await householdService.joinHousehold(
+                code: joinCodeInput.uppercased(),
+                userId: userId
+            )
             
             if let houseId = house.id {
-                try await userService.updateUserHousehold(userId: userId, householdId: houseId)
+                try await userService.updateUserHousehold(
+                    userId: userId,
+                    householdId: houseId
+                )
             }
             
             await loadProfile()
             joinCodeInput = ""
-            activeAlert = .success("Joined \(house.name) successfully!")
             
+            alert = .success("Joined \(house.name) successfully!")
             state = .loaded
+            
         } catch {
-            activeAlert = .error("Could not join: \(error.localizedDescription)")
+            alert = .error("Could not join: \(error.localizedDescription)")
             joinCodeInput = ""
             await loadProfile()
         }
     }
     
     func leaveHousehold() async {
-        guard let householdId = household?.id else { return }
-        guard let userId = user?.id else { return }
+        guard let householdId = household?.id,
+              let userId = user?.id else { return }
         
         state = .loading
         
         do {
-            try await householdService.leaveHousehold(id: householdId, userId: userId)
+            try await householdService.leaveHousehold(
+                id: householdId,
+                userId: userId
+            )
             
-            try await userService.updateUserHousehold(userId: userId, householdId: nil)
-            
-            self.household = nil
-            if var updatedUser = self.user {
-                updatedUser.householdId = nil
-                self.user = updatedUser
-            }
+            try await userService.updateUserHousehold(
+                userId: userId,
+                householdId: nil
+            )
             
             await loadProfile()
             
-            activeAlert = .success("You have left the household.")
+            alert = .success("You have left the household.")
             state = .loaded
             
         } catch {
-            state = .error(error.localizedDescription)
+            alert = .error(error.localizedDescription)
+            state = .loaded
         }
     }
     

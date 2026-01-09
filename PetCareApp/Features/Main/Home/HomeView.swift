@@ -26,7 +26,7 @@ struct HomeView: View {
             content
         }
         .navigationTitle("Home")
-        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.loadData()
         }
@@ -54,7 +54,7 @@ struct HomeView: View {
     
     private var dashboard: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     VStack(alignment: .leading, spacing: 6) {
                         Label(viewModel.household?.name ?? "Home", systemImage: "house.fill")
@@ -84,12 +84,15 @@ struct HomeView: View {
                         .padding(.horizontal, 24)
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
+                        LazyHStack(spacing: 16) {
                             ForEach(viewModel.pets) { pet in
                                 PetCard(pet: pet)
+                                    .onTapGesture {
+                                        navigate(.petDetails(pet: pet))
+                                    }
                             }
                         }
-                        .padding(.horizontal, 24)
+                        .padding(24)
                     }
                 }
             }

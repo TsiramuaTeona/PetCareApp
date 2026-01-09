@@ -14,6 +14,6 @@ extension View {
             .padding()
             .background(.surface)
             .cornerRadius(10)
-            .shadow(color: .textPrimary.opacity(0.05), radius: 5, x: 0, y: 2)
+            .shadow(color: .textPrimary.opacity(0.08), radius: 10, x: 0, y: 5)
     }
 }

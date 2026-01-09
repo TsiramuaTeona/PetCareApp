@@ -20,6 +20,7 @@ struct ErrorView: View {
             Image(systemName: "exclamationmark.triangle.fill")
             Text(message ?? " ")
                 .font(.appBody)
+                .multilineTextAlignment(.leading)
             
             Spacer()
         }

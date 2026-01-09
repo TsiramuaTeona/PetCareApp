@@ -18,24 +18,13 @@ struct ProfileView: View {
     var body: some View {
         ScreenStateContainer(
             state: viewModel.state,
-            onRetry: {
-                await viewModel.loadProfile()
-            }
+            onRetry: { await viewModel.loadProfile() }
         ) {
             content
         }
         .navigationTitle("Profile")
-        .task {
-            await viewModel.loadProfile()
-        }
-        .alert(item: $viewModel.activeAlert) { alertType in
-            switch alertType {
-            case .error(let message):
-                return Alert(title: Text("Error"), message: Text(message), dismissButton: .default(Text("OK")))
-            case .success(let message):
-                return Alert(title: Text("Success"), message: Text(message), dismissButton: .default(Text("OK")))
-            }
-        }
+        .task { await viewModel.loadProfile() }
+        .alert(item: $viewModel.alert) { $0.toAlert() }
     }
     
     // MARK: - Subviews
@@ -46,7 +35,7 @@ struct ProfileView: View {
                 
                 userInfoSection
                 
-                if viewModel.household != nil {
+                if viewModel.isUserInHousehold {
                     HouseholdInfoSection(viewModel: viewModel)
                 } else {
                     NoHouseholdSection(viewModel: viewModel)
@@ -64,19 +53,17 @@ struct ProfileView: View {
                 .scaledToFit()
                 .frame(width: 80, height: 80)
             
-            Text(viewModel.user?.fullName ?? "User")
+            Text(viewModel.userFullName)
                 .font(.appHeader)
             
-            Label(viewModel.user?.email ?? "", systemImage: "envelope.fill")
+            Label(viewModel.userEmail, systemImage: "envelope.fill")
                 .font(.appCaption)
                 .foregroundColor(.textSecondary)
             
             Divider()
             
             PrimaryButton(title: "Logout", isLoading: false) {
-                Task {
-                    await viewModel.signOut()
-                }
+                Task { await viewModel.signOut() }
             }
         }
         .shadowCard()

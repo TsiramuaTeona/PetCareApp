@@ -36,43 +36,40 @@ struct HouseholdInfoSection: View {
             
             Divider()
             
-            if let household = viewModel.household {
+            HStack {
+                Text(viewModel.householdName)
+                    .font(.appTitle)
+                
+                Spacer()
+                
+                Text("\(viewModel.householdMemberCount) Members")
+                    .font(.appBody)
+                    .foregroundColor(.textSecondary)
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("INVITE CODE")
+                    .font(.appCaption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.textSecondary)
                 
                 HStack {
-                    Text(household.name)
-                        .font(.appTitle)
+                    Text(viewModel.householdJoinCode)
+                        .font(.appHeader)
+                        .foregroundColor(.brandPrimary)
                     
                     Spacer()
                     
-                    Text("\(household.memberIds.count) Members")
-                        .font(.appBody)
-                        .foregroundColor(.textSecondary)
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("INVITE CODE")
-                        .font(.appCaption)
-                        .fontWeight(.bold)
-                        .foregroundColor(.textSecondary)
-                    
-                    HStack {
-                        Text(household.joinCode)
-                            .font(.appHeader)
+                    Button {
+                        UIPasteboard.general.string = viewModel.householdJoinCode
+                    } label: {
+                        Image(systemName: "doc.on.doc")
                             .foregroundColor(.brandPrimary)
-                        
-                        Spacer()
-                        
-                        Button {
-                            UIPasteboard.general.string = household.joinCode
-                        } label: {
-                            Image(systemName: "doc.on.doc")
-                                .foregroundColor(.brandPrimary)
-                        }
                     }
-                    .padding()
-                    .background(.brandPrimary.opacity(0.1))
-                    .cornerRadius(10)
                 }
+                .padding()
+                .background(.brandPrimary.opacity(0.1))
+                .cornerRadius(10)
             }
         }
         .shadowCard()

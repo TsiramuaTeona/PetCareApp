@@ -16,36 +16,49 @@ struct PetCard: View {
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 8) {
-            if let imageUrl = pet.photoUrl, let url = URL(string: imageUrl) {
-                AsyncImage(url: url) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    LoadingView(pawCount: 2, size: 18)
-                }
-                .frame(width: 100, height: 100)
-                .clipShape(Circle())
-                .overlay(Circle().stroke(.brandPrimary, lineWidth: 1))
-            } else {
-                Image(systemName: "pawprint.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .overlay(Circle().stroke(.brandPrimary, lineWidth: 1))
-                    .foregroundColor(.brandSecondary)
+        VStack(alignment: .leading, spacing: 0) {
+            ImageView(
+                urlString: pet.photoUrl,
+                contentMode: .fill
+            )
+            .frame(width: 160, height: 120)
+            .clipped()
+            .overlay(alignment: .topTrailing) {
+                Image(systemName: pet.species.icon)
+                    .font(.appCaption)
+                    .foregroundColor(.surface)
+                    .padding(6)
+                    .background(Color(pet.genderColor))
+                    .clipShape(Circle())
+                    .padding(8)
             }
             
-            Text(pet.name)
-                .font(.appHeader)
-                .foregroundColor(.brandPrimary)
-            
-            Label(pet.breed ?? "Unknown Breed", systemImage: pet.species.icon)
-                .font(.appBody)
-                .foregroundColor(.textSecondary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(pet.name)
+                    .font(.appTitle)
+                    .fontDesign(.rounded)
+                    .foregroundColor(.textPrimary)
+                    .lineLimit(1)
+                
+                Text(pet.displayBreed)
+                    .font(.appCaption)
+                    .foregroundColor(.textSecondary)
+                    .lineLimit(1)
+                
+                Text(pet.ageFormatted)
+                    .font(.appCaption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.brandPrimary.opacity(0.1))
+                    .foregroundColor(.brandPrimary)
+                    .cornerRadius(4)
+                    .padding(.top, 4)
+            }
+            .padding(12)
+            .frame(width: 160, alignment: .leading)
+            .background(.surface)
         }
-        .frame(width: 160)
-        .shadowCard()
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: .textPrimary.opacity(0.08), radius: 10, x: 0, y: 5)
     }
 }
