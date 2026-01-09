@@ -13,24 +13,20 @@ struct Pet: Codable, Identifiable {
     @DocumentID var id: String?
     let householdId: String
     
-    let name: String
+    var name: String
     let species: PetSpecies
-    let breed: String?
+    var breed: String?
     let gender: PetGender
     
     let birthDate: Date
-    let photoUrl: String?
+    var photoUrl: String?
+    
+    var weight: Double?
+    var height: Double?
+    var color: String? 
+    var bio: String?
     
     let createdAt: Date
-    
-    var ageFormatted: String {
-        let components = Calendar.current.dateComponents([.year, .month], from: birthDate, to: Date())
-        if let years = components.year, years > 0 {
-            return "\(years) yrs"
-        } else {
-            return "\(components.month ?? 0) mos"
-        }
-    }
 }
 
 enum PetSpecies: String, Codable, CaseIterable, Identifiable {
@@ -52,4 +48,48 @@ enum PetSpecies: String, Codable, CaseIterable, Identifiable {
 enum PetGender: String, Codable, CaseIterable {
     case male = "Male"
     case female = "Female"
+}
+
+extension Pet {
+    var ageFormatted: String {
+        let components = Calendar.current.dateComponents([.year, .month], from: birthDate, to: Date())
+        if let years = components.year, years > 0 {
+            return "\(years) yrs"
+        } else {
+            return "\(components.month ?? 0) mos"
+        }
+    }
+    
+    var displayBreed: String {
+        breed?.isEmpty == false ? breed! : "Unknown Breed"
+    }
+    
+    var displayGenderSymbol: String {
+        gender == .female ? "♀" : "♂"
+    }
+    
+    var genderColor: String {
+        switch gender {
+        case .male: return "BrandSecondary"
+        case .female: return "BrandPrimary"
+        }
+    }
+    
+    var displayWeight: String {
+        guard let weight else { return "-" }
+        return "\(weight) kg"
+    }
+    
+    var displayHeight: String {
+        guard let height else { return "-" }
+        return "\(height) cm"
+    }
+    
+    var displayColor: String {
+        color?.isEmpty == false ? color! : "-"
+    }
+    
+    var displayBio: String {
+        bio?.isEmpty == false ? bio! : "No bio yet. Tap edit to add one!"
+    }
 }

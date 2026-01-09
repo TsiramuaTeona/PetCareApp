@@ -28,10 +28,14 @@ struct AddPetView: View {
     private var content: some View {
         ScrollView {
             VStack(spacing: 16) {
-                photoPickerSection
+                PhotoPickerView(
+                    imageData: $viewModel.photoData,
+                    size: 120
+                )
+
                 formSection
             }
-            .padding(.horizontal, 24)
+            .padding(24)
         }
         .background(.mainBackground)
         .navigationBarHidden(false)
@@ -40,42 +44,6 @@ struct AddPetView: View {
         .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
             if shouldDismiss {
                 dismiss()
-            }
-        }
-    }
-    
-    private var photoPickerSection: some View {
-        PhotosPicker(
-            selection: $selectedItem,
-            matching: .images,
-            photoLibrary: .shared()
-        ) {
-            ZStack {
-                if let data = viewModel.photoData,
-                   let image = UIImage(data: data) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 120, height: 120)
-                        .clipShape(Circle())
-                } else {
-                    Circle()
-                        .fill(Color.brandSecondary.opacity(0.15))
-                        .frame(width: 120, height: 120)
-                    
-                    Image(systemName: "camera.fill")
-                        .font(.title)
-                        .foregroundColor(.brandSecondary)
-                }
-            }
-        }
-        .onChange(of: selectedItem) { _, item in
-            Task {
-                if let data = try? await item?.loadTransferable(type: Data.self),
-                   let uiImage = UIImage(data: data),
-                   let compressedData = uiImage.jpegData(compressionQuality: 0.6) {
-                    viewModel.photoData = compressedData
-                }
             }
         }
     }
@@ -133,18 +101,6 @@ struct AddPetView: View {
         )
         .font(.appTitle)
         .foregroundColor(.textPrimary)
-        
-        HStack {
-            Text("Weight (kg)")
-                .font(.appTitle)
-                .foregroundColor(.textPrimary)
-            
-            Spacer()
-            
-            TextField("0.0", text: $viewModel.weight)
-                .keyboardType(.decimalPad)
-                .multilineTextAlignment(.trailing)
-        }
         
         ErrorView(message: viewModel.errorMessage)
         

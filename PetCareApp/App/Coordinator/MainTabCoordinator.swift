@@ -38,10 +38,12 @@ final class MainTabCoordinator: Coordinator {
     
     func handle(_ destination: Destination) {
         switch destination {
-        case .petDetails(let petId):
-            showPetDetails(petId: petId)
+        case .petDetails(let pet):
+            showPetDetails(pet: pet)
         case .addPet(let householdId):
             showAddPet(householdId: householdId)
+        case .editPet(let pet, let onSave):
+            showEditPet(pet: pet, onSave: onSave)
         case .scanner(let onScan):
             showScanner(onScan: onScan)
         case .selectTab(let tab):
@@ -103,10 +105,14 @@ final class MainTabCoordinator: Coordinator {
         }
     }
     
-    private func showPetDetails(petId: String) {
+    private func showPetDetails(pet: Pet) {
         guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
         
-        let view = PetDetailsView(petId: petId)
+        let viewModel = container.makePetDetailsViewModel(pet: pet)
+        let view = PetDetailsView(viewModel: viewModel)
+            .environment(\.navigate) { [weak self] destination in
+                self?.handle(destination)
+            }
         let viewController = UIHostingController(rootView: view)
         
         viewController.hidesBottomBarWhenPushed = true
@@ -122,6 +128,19 @@ final class MainTabCoordinator: Coordinator {
         let viewController = UIHostingController(rootView: view)
         viewController.hidesBottomBarWhenPushed = true
         currentNavigation.pushViewController(viewController, animated: true)
+    }
+    
+    private func showEditPet(pet: Pet, onSave: @escaping (Pet) -> Void) {
+        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        
+        let viewModel = container.makeEditPetViewModel(pet: pet)
+        let view = EditPetView(
+            viewModel: viewModel,
+            onSave: onSave
+        )
+        
+        let viewController = UIHostingController(rootView: view)
+        currentNavigation.present(viewController, animated: true)
     }
     
     private func showScanner(onScan: @escaping (String) -> Void) {

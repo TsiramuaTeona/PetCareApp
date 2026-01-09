@@ -9,12 +9,13 @@
 import Foundation
 import Combine
 
+@MainActor
 final class AddPetViewModel: ObservableObject {
     
-    // MARK: - Properties
+    // MARK: - Published Properties
     
     @Published var photoData: Data?
-
+    
     @Published var name: String = ""
     @Published var species: PetSpecies = .dog
     @Published var breed: String = ""
@@ -26,20 +27,22 @@ final class AddPetViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var shouldDismiss = false
     
+    // MARK: - Private Properties
+    
     private let householdId: String
     private let petService: PetServiceProtocol
-    private let photoStorageService: PetPhotoStorageServiceProtocol
+    private let imageStorageService: ImageStorageServiceProtocol
     
     // MARK: - Initializer
     
     init(
         householdId: String,
         petService: PetServiceProtocol,
-        photoStorageService: PetPhotoStorageServiceProtocol
+        imageStorageService: ImageStorageServiceProtocol
     ) {
         self.householdId = householdId
         self.petService = petService
-        self.photoStorageService = photoStorageService
+        self.imageStorageService = imageStorageService
     }
     
     // MARK: - Methods
@@ -54,8 +57,10 @@ final class AddPetViewModel: ObservableObject {
         
         isLoading = true
         
+        var createdPetId: String?
+        
         do {
-            let newPet = Pet(
+            let pet = Pet(
                 id: nil,
                 householdId: householdId,
                 name: name,
@@ -67,21 +72,30 @@ final class AddPetViewModel: ObservableObject {
                 createdAt: Date()
             )
             
-            let petId = try await petService.addPet(newPet)
+            let petId = try await petService.addPet(pet)
+            createdPetId = petId
             
             if let photoData {
-                let url = try await photoStorageService.uploadPetPhoto(
+                let url = try await imageStorageService.uploadPetImage(
                     petId: petId,
-                    imageData: photoData
+                    data: photoData
                 )
                 
-                try await petService.updatePetPhoto(petId: petId, photoUrl: url)
+                try await petService.updatePetPhoto(
+                    petId: petId,
+                    photoUrl: url
+                )
+                
             }
             
             shouldDismiss = true
             
         } catch {
-            errorMessage = error.localizedDescription
+            if let petId = createdPetId {
+                try? await petService.deletePet(petId: petId)
+            }
+            
+            errorMessage = "Failed to add pet. Please try again."
         }
         
         isLoading = false
