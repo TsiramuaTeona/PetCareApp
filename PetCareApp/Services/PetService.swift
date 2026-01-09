@@ -12,6 +12,7 @@ protocol PetServiceProtocol {
     func addPet(_ pet: Pet) async throws -> String
     func updatePetPhoto(petId: String, photoUrl: String) async throws
     func getPets(forHousehold householdId: String) async throws -> [Pet]
+    func getPet(petId: String) async throws -> Pet
     func updatePet(_ pet: Pet) async throws
     func deletePet(petId: String) async throws
 }
@@ -38,6 +39,11 @@ final class PetService: PetServiceProtocol {
             .getDocuments()
         
         return snapshot.documents.compactMap { try? $0.data(as: Pet.self) }
+    }
+    
+    func getPet(petId: String) async throws -> Pet {
+        let snapshot = try await db.collection(collection).document(petId).getDocument()
+        return try snapshot.data(as: Pet.self)
     }
     
     func updatePet(_ pet: Pet) async throws {
