@@ -21,8 +21,6 @@ struct Pet: Codable, Identifiable {
     let birthDate: Date
     var photoUrl: String?
     
-    var weight: Double?
-    var height: Double?
     var color: String? 
     var bio: String?
     
@@ -73,16 +71,6 @@ extension Pet {
         case .male: return "BrandSecondary"
         case .female: return "BrandPrimary"
         }
-    }
-    
-    var displayWeight: String {
-        guard let weight else { return "-" }
-        return "\(weight) kg"
-    }
-    
-    var displayHeight: String {
-        guard let height else { return "-" }
-        return "\(height) cm"
     }
     
     var displayColor: String {

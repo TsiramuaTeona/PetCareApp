@@ -5,6 +5,7 @@
 //  Created by Teona Tsiramua on 08.01.26.
 //
 
+
 import SwiftUI
 
 struct EditPetView: View {
@@ -37,7 +38,6 @@ struct EditPetView: View {
                     
                     VStack(spacing: 20) {
                         basicInfoSection
-                        measurementsSection
                         bioSection
                     }
                     .padding(.horizontal, 24)
@@ -84,7 +84,7 @@ struct EditPetView: View {
     
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionHeader("Basic Info")
+            SectionHeaderView(text: "Basic Info")
             
             PrimaryTextField(
                 title: "Name",
@@ -108,33 +108,9 @@ struct EditPetView: View {
         }
     }
     
-    private var measurementsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            sectionHeader("Measurements")
-            
-            HStack(spacing: 16) {
-                PrimaryTextField(
-                    title: "Weight (kg)",
-                    placeholder: "0.0",
-                    text: $viewModel.weight,
-                    keyboardType: .decimalPad
-                )
-                
-                PrimaryTextField(
-                    title: "Height (cm)",
-                    placeholder: "0",
-                    text: $viewModel.height,
-                    keyboardType: .decimalPad
-                )
-            }
-            
-            Divider()
-        }
-    }
-    
     private var bioSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            sectionHeader("About")
+            SectionHeaderView(text: "About")
             
             VStack(alignment: .leading, spacing: 8) {
                 Text("Bio")
@@ -154,12 +130,5 @@ struct EditPetView: View {
             
             Divider()
         }
-    }
-    
-    private func sectionHeader(_ text: String) -> some View {
-        Text(text)
-            .font(.appHeader)
-            .foregroundColor(.brandSecondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

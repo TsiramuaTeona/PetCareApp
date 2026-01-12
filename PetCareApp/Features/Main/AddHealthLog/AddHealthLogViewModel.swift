@@ -1,0 +1,177 @@
+//
+//  AddHealthLogViewModel.swift
+//  PetCareApp
+//
+//  Created by Teona Tsiramua on 10.01.26.
+//
+
+
+import Foundation
+import Combine
+
+@MainActor
+final class AddHealthLogViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
+    
+    @Published var category: LogCategory = .vaccine
+    @Published var title: String = ""
+    @Published var note: String = ""
+    @Published var actionDate: Date = Date()
+    
+    @Published var dosage: String = ""
+    @Published var timesPerDay: Int = 1
+    @Published var isChronic: Bool = false
+    @Published var durationDays: Double = 7
+    
+    @Published var valueString: String = ""
+    
+    @Published var addReminder: Bool = false
+    @Published var nextDueDate: Date = Date().addingTimeInterval(86400 * 30)
+    @Published var recurrence: RecurrenceRule = .none
+    
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    
+    // MARK: - Private Properties
+    
+    private let petId: String
+    private let healthService: HealthServiceProtocol
+    private let reminderService: ReminderSyncServiceProtocol
+    
+    // MARK: - Computed Properties
+    
+    var isMedication: Bool {
+        category == .medication
+    }
+    
+    var isWeight: Bool {
+        category == .weight
+    }
+    
+    var isHistoryLog: Bool {
+        Calendar.current.startOfDay(for: actionDate) <= Calendar.current.startOfDay(for: Date())
+    }
+    
+    var titlePlaceholder: String {
+        category.titlePlaceholder
+    }
+    
+    var titleSuggestions: [String] {
+        category.titleSuggestions
+    }
+    
+    var reminderLabel: String {
+        category.reminderLabel(isHistory: isHistoryLog)
+    }
+    
+    var hasValueField: Bool {
+        category.hasValueField
+    }
+    
+    private var resolvedTitle: String {
+        category == .weight ? "\(valueString) kg" : title
+    }
+    
+    // MARK: - Callbacks
+    
+    var onSaveSuccess: (() -> Void)?
+
+    // MARK: - Initializer
+    
+    init(
+        petId: String,
+        category: LogCategory = .vaccine,
+        healthService: HealthServiceProtocol,
+        reminderService: ReminderSyncServiceProtocol
+    ) {
+        self.petId = petId
+        self.category = category
+        self.healthService = healthService
+        self.reminderService = reminderService
+    }
+    
+    // MARK: - Public Method
+    
+    func save() async {
+        guard validate() else { return }
+        isLoading = true
+        
+        do {
+            if isHistoryLog {
+                try await createAndSaveHistoryLog()
+            }
+            
+            let shouldScheduleFuture = isMedication || (!isHistoryLog) || (isHistoryLog && addReminder)
+            
+            if shouldScheduleFuture {
+                try await createAndSaveFutureLog()
+            }
+            
+            onSaveSuccess?()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
+    }
+    
+    // MARK: - Private Methods
+    
+    private func createAndSaveHistoryLog() async throws {
+        let log = HealthLog(
+            id: nil,
+            petId: petId,
+            category: category,
+            title: resolvedTitle,
+            note: note.isEmpty ? nil : note,
+            date: actionDate,
+            isResolved: true,
+            completedDate: Date(),
+            nextDueDate: nil,
+            recurrence: nil,
+            value: valueString.doubleValue,
+            dosage: dosage,
+            timesPerDay: timesPerDay,
+            reminderTimes: nil,
+            durationDays: nil
+        )
+        _ = try await healthService.addLog(log)
+    }
+    
+    private func createAndSaveFutureLog() async throws {
+        let schedule = isMedication ? MedicationScheduler.generateSchedule(start: actionDate, frequency: timesPerDay) : nil
+        
+        let targetDate = isMedication && isHistoryLog
+        ? (MedicationScheduler.findNextDose(from: schedule ?? []) ?? actionDate)
+        : (isHistoryLog ? nextDueDate : actionDate)
+        
+        let log = HealthLog(
+            id: nil, petId: petId,
+            category: category,
+            title: resolvedTitle,
+            note: isHistoryLog ? category.futureNote : (note.isEmpty ? nil : note),
+            date: isMedication ? actionDate : targetDate,
+            isResolved: false,
+            nextDueDate: targetDate,
+            recurrence: isMedication ? .daily : recurrence,
+            value: nil,
+            dosage: isMedication ? dosage : nil,
+            timesPerDay: isMedication ? timesPerDay : nil,
+            reminderTimes: schedule,
+            durationDays: (isMedication && !isChronic) ? Int(durationDays) : nil
+        )
+        
+        let id = try await healthService.addLog(log)
+        var savedLog = log; savedLog.id = id
+        await reminderService.scheduleReminder(for: savedLog)
+    }
+    
+    private func validate() -> Bool {
+        if category != .weight && title.trimmingCharacters(in: .whitespaces).isEmpty {
+            errorMessage = "Please enter a title."
+            return false
+        }
+        return true
+    }
+}

@@ -18,6 +18,5 @@ enum Destination {
     case petDetails(pet: Pet)
     case addPet(householdId: String)
     case editPet(pet: Pet, onSave: (Pet) -> Void)
-    
-    case scanner(onScan: (String) -> Void)
+    case addHealthLog(petId: String, category: LogCategory = .vaccine, onSave: () -> Void)
 }

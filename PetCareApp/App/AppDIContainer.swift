@@ -17,6 +17,10 @@ final class AppDIContainer {
     lazy var imageStorageService: ImageStorageServiceProtocol = ImageStorageService()
     lazy var mapService: MapServiceProtocol = MapService()
     lazy var locationService: LocationServiceProtocol = LocationService()
+    lazy var healthService: HealthServiceProtocol = HealthService()
+    lazy var reminderSyncService: ReminderSyncServiceProtocol = {
+        return ReminderSyncService(petService: petService, healthService: healthService)
+    }()
     
     // MARK: - ViewModels
     
@@ -40,7 +44,9 @@ final class AppDIContainer {
             authService: authService,
             userService: userService,
             householdService: householdService,
-            petService: petService
+            petService: petService,
+            healthService: healthService,
+            reminderSyncService: reminderSyncService
         )
     }
     
@@ -63,7 +69,8 @@ final class AppDIContainer {
     func makePetDetailsViewModel(pet: Pet) -> PetDetailsViewModel {
         return PetDetailsViewModel(
             pet: pet,
-            petService: petService
+            petService: petService,
+            healthService: healthService
         )
     }
     
@@ -75,7 +82,20 @@ final class AppDIContainer {
         )
     }
     
+    func makeAddHealthLogViewModel(petId: String, category: LogCategory) -> AddHealthLogViewModel {
+        return AddHealthLogViewModel(
+            petId: petId,
+            category: category,
+            healthService: healthService,
+            reminderService: reminderSyncService
+        )
+    }
+    
     func makeMapViewModel() -> MapViewModel {
         return MapViewModel(mapService: mapService)
+    }
+    
+    func makeReminderSyncService() -> ReminderSyncService {
+        return ReminderSyncService(petService: petService, healthService: healthService)
     }
 }

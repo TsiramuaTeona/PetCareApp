@@ -26,6 +26,7 @@ final class AppCoordinator: Coordinator {
     private let window: UIWindow
     
     private let container: AppDIContainer
+    private let notificationManager = NotificationManager.shared
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initializer
@@ -44,6 +45,8 @@ final class AppCoordinator: Coordinator {
     func start() {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
+        
+        notificationManager.requestAuthorization()
         
         observeAuthState()
     }

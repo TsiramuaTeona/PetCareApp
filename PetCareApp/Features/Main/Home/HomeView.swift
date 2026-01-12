@@ -32,6 +32,8 @@ struct HomeView: View {
         }
     }
     
+    // MARK: - Subviews
+    
     private var content: some View {
         VStack(spacing: 0) {
             HeaderView()
@@ -94,6 +96,36 @@ struct HomeView: View {
                         }
                         .padding(24)
                     }
+                }
+                
+                if !viewModel.upcomingReminders.isEmpty {
+                    VStack(alignment: .leading, spacing: 24) {
+                        HStack {
+                            Text("Upcoming")
+                                .font(.appHeader)
+                                .foregroundColor(.brandSecondary)
+                            
+                            Spacer()
+                            
+                            Button {
+                                // navigate(.remindersList)
+                            } label: {
+                                Text("See All")
+                                    .font(.appBody)
+                                    .foregroundColor(.brandPrimary)
+                            }
+                        }
+                        
+                        VStack(spacing: 16) {
+                            ForEach(viewModel.upcomingReminders) { item in
+                                HomeReminderCard(item: item)
+                                    .onTapGesture {
+                                        // navigate(.reminderDetails(reminder: item))
+                                    }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 24)
                 }
             }
             .padding(.top, 8)

@@ -44,8 +44,8 @@ final class MainTabCoordinator: Coordinator {
             showAddPet(householdId: householdId)
         case .editPet(let pet, let onSave):
             showEditPet(pet: pet, onSave: onSave)
-        case .scanner(let onScan):
-            showScanner(onScan: onScan)
+        case .addHealthLog(let petId, let category, let onSave):
+            showAddHealthLog(petId: petId, category: category, onSave: onSave)
         case .selectTab(let tab):
             tabBarController.selectedIndex = tab.rawValue
         default:
@@ -143,12 +143,17 @@ final class MainTabCoordinator: Coordinator {
         currentNavigation.present(viewController, animated: true)
     }
     
-    private func showScanner(onScan: @escaping (String) -> Void) {
+    private func showAddHealthLog(petId: String, category: LogCategory, onSave: @escaping () -> Void) {
         guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
         
-        let scannerViewController = ScannerViewController(
-            //                onScan: onScan
-        )
-        currentNavigation.present(scannerViewController, animated: true)
+        let viewModel = container.makeAddHealthLogViewModel(petId: petId, category: category)
+        viewModel.onSaveSuccess = { [weak currentNavigation] in
+            currentNavigation?.dismiss(animated: true)
+            onSave()
+        }
+        
+        let view = AddHealthLogView(viewModel: viewModel)
+        let vc = UIHostingController(rootView: view)
+        currentNavigation.present(vc, animated: true)
     }
 }

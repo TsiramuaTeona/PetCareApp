@@ -15,8 +15,6 @@ final class EditPetViewModel: ObservableObject {
     
     @Published var name: String
     @Published var breed: String
-    @Published var weight: String
-    @Published var height: String
     @Published var color: String
     @Published var bio: String
     @Published var photoData: Data?
@@ -48,8 +46,6 @@ final class EditPetViewModel: ObservableObject {
         
         self.name = pet.name
         self.breed = pet.breed ?? ""
-        self.weight = pet.weight != nil ? String(pet.weight!) : ""
-        self.height = pet.height != nil ? String(pet.height!) : ""
         self.color = pet.color ?? ""
         self.bio = pet.bio ?? ""
     }
@@ -64,8 +60,6 @@ final class EditPetViewModel: ObservableObject {
         var updatedPet = originalPet
         updatedPet.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         updatedPet.breed = breed.nilIfEmpty
-        updatedPet.weight = weight.doubleValue
-        updatedPet.height = height.doubleValue
         updatedPet.color = color.nilIfEmpty
         updatedPet.bio = bio
         
