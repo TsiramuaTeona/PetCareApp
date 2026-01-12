@@ -43,7 +43,7 @@ struct ImageView: View {
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
             } else if imageLoader.isLoading && showsProgress {
-                LoadingView(pawCount: 2, size: 18)
+                LoadingView(pawCount: 1, size: 21)
             } else {
                 placeholderView
             }
@@ -62,7 +62,7 @@ struct ImageView: View {
         Image(systemName: placeholderSystemImage)
             .resizable()
             .scaledToFit()
-            .frame(width: 64, height: 64)
+            .frame(width: 32, height: 32)
             .foregroundColor(.brandSecondary.opacity(0.5))
     }
 }
