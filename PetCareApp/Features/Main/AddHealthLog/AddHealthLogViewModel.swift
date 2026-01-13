@@ -119,15 +119,42 @@ final class AddHealthLogViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func createAndSaveHistoryLog() async throws {
+        guard isMedication else {
+            try await saveSingleHistoryLog(date: actionDate)
+            return
+        }
+        
+        let calendar = Calendar.current
+        let now = Date()
+        
+        let intervalHours = 24.0 / Double(max(1, timesPerDay))
+        
+        var simulationDate = actionDate
+        
+        while simulationDate < now {
+            if !isChronic {
+                if let endDate = calendar.date(byAdding: .day, value: Int(durationDays), to: actionDate),
+                   simulationDate > endDate {
+                    break
+                }
+            }
+            
+            try await saveSingleHistoryLog(date: simulationDate)
+            
+            simulationDate = simulationDate.addingTimeInterval(intervalHours * 3600)
+        }
+    }
+    
+    private func saveSingleHistoryLog(date: Date) async throws {
         let log = HealthLog(
             id: nil,
             petId: petId,
             category: category,
             title: resolvedTitle,
             note: note.isEmpty ? nil : note,
-            date: actionDate,
+            date: date,
             isResolved: true,
-            completedDate: Date(),
+            completedDate: date,
             nextDueDate: nil,
             recurrence: nil,
             value: valueString.doubleValue,
@@ -142,18 +169,27 @@ final class AddHealthLogViewModel: ObservableObject {
     private func createAndSaveFutureLog() async throws {
         let schedule = isMedication ? MedicationScheduler.generateSchedule(start: actionDate, frequency: timesPerDay) : nil
         
-        let targetDate = isMedication && isHistoryLog
-        ? (MedicationScheduler.findNextDose(from: schedule ?? []) ?? actionDate)
-        : (isHistoryLog ? nextDueDate : actionDate)
+        var startTargetDate = isHistoryLog ? nextDueDate : actionDate
+        
+        if isMedication && isHistoryLog {
+            let intervalHours = 24.0 / Double(max(1, timesPerDay))
+            var simulationDate = actionDate
+            let now = Date()
+            
+            while simulationDate < now {
+                simulationDate = simulationDate.addingTimeInterval(intervalHours * 3600)
+            }
+            startTargetDate = simulationDate
+        }
         
         let log = HealthLog(
             id: nil, petId: petId,
             category: category,
             title: resolvedTitle,
             note: isHistoryLog ? category.futureNote : (note.isEmpty ? nil : note),
-            date: isMedication ? actionDate : targetDate,
+            date: startTargetDate,
             isResolved: false,
-            nextDueDate: targetDate,
+            nextDueDate: startTargetDate,
             recurrence: isMedication ? .daily : recurrence,
             value: nil,
             dosage: isMedication ? dosage : nil,

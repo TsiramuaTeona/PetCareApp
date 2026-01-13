@@ -9,12 +9,6 @@
 import Foundation
 import Combine
 
-enum PetDetailsSection: Hashable {
-    case weight
-    case medication
-    case top
-}
-
 @MainActor
 final class PetDetailsViewModel: ObservableObject {
     // MARK: - Published Properties
@@ -87,9 +81,12 @@ final class PetDetailsViewModel: ObservableObject {
         var historyLog = log
         historyLog.isResolved = true
         historyLog.completedDate = now
+    
+        historyLog.date = now
+        
         historyLog.nextDueDate = nil
         
-        if let nextLog = LogScheduler.generateNextLog(currentLog: log) {
+        if let nextLog = LogScheduler.generateNextLog(currentLog: log, completionDate: now) {
             await createAndSchedule(nextLog, petName: pet.name)
         }
         
