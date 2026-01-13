@@ -50,8 +50,6 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Methods
     
     func loadData() async {
-        state = .loading
-        
         do {
             guard let userId = authService.currentUserId else {
                 state = .error("User not authenticated")
@@ -100,7 +98,7 @@ final class HomeViewModel: ObservableObject {
                     guard let logs = try? await self.healthService.fetchLogs(petId: petId) else { return [] }
                     
                     return logs.filter { !$0.isResolved && $0.nextDueDate != nil }
-                        .map { ReminderItem(petName: pet.name, petPhoto: pet.photoUrl, log: $0) }
+                        .map { ReminderItem(petId: petId, petName: pet.name, petPhoto: pet.photoUrl, log: $0) }
                 }
             }
             
@@ -111,7 +109,6 @@ final class HomeViewModel: ObservableObject {
         
         self.upcomingReminders = Array(allItems
             .sorted { ($0.log.nextDueDate ?? .distantFuture) < ($1.log.nextDueDate ?? .distantFuture) }
-            .prefix(3)
         )
     }
 }

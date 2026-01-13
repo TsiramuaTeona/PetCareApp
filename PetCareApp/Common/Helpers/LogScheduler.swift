@@ -13,9 +13,8 @@ struct LogScheduler {
         guard let nextDate = calculateNextDate(for: currentLog, from: completionDate) else { return nil }
         
         if currentLog.isMedication, let duration = currentLog.durationDays {
-            let calendar = Calendar.current
-            if let endDate = calendar.date(byAdding: .day, value: duration, to: currentLog.date),
-               nextDate > endDate {
+            let endDate = currentLog.date.adding(days: duration)
+            if nextDate > endDate {
                 return nil
             }
         }
@@ -31,33 +30,31 @@ struct LogScheduler {
     }
     
     private static func calculateNextDate(for log: HealthLog, from completedDate: Date) -> Date? {
-        let calendar = Calendar.current
-        
         let originalDueDate = log.nextDueDate ?? log.date
         
-        
-        let isOverdueByDays = calendar.dateComponents([.day], from: originalDueDate, to: completedDate).day ?? 0 >= 1
+        let isOverdue = completedDate.startOfDay > originalDueDate.startOfDay
         
         if log.isMedication {
-            if isOverdueByDays {
-                let intervalHours = 24.0 / Double(max(1, log.timesPerDay ?? 1))
-                return originalDueDate.addingTimeInterval(intervalHours * 3600)
+            let timesPerDay = Double(max(1, log.timesPerDay ?? 1))
+            let intervalMinutes = Int((24.0 / timesPerDay) * 60)
+            
+            if isOverdue {
+                return originalDueDate.adding(minutes: intervalMinutes)
             } else {
-                let intervalHours = 24.0 / Double(max(1, log.timesPerDay ?? 1))
-                return completedDate.addingTimeInterval(intervalHours * 3600)
+                return completedDate.adding(minutes: intervalMinutes)
             }
         }
         
         guard let rule = log.recurrence else { return nil }
         
         switch rule {
-        case .daily: return calendar.date(byAdding: .day, value: 1, to: originalDueDate)
-        case .weekly: return calendar.date(byAdding: .day, value: 7, to: originalDueDate)
-        case .monthly: return calendar.date(byAdding: .month, value: 1, to: originalDueDate)
-        case .everyThreeMonths: return calendar.date(byAdding: .month, value: 3, to: originalDueDate)
-        case .everySixMonths: return calendar.date(byAdding: .month, value: 6, to: originalDueDate)
-        case .yearly: return calendar.date(byAdding: .year, value: 1, to: originalDueDate)
-        case .none: return nil
+        case .daily:            return originalDueDate.adding(days: 1)
+        case .weekly:           return originalDueDate.adding(days: 7)
+        case .monthly:          return originalDueDate.adding(months: 1)
+        case .everyThreeMonths: return originalDueDate.adding(months: 3)
+        case .everySixMonths:   return originalDueDate.adding(months: 6)
+        case .yearly:           return originalDueDate.adding(years: 1)
+        case .none:             return nil
         }
     }
 }

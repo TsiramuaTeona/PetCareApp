@@ -24,9 +24,9 @@ struct StandardDetailsSection: View {
                     PrimaryTextField(
                         title: "Value",
                         placeholder: "0.0 kg",
-                        text: $viewModel.valueString
+                        text: $viewModel.valueString,
+                        keyboardType: .decimalPad
                     )
-                    .keyboardType(.decimalPad)
                 }
             }
             

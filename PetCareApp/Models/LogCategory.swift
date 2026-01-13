@@ -81,14 +81,6 @@ extension LogCategory {
         }
     }
     
-    var futureNote: String {
-        switch self {
-        case .vet: return "Scheduled Visit"
-        case .food: return "Buy Food"
-        default: return "Next scheduled dose"
-        }
-    }
-    
     func reminderLabel(isHistory: Bool) -> String {
         guard isHistory else { return "Set Repetition" }
         switch self {

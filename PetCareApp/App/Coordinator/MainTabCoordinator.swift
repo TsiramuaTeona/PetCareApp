@@ -46,6 +46,10 @@ final class MainTabCoordinator: Coordinator {
             showEditPet(pet: pet, onSave: onSave)
         case .addHealthLog(let petId, let category, let onSave):
             showAddHealthLog(petId: petId, category: category, onSave: onSave)
+        case .logDetails(let petId, let log):
+            showLogDetails(petId: petId, log: log)
+        case .remindersList(let items):
+            showRemindersList(items: items)
         case .selectTab(let tab):
             tabBarController.selectedIndex = tab.rawValue
         default:
@@ -153,7 +157,33 @@ final class MainTabCoordinator: Coordinator {
         }
         
         let view = AddHealthLogView(viewModel: viewModel)
-        let vc = UIHostingController(rootView: view)
-        currentNavigation.present(vc, animated: true)
+        let viewController = UIHostingController(rootView: view)
+        currentNavigation.present(viewController, animated: true)
     }
+    
+    private func showLogDetails(petId: String, log: HealthLog) {
+        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        
+        let viewModel = container.makeLogDetailsViewModel(petId: petId, log: log)
+        let view = LogDetailsView(viewModel: viewModel)
+        
+        let viewController = UIHostingController(rootView: view)
+        viewController.hidesBottomBarWhenPushed = true
+        currentNavigation.pushViewController(viewController, animated: true)
+    }
+    
+    private func showRemindersList(items: [ReminderItem]) {
+        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        
+        let viewModel = RemindersViewModel(reminders: items)
+        let view = RemindersView(viewModel: viewModel)
+            .environment(\.navigate) { [weak self] destination in
+                self?.handle(destination)
+            }
+        
+        let viewController = UIHostingController(rootView: view)
+        viewController.hidesBottomBarWhenPushed = true
+        currentNavigation.pushViewController(viewController, animated: true)
+    }
+
 }

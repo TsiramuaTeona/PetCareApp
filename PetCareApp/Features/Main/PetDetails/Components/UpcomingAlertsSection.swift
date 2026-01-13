@@ -13,6 +13,7 @@ struct UpcomingAlertsSection: View {
     // MARK: - Properties
     
     @ObservedObject var viewModel: PetDetailsViewModel
+    @Environment(\.navigate) private var navigate
     
     // MARK: - Body
     
@@ -26,6 +27,9 @@ struct UpcomingAlertsSection: View {
                     ForEach(viewModel.upcomingAlerts) { log in
                         HealthAlertCard(log: log) {
                             Task { await viewModel.resolveLog(log) }
+                        }
+                        .onTapGesture {
+                            navigate(.logDetails(petId: viewModel.petId, log: log))
                         }
                     }
                 }

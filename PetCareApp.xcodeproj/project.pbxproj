@@ -171,6 +171,7 @@
 				INFOPLIST_FILE = PetCareApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PetCare;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to show nearby veterinary clinics.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -205,6 +206,7 @@
 				INFOPLIST_FILE = PetCareApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PetCare;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to show nearby veterinary clinics.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

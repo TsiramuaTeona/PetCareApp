@@ -12,6 +12,7 @@ struct HistoryLogRow: View {
     // MARK: - Properties
     
     let log: HealthLog
+    let onInfoTap: () -> Void
     let onDelete: () -> Void
     
     // MARK: - Body
@@ -33,6 +34,12 @@ struct HistoryLogRow: View {
             }
             
             Spacer()
+            
+            Button(action: onInfoTap) {
+                Image(systemName: "info.circle")
+                    .font(.appTitle)
+                    .foregroundColor(log.category.color)
+            }
         }
         .contextMenu {
             Button(role: .destructive, action: onDelete) {

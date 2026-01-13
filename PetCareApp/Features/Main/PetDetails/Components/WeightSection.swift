@@ -66,5 +66,6 @@ struct WeightSection: View {
             .multilineTextAlignment(.center)
             .padding()
             .shadowCard()
+            .frame(maxWidth: .infinity)
     }
 }

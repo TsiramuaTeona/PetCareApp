@@ -50,7 +50,7 @@ final class AddHealthLogViewModel: ObservableObject {
     }
     
     var isHistoryLog: Bool {
-        Calendar.current.startOfDay(for: actionDate) <= Calendar.current.startOfDay(for: Date())
+        actionDate.startOfDay <= Date().startOfDay
     }
     
     var titlePlaceholder: String {
@@ -124,24 +124,22 @@ final class AddHealthLogViewModel: ObservableObject {
             return
         }
         
-        let calendar = Calendar.current
         let now = Date()
-        
-        let intervalHours = 24.0 / Double(max(1, timesPerDay))
+        let intervalMinutes = Int((24.0 / Double(max(1, timesPerDay))) * 60)
         
         var simulationDate = actionDate
         
         while simulationDate < now {
             if !isChronic {
-                if let endDate = calendar.date(byAdding: .day, value: Int(durationDays), to: actionDate),
-                   simulationDate > endDate {
+                let endDate = actionDate.adding(days: Int(durationDays))
+                
+                if simulationDate > endDate {
                     break
                 }
             }
             
             try await saveSingleHistoryLog(date: simulationDate)
-            
-            simulationDate = simulationDate.addingTimeInterval(intervalHours * 3600)
+            simulationDate = simulationDate.adding(minutes: intervalMinutes)
         }
     }
     
@@ -186,7 +184,7 @@ final class AddHealthLogViewModel: ObservableObject {
             id: nil, petId: petId,
             category: category,
             title: resolvedTitle,
-            note: isHistoryLog ? category.futureNote : (note.isEmpty ? nil : note),
+            note: note.isEmpty ? nil : note,
             date: startTargetDate,
             isResolved: false,
             nextDueDate: startTargetDate,

@@ -17,7 +17,7 @@ struct MedicationCard: View {
     
     private var endDate: Date? {
         guard let days = log.durationDays else { return nil }
-        return Calendar.current.date(byAdding: .day, value: days, to: log.date)
+        return log.date.adding(days: days)
     }
     
     private var durationText: String {
@@ -55,7 +55,7 @@ struct MedicationCard: View {
         HStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.2))
+                    .fill(.white.opacity(0.2))
                     .frame(width: 44, height: 44)
                 
                 Image(systemName: "pills.fill")

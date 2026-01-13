@@ -13,7 +13,15 @@ extension String {
         Double(replacingOccurrences(of: ",", with: "."))
     }
     
+    var trimmed: String {
+        trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     var nilIfEmpty: String? {
         isEmpty ? nil : self
+    }
+    
+    var isEmptyOrWhitespace: Bool {
+        trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }

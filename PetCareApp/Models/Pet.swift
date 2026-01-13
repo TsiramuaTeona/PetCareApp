@@ -50,12 +50,7 @@ enum PetGender: String, Codable, CaseIterable {
 
 extension Pet {
     var ageFormatted: String {
-        let components = Calendar.current.dateComponents([.year, .month], from: birthDate, to: Date())
-        if let years = components.year, years > 0 {
-            return "\(years) yrs"
-        } else {
-            return "\(components.month ?? 0) mos"
-        }
+        birthDate.ageDescription()
     }
     
     var displayBreed: String {

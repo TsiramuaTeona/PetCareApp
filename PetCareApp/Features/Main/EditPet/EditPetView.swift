@@ -47,7 +47,7 @@ struct EditPetView: View {
                 .padding(.vertical, 20)
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("Edit Profile")
+            .navigationTitle("Edit Pet Info")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

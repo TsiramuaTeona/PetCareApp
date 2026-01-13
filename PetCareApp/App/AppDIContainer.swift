@@ -91,6 +91,15 @@ final class AppDIContainer {
         )
     }
     
+    func makeLogDetailsViewModel(petId: String, log: HealthLog) -> LogDetailsViewModel {
+        return LogDetailsViewModel(
+            petId: petId,
+            sourceLog: log,
+            healthService: healthService,
+            reminderService: reminderSyncService
+        )
+    }
+    
     func makeMapViewModel() -> MapViewModel {
         return MapViewModel(mapService: mapService)
     }

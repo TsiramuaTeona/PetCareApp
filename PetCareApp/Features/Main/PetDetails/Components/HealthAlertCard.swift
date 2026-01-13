@@ -26,7 +26,11 @@ struct HealthAlertCard: View {
             Spacer()
             
             if log.isActionable {
-                resolveButton
+                ResolveButton(
+                    action: resolveAction,
+                    isUrgent: log.isUrgent,
+                    categoryColor: log.category.color
+                )
             }
         }
         .shadowCard()
@@ -57,24 +61,6 @@ struct HealthAlertCard: View {
                 .foregroundColor(log.isUrgent ? .error.opacity(0.8) : .textSecondary)
         }
     }
-    
-    private var resolveButton: some View {
-        Button(action: resolveAction) {
-            HStack(spacing: 6) {
-                Image(systemName: "checkmark")
-                    .font(.caption.bold())
-                
-                Text("Done")
-                    .font(.appCaption.bold())
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(log.isUrgent ? .error : log.category.color)
-            )
-            .foregroundColor(.white)
-        }
-        .buttonStyle(.plain)
-    }
 }
+
+

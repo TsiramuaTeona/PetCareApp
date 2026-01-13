@@ -57,6 +57,9 @@ struct MedicationSection: View {
             HStack(spacing: 12) {
                 ForEach(viewModel.medicationLogs) { log in
                     MedicationCard(log: log)
+                        .onTapGesture {
+                            navigate(.logDetails(petId: viewModel.petId, log: log))
+                        }
                 }
             }
             .padding(.vertical)

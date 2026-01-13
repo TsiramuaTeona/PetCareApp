@@ -70,10 +70,15 @@ struct StatusSection: View {
             ForEach(visibleLogs) { log in
                 HistoryLogRow(
                     log: log,
+                    onInfoTap: {
+                        navigate(.logDetails(petId: viewModel.petId, log: log))
+                    },
                     onDelete: {
                         Task { await viewModel.deleteLog(log) }
                     }
                 )
+                
+                Divider()
             }
         }
         .animation(.easeInOut, value: visibleCount)

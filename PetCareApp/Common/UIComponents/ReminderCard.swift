@@ -1,5 +1,5 @@
 //
-//  HomeReminderCard.swift
+//  ReminderCard.swift
 //  PetCareApp
 //
 //  Created by Teona Tsiramua on 10.01.26.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct HomeReminderCard: View {
+struct ReminderCard: View {
     // MARK: - Properties
     
     let item: ReminderItem

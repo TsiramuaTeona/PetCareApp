@@ -14,7 +14,7 @@ class NotificationManager {
     
     static let shared = NotificationManager()
     
-    // MARK: - Initializer
+    // MARK: - Methods
     
     func requestAuthorization() {
         UNUserNotificationCenter.current()

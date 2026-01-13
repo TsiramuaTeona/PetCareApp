@@ -36,9 +36,19 @@ struct HomeView: View {
     
     private var content: some View {
         VStack(spacing: 0) {
-            HeaderView()
-                .padding(.horizontal, 24)
-                .padding(.vertical, 16)
+            HStack {
+                HeaderView()
+                
+                Spacer()
+                
+                Button("", systemImage: "bell.fill") {
+                    navigate(.remindersList(items: viewModel.upcomingReminders))
+                }
+                .font(.appButton)
+                .foregroundColor(.brandSecondary)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
             
             if viewModel.household == nil {
                 EmptyHouseholdView(
@@ -108,7 +118,7 @@ struct HomeView: View {
                             Spacer()
                             
                             Button {
-                                // navigate(.remindersList)
+                                 navigate(.remindersList(items: viewModel.upcomingReminders))
                             } label: {
                                 Text("See All")
                                     .font(.appBody)
@@ -117,16 +127,18 @@ struct HomeView: View {
                         }
                         
                         VStack(spacing: 16) {
-                            ForEach(viewModel.upcomingReminders) { item in
-                                HomeReminderCard(item: item)
+                            ForEach(viewModel.upcomingReminders.prefix(3)) { item in
+                                ReminderCard(item: item)
                                     .onTapGesture {
-                                        // navigate(.reminderDetails(reminder: item))
+                                        navigate(.logDetails(petId: item.petId, log: item.log))
                                     }
                             }
                         }
                     }
                     .padding(.horizontal, 24)
                 }
+                
+                Spacer(minLength: 40)
             }
             .padding(.top, 8)
         }

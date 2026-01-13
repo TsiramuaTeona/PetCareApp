@@ -26,6 +26,11 @@ struct ScreenStateContainer<Content: View>: View {
         case .loaded:
             content()
                 .background(.mainBackground)
+                .refreshable {
+                    Task {
+                        await onRetry()
+                    }
+                }
 
         case .error(let message):
             ErrorStateView(

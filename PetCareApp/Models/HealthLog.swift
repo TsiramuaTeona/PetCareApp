@@ -41,33 +41,32 @@ extension HealthLog {
         if isResolved { return "Completed" }
         guard let due = nextDueDate else { return "" }
         
-        let calendar = Calendar.current
         let now = Date()
         
-        if due < now {
+        if due.isInPast {
             if isMedication {
                 return "Missed Dose"
             }
             
-            let days = calendar.dateComponents([.day], from: due, to: now).day ?? 0
+            let days = Calendar.current.dateComponents([.day], from: due, to: now).day ?? 0
             return "Overdue by \(days) days"
         }
         
-        if calendar.isDateInToday(due) {
-            return isMedication ? "Today at \(due.formatted(date: .omitted, time: .shortened))" : "Due Today"
+        if due.isToday {
+            return isMedication ? "Today at \(due.timeString)" : "Due Today"
         }
         
-        if calendar.isDateInTomorrow(due) {
-            return isMedication ? "Tomorrow at \(due.formatted(date: .omitted, time: .shortened))" : "Due Tomorrow"
+        if due.isTomorrow {
+            return isMedication ? "Tomorrow at \(due.timeString)" : "Due Tomorrow"
         }
         
-        let days = calendar.dateComponents([.day], from: now, to: due).day ?? 0
+        let days = Calendar.current.dateComponents([.day], from: now, to: due).day ?? 0
         return "In \(days) days"
     }
     
     var isUrgent: Bool {
         guard let due = nextDueDate, !isResolved else { return false }
-        return due < Date()
+        return due.isInPast
     }
     
     func isPastEnd(currentDate: Date) -> Bool {
@@ -78,22 +77,18 @@ extension HealthLog {
     var isActionable: Bool {
         guard let due = nextDueDate else { return false }
         
-        if due < Date() { return true }
-        
-        let calendar = Calendar.current
+        if due.isInPast { return true }
         
         if category == .medication {
-            if let earlyAccessTime = calendar.date(byAdding: .minute, value: -30, to: due) {
-                return Date() >= earlyAccessTime
-            }
-            return false
+            let earlyAccessTime = due.adding(minutes: -30)
+            return Date() >= earlyAccessTime
         }
         
         let windowInDays: Int = {
             guard let recurrence = recurrence else { return 0 }
             
             switch recurrence {
-            case .daily:            return 0  
+            case .daily:            return 0
             case .weekly:           return 1
             case .monthly:          return 5
             case .everyThreeMonths: return 7
@@ -103,9 +98,7 @@ extension HealthLog {
             }
         }()
         
-        guard let startOfWindow = calendar.date(byAdding: .day, value: -windowInDays, to: due) else {
-            return false
-        }
+        let startOfWindow = due.adding(days: -windowInDays)
         
         return Date() >= startOfWindow
     }

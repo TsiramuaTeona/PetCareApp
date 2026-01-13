@@ -59,7 +59,7 @@ final class PetDetailsViewModel: ObservableObject {
     
     func refresh() async {
         guard let petId = pet.id else { return }
-        state = .loading
+        
         do {
             async let petTask = petService.getPet(petId: petId)
             async let logsTask = healthService.fetchLogs(petId: petId)
@@ -155,7 +155,7 @@ final class PetDetailsViewModel: ObservableObject {
             scheduledLog.id = newId
             notificationManager.scheduleNotification(for: scheduledLog, petName: petName)
         } catch {
-            print("Failed to create next recurrence: \(error)")
+            alert = .error("Failed to create next recurrence: \(error.localizedDescription)")
         }
     }
 }

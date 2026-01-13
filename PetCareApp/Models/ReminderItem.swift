@@ -8,8 +8,9 @@
 
 import Foundation
 
-struct ReminderItem: Identifiable {
+struct ReminderItem: Identifiable, Equatable {
     let id = UUID()
+    let petId: String
     let petName: String
     let petPhoto: String?
     let log: HealthLog
