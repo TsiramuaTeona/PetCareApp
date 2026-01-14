@@ -59,6 +59,6 @@ struct PetCard: View {
             .background(.surface)
         }
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .shadow(color: .textPrimary.opacity(0.08), radius: 10, x: 0, y: 5)
+        .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 5)
     }
 }

@@ -35,7 +35,7 @@ struct CategoryChip: View {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(isSelected ? Color.clear : Color.textSecondary.opacity(0.1), lineWidth: 1)
             )
-            .shadow(color: .textPrimary.opacity(0.05), radius: 2, x: 0, y: 1)
+            .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
     }
 }

@@ -67,10 +67,10 @@ struct ReminderCard: View {
         }
         .padding(14)
         .background(.surface)
-        .cornerRadius(16)
-        .shadow(color: .textPrimary.opacity(0.04), radius: 3, x: 0, y: 1)
+        .cornerRadius(10)
+        .shadow(color: .black.opacity(0.04), radius: 3, x: 0, y: 1)
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray.opacity(0.06), lineWidth: 1)
         )
     }

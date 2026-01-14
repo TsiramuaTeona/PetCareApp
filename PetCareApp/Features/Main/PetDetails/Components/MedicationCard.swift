@@ -45,7 +45,7 @@ struct MedicationCard: View {
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(log.isUrgent ? .error.opacity(0.9) : .brandPurple)
-                .shadow(color: .textPrimary.opacity(0.15), radius: 8, x: 0, y: 4)
+                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
         )
     }
     

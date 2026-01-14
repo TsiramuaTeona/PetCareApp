@@ -56,6 +56,6 @@ struct WeightTooltip: View {
         .padding(.vertical, 8)
         .background(.brandSecondary)
         .cornerRadius(30)
-        .shadow(color: .textPrimary.opacity(0.2), radius: 8, x: 0, y: 4)
+        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
     }
 }

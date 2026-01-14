@@ -47,7 +47,7 @@ struct MedicationSection: View {
                     .padding(8)
                     .background(.brandPurple)
                     .clipShape(Circle())
-                    .shadow(color: .textPrimary.opacity(0.08), radius: 10, x: 0, y: 5)
+                    .shadow(color: .black.opacity(0.08), radius: 10, x: 0, y: 5)
             }
         }
     }
