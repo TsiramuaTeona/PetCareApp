@@ -94,11 +94,11 @@ struct HistorySection: View {
             VStack(spacing: 8) {
                 Image(systemName: "clock.arrow.circlepath")
                     .font(.largeTitle)
-                    .foregroundColor(.textSecondary.opacity(0.3))
+                    .foregroundColor(.brandPrimary.opacity(0.3))
                 
                 Text("No history yet")
                     .font(.appCaption)
-                    .foregroundColor(.textSecondary)
+                    .foregroundColor(.brandPrimary)
             }
             .padding(.vertical, 20)
             Spacer()

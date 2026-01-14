@@ -91,7 +91,7 @@ final class LogDetailsViewModel: ObservableObject {
             .sorted { ($0.nextDueDate ?? Date.distantFuture) < ($1.nextDueDate ?? Date.distantFuture) }
         
         self.historyLogs = relatedLogs
-            .filter { $0.isResolved || ($0.nextDueDate ?? Date.distantFuture) < now }
+            .filter { ( $0.isResolved || ($0.nextDueDate ?? Date.distantFuture) < now ) && !$0.isUrgent }
             .sorted { $0.date > $1.date }
         
         self.chartData = self.historyLogs.sorted { $0.date < $1.date }
