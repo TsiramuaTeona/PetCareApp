@@ -108,6 +108,13 @@ struct HomeView: View {
                     }
                 }
                 
+                FunFactCard(fact: viewModel.dailyFact) {
+                    withAnimation {
+                        viewModel.refreshFact()
+                    }
+                }
+                .padding(.horizontal, 24)
+                
                 if !viewModel.upcomingReminders.isEmpty {
                     VStack(alignment: .leading, spacing: 24) {
                         HStack {
@@ -135,7 +142,7 @@ struct HomeView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 24)
+                    .padding(24)
                 }
                 
                 Spacer(minLength: 40)

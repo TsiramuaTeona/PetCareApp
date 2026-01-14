@@ -18,6 +18,8 @@ final class HomeViewModel: ObservableObject {
     @Published var household: Household?
     @Published var pets: [Pet] = []
     @Published var upcomingReminders: [ReminderItem] = []
+    @Published var dailyFact: String = ""
+    
     @Published private(set) var state: ScreenState = .loading
     
     // MARK: - Services Properties
@@ -50,6 +52,8 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Methods
     
     func loadData() async {
+        dailyFact = FunFactService.getRandomFact()
+        
         do {
             guard let userId = authService.currentUserId else {
                 state = .error("User not authenticated")
@@ -86,6 +90,10 @@ final class HomeViewModel: ObservableObject {
         } catch {
             state = .error(error.localizedDescription)
         }
+    }
+    
+    func refreshFact() {
+        dailyFact = FunFactService.getRandomFact()
     }
     
     private func loadReminders(for pets: [Pet]) async {
