@@ -14,11 +14,11 @@ struct Pet: Codable, Identifiable {
     let householdId: String
     
     var name: String
-    let species: PetSpecies
+    var species: PetSpecies
     var breed: String?
-    let gender: PetGender
+    var gender: PetGender
     
-    let birthDate: Date
+    var birthDate: Date
     var photoUrl: String?
     
     var color: String? 

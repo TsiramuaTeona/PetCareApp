@@ -105,9 +105,50 @@ struct EditPetView: View {
             )
             
             Divider()
+            
+            HStack {
+                Text("Species")
+                    .font(.appTitle)
+                    .foregroundColor(.textPrimary)
+                
+                Spacer()
+                
+                Picker("Species", selection: $viewModel.species) {
+                    ForEach(PetSpecies.allCases) { species in
+                        Label(species.rawValue, systemImage: species.icon)
+                            .tag(species)
+                    }
+                }
+            }
+            
+            HStack {
+                Text("Gender")
+                    .font(.appTitle)
+                    .foregroundColor(.textPrimary)
+                
+                Spacer()
+                
+                Picker("Gender", selection: $viewModel.gender) {
+                    ForEach(PetGender.allCases, id: \.self) {
+                        Text($0.rawValue)
+                    }
+                }
+            }
+            
+            DatePicker(
+                "Birthday",
+                selection: $viewModel.birthDate,
+                in: ...Date(),
+                displayedComponents: .date
+            )
+            .font(.appTitle)
+            .foregroundColor(.textPrimary)
+            
+            
+            Divider()
         }
     }
-    
+
     private var bioSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeaderView(text: "About")

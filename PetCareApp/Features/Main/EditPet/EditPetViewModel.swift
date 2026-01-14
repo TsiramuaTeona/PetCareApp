@@ -14,7 +14,11 @@ final class EditPetViewModel: ObservableObject {
     // MARK: - Published Properties
     
     @Published var name: String
+    @Published var species: PetSpecies
     @Published var breed: String
+    @Published var gender: PetGender
+    @Published var birthDate: Date
+    
     @Published var color: String
     @Published var bio: String
     @Published var photoData: Data?
@@ -45,7 +49,10 @@ final class EditPetViewModel: ObservableObject {
         self.imageStorageService = imageStorageService
         
         self.name = pet.name
+        self.species = pet.species
         self.breed = pet.breed ?? ""
+        self.gender = pet.gender
+        self.birthDate = pet.birthDate
         self.color = pet.color ?? ""
         self.bio = pet.bio ?? ""
     }
@@ -58,8 +65,11 @@ final class EditPetViewModel: ObservableObject {
         state = .loading
         
         var updatedPet = originalPet
-        updatedPet.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        updatedPet.name = name.trimmed
+        updatedPet.species = species
         updatedPet.breed = breed.nilIfEmpty
+        updatedPet.gender = gender
+        updatedPet.birthDate = birthDate
         updatedPet.color = color.nilIfEmpty
         updatedPet.bio = bio
         
