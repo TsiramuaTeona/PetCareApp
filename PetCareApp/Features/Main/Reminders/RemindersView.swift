@@ -96,7 +96,7 @@ struct RemindersView: View {
     private var emptyState: some View {
         VStack(spacing: 12) {
             Spacer()
-                .frame(height: 300)
+                .frame(height: 250)
             
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 40))

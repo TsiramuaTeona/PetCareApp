@@ -93,7 +93,7 @@ struct HomeView: View {
                     Text("No pets yet. Tap ⊕ to add one!")
                         .foregroundColor(.textSecondary)
                         .font(.appBody)
-                        .padding(.horizontal, 24)
+                        .padding(24)
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 16) {

@@ -52,6 +52,7 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Methods
     
     func loadData() async {
+        state = .loading
         dailyFact = FunFactService.getRandomFact()
         
         do {
