@@ -29,6 +29,7 @@ struct CategorySection: View {
                                 onTap: {
                                     withAnimation {
                                         viewModel.category = category
+                                        viewModel.errorMessage = nil
                                         proxy.scrollTo(category, anchor: .center)
                                     }
                                 }

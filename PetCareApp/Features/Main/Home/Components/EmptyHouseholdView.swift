@@ -27,6 +27,7 @@ struct EmptyHouseholdView: View {
             Text("Welcome, \(userName)!")
                 .font(.appDisplay)
                 .foregroundColor(.textPrimary)
+                .multilineTextAlignment(.center)
             
             Text("To start tracking your pets, you need to create or join a household.")
                 .font(.appBody)

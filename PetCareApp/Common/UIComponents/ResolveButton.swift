@@ -19,7 +19,7 @@ struct ResolveButton: View {
     
     var body: some View {
         Button(action: action) {
-            Image(systemName: "checkmark.circle.dotted")
+            Image(systemName: "checkmark.arrow.trianglehead.counterclockwise")
                 .font(.system(size: 28))
                 .foregroundColor(isUrgent ? .error : categoryColor)
         }

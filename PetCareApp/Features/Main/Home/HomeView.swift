@@ -12,7 +12,7 @@ struct HomeView: View {
     // MARK: - Properties
     
     @StateObject var viewModel: HomeViewModel
-    @Environment(\.navigate) var navigate
+    @Environment(\.navigate) private var navigate
     
     // MARK: - Body
     
@@ -36,19 +36,7 @@ struct HomeView: View {
     
     private var content: some View {
         VStack(spacing: 0) {
-            HStack {
-                HeaderView()
-                
-                Spacer()
-                
-                Button("", systemImage: "bell.fill") {
-                    navigate(.remindersList(items: viewModel.upcomingReminders))
-                }
-                .font(.appButton)
-                .foregroundColor(.brandSecondary)
-            }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 16)
+            header
             
             if viewModel.household == nil {
                 EmptyHouseholdView(
@@ -60,53 +48,31 @@ struct HomeView: View {
             } else {
                 dashboard
             }
-            
         }
+    }
+    
+    private var header: some View {
+        HStack {
+            HeaderView()
+            
+            Spacer()
+            
+            Button("", systemImage: "bell.fill") {
+                navigate(.remindersList(items: viewModel.upcomingReminders))
+            }
+            .font(.appButton)
+            .foregroundColor(.brandSecondary)
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 16)
     }
     
     private var dashboard: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Label(viewModel.household?.name ?? "Home", systemImage: "house.fill")
-                            .font(.appTitle)
-                            .foregroundColor(.textSecondary)
-                        
-                        Text("My Pets")
-                            .font(.appDisplay)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        navigate(.addPet(householdId: viewModel.household?.id ?? ""))
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.appDisplay)
-                            .foregroundColor(.brandPrimary)
-                    }
-                }
-                .padding(.horizontal, 24)
+                petsHeader
                 
-                if viewModel.pets.isEmpty {
-                    Text("No pets yet. Tap ⊕ to add one!")
-                        .foregroundColor(.textSecondary)
-                        .font(.appBody)
-                        .padding(24)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 16) {
-                            ForEach(viewModel.pets) { pet in
-                                PetCard(pet: pet)
-                                    .onTapGesture {
-                                        navigate(.petDetails(pet: pet))
-                                    }
-                            }
-                        }
-                        .padding(24)
-                    }
-                }
+                petsList
                 
                 FunFactCard(fact: viewModel.dailyFact) {
                     withAnimation {
@@ -115,39 +81,96 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
                 
-                if !viewModel.upcomingReminders.isEmpty {
-                    VStack(alignment: .leading, spacing: 24) {
-                        HStack {
-                            Text("Upcoming")
-                                .font(.appHeader)
-                                .foregroundColor(.brandSecondary)
-                            
-                            Spacer()
-                            
-                            Button {
-                                 navigate(.remindersList(items: viewModel.upcomingReminders))
-                            } label: {
-                                Text("See All")
-                                    .font(.appBody)
-                                    .foregroundColor(.brandPrimary)
-                            }
-                        }
-                        
-                        VStack(spacing: 16) {
-                            ForEach(viewModel.upcomingReminders.prefix(3)) { item in
-                                ReminderCard(item: item)
-                                    .onTapGesture {
-                                        navigate(.logDetails(petId: item.petId, log: item.log))
-                                    }
-                            }
-                        }
-                    }
-                    .padding(24)
-                }
+                upcomingSection
                 
                 Spacer(minLength: 40)
             }
             .padding(.top, 8)
+        }
+    }
+    
+    private var petsHeader: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                Label(viewModel.household?.name ?? "Home", systemImage: "house.fill")
+                    .font(.appTitle)
+                    .foregroundColor(.textSecondary)
+                
+                Text("My Pets")
+                    .font(.appDisplay)
+            }
+            
+            Spacer()
+            
+            let householdId = viewModel.household?.id ?? ""
+            
+            Button {
+                guard !householdId.isEmpty else { return }
+                navigate(.addPet(householdId: householdId))
+            } label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.appDisplay)
+                    .foregroundColor(householdId.isEmpty ? .textSecondary : .brandPrimary)
+            }
+            .disabled(householdId.isEmpty)
+        }
+        .padding(.horizontal, 24)
+    }
+    
+    private var petsList: some View {
+        Group {
+            if viewModel.pets.isEmpty {
+                Text("No pets yet. Tap ⊕ to add one!")
+                    .foregroundColor(.textSecondary)
+                    .font(.appBody)
+                    .padding(24)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 16) {
+                        ForEach(viewModel.pets) { pet in
+                            PetCard(pet: pet)
+                                .onTapGesture {
+                                    navigate(.petDetails(pet: pet))
+                                }
+                        }
+                    }
+                    .padding(24)
+                }
+            }
+        }
+    }
+    
+    private var upcomingSection: some View {
+        Group {
+            if !viewModel.upcomingReminders.isEmpty {
+                VStack(alignment: .leading, spacing: 24) {
+                    HStack {
+                        Text("Upcoming")
+                            .font(.appHeader)
+                            .foregroundColor(.brandSecondary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            navigate(.remindersList(items: viewModel.upcomingReminders))
+                        } label: {
+                            Text("See All")
+                                .font(.appBody)
+                                .foregroundColor(.brandPrimary)
+                        }
+                    }
+                    
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.upcomingReminders.prefix(3)) { item in
+                            ReminderCard(item: item)
+                                .onTapGesture {
+                                    navigate(.logDetails(petId: item.petId, log: item.log))
+                                }
+                        }
+                    }
+                }
+                .padding(24)
+            }
         }
     }
 }

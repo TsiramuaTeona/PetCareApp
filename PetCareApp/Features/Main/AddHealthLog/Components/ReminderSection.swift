@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct ReminderSection: View {
@@ -38,10 +37,15 @@ struct ReminderSection: View {
                 if viewModel.addReminder && !viewModel.isMedication {
                     
                     if viewModel.isHistoryLog {
-                        DatePicker("Next Due Date", selection: $viewModel.nextDueDate, in: Date()..., displayedComponents: .date)
-                            .font(.appTitle)
-                            .foregroundColor(.textPrimary)
-                            .borderedSection()
+                        DatePicker(
+                            "Next Due Date",
+                            selection: $viewModel.nextDueDate,
+                            in: Date()...,
+                            displayedComponents: .date
+                        )
+                        .font(.appTitle)
+                        .foregroundColor(.textPrimary)
+                        .borderedSection()
                     }
                     
                     HStack {
@@ -57,6 +61,7 @@ struct ReminderSection: View {
                             }
                         }
                         .labelsHidden()
+                        .disabled(!viewModel.addReminder)
                     }
                     .borderedSection()
                 }

@@ -104,7 +104,7 @@ struct PetDetailsView: View {
                 urlString: viewModel.pet.photoUrl,
                 contentMode: .fill
             )
-            .frame(maxWidth: .infinity, maxHeight: 350)
+            .frame(maxWidth: .infinity, minHeight: 350, maxHeight: 400)
             .clipped()
         }
     }

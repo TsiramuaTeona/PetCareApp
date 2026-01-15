@@ -12,6 +12,7 @@ import SwiftUI
 
 struct HealthLog: Codable, Identifiable, Equatable {
     @DocumentID var id: String?
+    
     var petId: String
     var category: LogCategory
     var title: String
@@ -34,7 +35,6 @@ struct HealthLog: Codable, Identifiable, Equatable {
 
 extension HealthLog {
     var isMedication: Bool { category == .medication }
-    
     var isWeight: Bool { category == .weight }
     
     var statusText: String {
@@ -44,9 +44,7 @@ extension HealthLog {
         let now = Date()
         
         if due.isInPast {
-            if isMedication {
-                return "Missed Dose"
-            }
+            if isMedication { return "Missed Dose" }
             
             let days = Calendar.current.dateComponents([.day], from: due, to: now).day ?? 0
             return "Overdue by \(days) days"
@@ -67,11 +65,6 @@ extension HealthLog {
     var isUrgent: Bool {
         guard let due = nextDueDate, !isResolved else { return false }
         return due.isInPast
-    }
-    
-    func isPastEnd(currentDate: Date) -> Bool {
-        guard let _ = durationDays, let _ = timesPerDay else { return false }
-        return false
     }
     
     var isActionable: Bool {
@@ -99,7 +92,6 @@ extension HealthLog {
         }()
         
         let startOfWindow = due.adding(days: -windowInDays)
-        
         return Date() >= startOfWindow
     }
 }
