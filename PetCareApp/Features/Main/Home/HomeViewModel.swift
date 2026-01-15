@@ -31,6 +31,14 @@ final class HomeViewModel: ObservableObject {
     private let healthService: HealthServiceProtocol
     private let reminderSyncService: ReminderSyncServiceProtocol
     
+    // MARK: - Task Management
+    
+    private var loadTask: Task<Void, Never>?
+    
+    // MARK: - Listening State
+    
+    private var listeningHouseholdId: String?
+    
     // MARK: - Initializer
     
     init(
@@ -49,25 +57,51 @@ final class HomeViewModel: ObservableObject {
         self.reminderSyncService = reminderSyncService
     }
     
+    // MARK: - Deinitializer
+    
+    deinit {
+        loadTask?.cancel()
+    }
+    
     // MARK: - Methods
     
     func loadData() async {
+        loadTask?.cancel()
+        
+        let task = Task { [weak self] in
+            guard let self else { return }
+            await self.performLoad()
+        }
+        
+        loadTask = task
+        await task.value
+    }
+    
+    func refreshFact() {
+        dailyFact = FunFactService.getRandomFact()
+    }
+    
+    // MARK: - Private Methods
+    
+    private func performLoad() async {
         state = .loading
         dailyFact = FunFactService.getRandomFact()
         
         do {
             guard let userId = authService.currentUserId else {
+                clearHomeDataForLogout()
                 state = .error("User not authenticated")
                 return
             }
             
             let userProfile = try await userService.getUser(userId: userId)
-            self.user = userProfile
+            user = userProfile
             
-            guard let householdId = userProfile.householdId else {
-                self.household = nil
-                self.pets = []
-                self.upcomingReminders = []
+            guard let householdId = userProfile.householdId, !householdId.isEmpty else {
+                stopHouseholdListeningIfNeeded()
+                household = nil
+                pets = []
+                upcomingReminders = []
                 state = .loaded
                 return
             }
@@ -80,44 +114,73 @@ final class HomeViewModel: ObservableObject {
             self.household = household
             self.pets = pets
             
-            await loadReminders(for: pets)
+            let reminders = try await fetchUpcomingReminders(for: pets)
+            self.upcomingReminders = reminders
             
-            Task {
+            if listeningHouseholdId != householdId {
                 await reminderSyncService.syncAllReminders(forHousehold: householdId)
+                await reminderSyncService.startListeningForHousehold(householdId)
+                listeningHouseholdId = householdId
             }
             
             state = .loaded
+        } catch is CancellationError {
             
         } catch {
             state = .error(error.localizedDescription)
         }
     }
     
-    func refreshFact() {
-        dailyFact = FunFactService.getRandomFact()
+    private func clearHomeDataForLogout() {
+        stopHouseholdListeningIfNeeded()
+        
+        user = nil
+        household = nil
+        pets = []
+        upcomingReminders = []
     }
     
-    private func loadReminders(for pets: [Pet]) async {
-        var allItems: [ReminderItem] = []
+    private func stopHouseholdListeningIfNeeded() {
+        reminderSyncService.stopListening()
+        listeningHouseholdId = nil
+    }
+    
+    private func fetchUpcomingReminders(for pets: [Pet]) async throws -> [ReminderItem] {
+        let healthService = self.healthService
         
-        await withTaskGroup(of: [ReminderItem].self) { group in
-            for pet in pets {
-                group.addTask {
-                    guard let petId = await pet.id else { return [] }
-                    guard let logs = try? await self.healthService.fetchLogs(petId: petId) else { return [] }
+        let petSnapshots: [(id: String, name: String, photoUrl: String?)] = pets.compactMap { pet in
+            guard let id = pet.id, !id.isEmpty else { return nil }
+            return (id: id, name: pet.name, photoUrl: pet.photoUrl)
+        }
+        
+        var allItems: [ReminderItem] = []
+        allItems.reserveCapacity(32)
+        
+        try await withThrowingTaskGroup(of: [ReminderItem].self) { group in
+            for pet in petSnapshots {
+                group.addTask(priority: .utility) {
+                    let logs = try await healthService.fetchLogs(petId: pet.id)
                     
-                    return logs.filter { !$0.isResolved && $0.nextDueDate != nil }
-                        .map { ReminderItem(petId: petId, petName: pet.name, petPhoto: pet.photoUrl, log: $0) }
+                    return logs
+                        .filter { !$0.isResolved && $0.nextDueDate != nil }
+                        .map {
+                            ReminderItem(
+                                petId: pet.id,
+                                petName: pet.name,
+                                petPhoto: pet.photoUrl,
+                                log: $0
+                            )
+                        }
                 }
             }
             
-            for await items in group {
+            for try await items in group {
                 allItems.append(contentsOf: items)
             }
         }
         
-        self.upcomingReminders = Array(allItems
-            .sorted { ($0.log.nextDueDate ?? .distantFuture) < ($1.log.nextDueDate ?? .distantFuture) }
-        )
+        return allItems.sorted {
+            ($0.log.nextDueDate ?? .distantFuture) < ($1.log.nextDueDate ?? .distantFuture)
+        }
     }
 }

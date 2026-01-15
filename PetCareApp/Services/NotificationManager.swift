@@ -9,71 +9,134 @@
 import UserNotifications
 import UIKit
 
-class NotificationManager {
-    // MARK: - Singleton Instance
+final class NotificationManager: NSObject {
+    
+    // MARK: - Singleton
     
     static let shared = NotificationManager()
     
-    // MARK: - Methods
+    private let center = UNUserNotificationCenter.current()
     
-    func requestAuthorization() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+    private override init() {
+        super.init()
     }
+    
+    // MARK: - Setup
+    
+    func configure() {
+        center.delegate = self
+    }
+    
+    // MARK: - Authorization
+    
+    func requestAuthorization() async -> Bool {
+        do {
+            return try await center.requestAuthorization(options: [.alert, .badge, .sound])
+        } catch {
+            return false
+        }
+    }
+    
+    func authorizationStatus() async -> UNAuthorizationStatus {
+        let settings = await center.notificationSettings()
+        return settings.authorizationStatus
+    }
+    
+    // MARK: - Scheduling
     
     func scheduleNotification(for log: HealthLog, petName: String) {
         cancelNotification(for: log)
-        guard let logId = log.id, !log.isResolved else { return }
+        
+        guard
+            let logId = log.id,
+            !logId.isEmpty,
+            !log.isResolved
+        else { return }
         
         if let times = log.reminderTimes, !times.isEmpty {
-            for (index, time) in times.enumerated() {
+            let timesSorted = times.sorted { $0.timeIntervalSince1970 < $1.timeIntervalSince1970 }
+            
+            for (index, time) in timesSorted.enumerated() {
                 scheduleOne(
-                    log: log,
-                    petName: petName,
+                    identifier: "\(logId)_\(index)",
+                    title: "\(petName): \(log.title)",
+                    body: notificationBody(for: log),
                     triggerDate: time,
-                    identifier: "\(logId)-\(index)",
                     repeats: true
                 )
             }
-        } else if let dueDate = log.nextDueDate {
+            return
+        }
+        
+        if let dueDate = log.nextDueDate, dueDate > Date() {
             scheduleOne(
-                log: log,
-                petName: petName,
-                triggerDate: dueDate,
                 identifier: logId,
+                title: "\(petName): \(log.title)",
+                body: notificationBody(for: log),
+                triggerDate: dueDate,
                 repeats: false
             )
         }
     }
     
     func cancelNotification(for log: HealthLog) {
-        guard let id = log.id else { return }
-        let identifiers = (0..<5).map { "\(id)-\($0)" } + [id]
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        guard let logId = log.id else { return }
+        
+        var identifiers = [logId]
+        identifiers += (0..<8).map { "\(logId)_\($0)" }
+        
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
+        center.removeDeliveredNotifications(withIdentifiers: identifiers)
     }
     
     func cancelAllPendingReminders() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        center.removeAllPendingNotificationRequests()
+        center.removeAllDeliveredNotifications()
     }
     
-    private func scheduleOne(log: HealthLog, petName: String, triggerDate: Date, identifier: String, repeats: Bool) {
+    // MARK: - Helpers
+    
+    private func scheduleOne(
+        identifier: String,
+        title: String,
+        body: String,
+        triggerDate: Date,
+        repeats: Bool
+    ) {
         let content = UNMutableNotificationContent()
-        content.title = "\(petName): \(log.title)"
-        content.body = log.note ?? "It's time for \(log.category.rawValue)"
+        content.title = title
+        content.body = body
         content.sound = .default
         
         let calendar = Calendar.current
-        let components: DateComponents
-        
-        if repeats {
-            components = calendar.dateComponents([.hour, .minute], from: triggerDate)
-        } else {
-            components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: triggerDate)
-        }
+        let components: DateComponents = repeats
+        ? calendar.dateComponents([.hour, .minute], from: triggerDate)
+        : calendar.dateComponents([.year, .month, .day, .hour, .minute], from: triggerDate)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: repeats)
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         
-        UNUserNotificationCenter.current().add(request)
+        center.add(request)
+    }
+    
+    private func notificationBody(for log: HealthLog) -> String {
+        
+        if let dosage = log.dosage, !dosage.isEmpty {
+            return "Dosage: \(dosage)"
+        }
+        
+        return "It's time for \(log.category.rawValue)"
+    }
+}
+
+// MARK: - Foreground Presentation
+
+extension NotificationManager: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .sound, .badge]
     }
 }

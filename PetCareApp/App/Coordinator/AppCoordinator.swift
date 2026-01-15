@@ -44,7 +44,10 @@ final class AppCoordinator: Coordinator {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         
-        notificationManager.requestAuthorization()
+        Task {
+            await notificationManager.requestAuthorization()
+        }
+        
         observeAuthState()
     }
     
