@@ -17,17 +17,20 @@ protocol Coordinator: AnyObject {
     // MARK: - Methods
     
     func start()
+    func stop()
     func childDidFinish(_ child: Coordinator?)
 }
 
 // MARK: - Extension
+
 extension Coordinator {
+    func stop() {}
+    
     func childDidFinish(_ child: Coordinator?) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
-        }
+        guard let child else { return }
+        
+        child.stop()
+        
+        childCoordinators.removeAll { $0 === child }
     }
 }

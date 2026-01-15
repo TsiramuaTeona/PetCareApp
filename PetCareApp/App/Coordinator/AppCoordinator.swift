@@ -23,21 +23,19 @@ final class AppCoordinator: Coordinator {
     
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
-    private let window: UIWindow
     
+    private let window: UIWindow
     private let container: AppDIContainer
     private let notificationManager = NotificationManager.shared
+    
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initializer
     
-    init(
-        window: UIWindow,
-        container: AppDIContainer
-    ) {
+    init(window: UIWindow, container: AppDIContainer) {
         self.window = window
-        self.navigationController = UINavigationController()
         self.container = container
+        self.navigationController = UINavigationController()
     }
     
     // MARK: - Public Methods
@@ -47,60 +45,59 @@ final class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
         
         notificationManager.requestAuthorization()
-        
         observeAuthState()
+    }
+    
+    func stop() {
+        cancellables.removeAll()
+        clearChildren()
     }
     
     // MARK: - Private Methods
     
     private func observeAuthState() {
         container.authService.userSessionPublisher
+            .map { $0 != nil }
+            .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] user in
+            .sink { [weak self] isLoggedIn in
                 guard let self else { return }
-                
-                if user != nil {
-                    self.showMainFlowIfNeeded()
-                } else {
-                    self.showAuthFlowIfNeeded()
-                }
+                self.switchToFlow(isLoggedIn ? .main : .auth)
             }
             .store(in: &cancellables)
     }
     
-    private func showAuthFlowIfNeeded() {
-        guard currentFlow != .auth else { return }
-        currentFlow = .auth
-        showAuthFlow()
+    private func switchToFlow(_ flow: Flow) {
+        guard currentFlow != flow else { return }
+        currentFlow = flow
+        
+        navigationController.dismiss(animated: false)
+        
+        navigationController.setViewControllers([], animated: false)
+        
+        clearChildren()
+        
+        switch flow {
+        case .auth:
+            let authCoordinator = AuthCoordinator(
+                navigationController: navigationController,
+                container: container
+            )
+            childCoordinators.append(authCoordinator)
+            authCoordinator.start()
+            
+        case .main:
+            let mainCoordinator = MainTabCoordinator(
+                navigationController: navigationController,
+                container: container
+            )
+            childCoordinators.append(mainCoordinator)
+            mainCoordinator.start()
+        }
     }
     
-    private func showMainFlowIfNeeded() {
-        guard currentFlow != .main else { return }
-        currentFlow = .main
-        showMainFlow()
-    }
-    
-    private func showAuthFlow() {
+    private func clearChildren() {
+        childCoordinators.forEach { $0.stop() }
         childCoordinators.removeAll()
-        
-        let authCoordinator = AuthCoordinator(
-            navigationController: navigationController,
-            container: container
-        )
-        
-        childCoordinators.append(authCoordinator)
-        authCoordinator.start()
-    }
-    
-    private func showMainFlow() {
-        childCoordinators.removeAll()
-        
-        let mainCoordinator = MainTabCoordinator(
-            navigationController: navigationController,
-            container: container
-        )
-        
-        childCoordinators.append(mainCoordinator)
-        mainCoordinator.start()
     }
 }

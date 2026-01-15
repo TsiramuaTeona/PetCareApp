@@ -17,6 +17,7 @@ final class AuthCoordinator: Coordinator {
     
     var navigationController: UINavigationController
     var childCoordinators: [Coordinator] = []
+    
     private let container: AppDIContainer
     
     // MARK: - Initializer
@@ -52,7 +53,8 @@ final class AuthCoordinator: Coordinator {
         let viewModel = container.makeLoginViewModel()
         
         viewModel.onGoogleSignInRequested = { [weak self, weak viewModel] in
-            Task {
+            guard let self, let viewModel else { return }
+            Task { [weak self] in
                 await self?.performGoogleSignIn(viewModel: viewModel)
             }
         }
@@ -63,15 +65,16 @@ final class AuthCoordinator: Coordinator {
             }
         
         let viewController = UIHostingController(rootView: view)
-        navigationController.setViewControllers([viewController], animated: false)
         
-        navigationController.navigationBar.isHidden = true
+        navigationController.setViewControllers([viewController], animated: false)
+        navigationController.setNavigationBarHidden(true, animated: false)
     }
     
     private func showRegisterView() {
         let viewModel = container.makeRegisterViewModel()
         let view = RegisterView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
+        
         navigationController.pushViewController(viewController, animated: true)
     }
     
@@ -79,26 +82,29 @@ final class AuthCoordinator: Coordinator {
         let viewModel = container.makeResetPasswordViewModel()
         let view = ResetPasswordView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
+        
         navigationController.pushViewController(viewController, animated: true)
     }
     
     @MainActor
-    private func performGoogleSignIn(viewModel: LoginViewModel?) async {
-        guard
-            let viewModel,
-            let clientID = FirebaseApp.app()?.options.clientID
-        else { return }
+    private func performGoogleSignIn(viewModel: LoginViewModel) async {
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            viewModel.handleGoogleSignInResult(.failure(AuthError.unknown("Missing Firebase clientID")))
+            return
+        }
         
-        let presenter = navigationController.topViewController ?? navigationController
+        let presenter = topMostPresenter()
         
         do {
             let config = GIDConfiguration(clientID: clientID)
             GIDSignIn.sharedInstance.configuration = config
+            
             let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
             
             guard let idToken = result.user.idToken?.tokenString else {
                 throw AuthError.unknown("Missing ID token")
             }
+            
             let accessToken = result.user.accessToken.tokenString
             
             let isNewUser = try await container.authService.signInWithGoogle(
@@ -111,10 +117,17 @@ final class AuthCoordinator: Coordinator {
             }
             
             viewModel.handleGoogleSignInResult(.success(()))
-            
         } catch {
             viewModel.handleGoogleSignInResult(.failure(error))
         }
+    }
+    
+    private func topMostPresenter() -> UIViewController {
+        var presenter: UIViewController = navigationController
+        while let presented = presenter.presentedViewController {
+            presenter = presented
+        }
+        return presenter
     }
     
     private func createGoogleUserProfile() async throws {

@@ -18,6 +18,8 @@ final class MainTabCoordinator: Coordinator {
     private let container: AppDIContainer
     private let tabBarController = UITabBarController()
     
+    private var tabNavigations: [MainTab: UINavigationController] = [:]
+    
     // MARK: - Initializer
     
     init(
@@ -32,26 +34,39 @@ final class MainTabCoordinator: Coordinator {
     
     func start() {
         setupTabs()
-        navigationController.setViewControllers([tabBarController], animated: true)
-        navigationController.isNavigationBarHidden = true
+        navigationController.setViewControllers([tabBarController], animated: false)
+        navigationController.setNavigationBarHidden(true, animated: false)
     }
+    
+    //    func stop() {
+    //        childCoordinators.forEach { $0.stop() }
+    //        childCoordinators.removeAll()
+    //        tabNavigations.removeAll()
+    //    }
     
     func handle(_ destination: Destination) {
         switch destination {
         case .petDetails(let pet):
             showPetDetails(pet: pet)
+            
         case .addPet(let householdId):
             showAddPet(householdId: householdId)
+            
         case .editPet(let pet, let onSave):
             showEditPet(pet: pet, onSave: onSave)
+            
         case .addHealthLog(let petId, let category, let onSave):
             showAddHealthLog(petId: petId, category: category, onSave: onSave)
+            
         case .logDetails(let petId, let log):
             showLogDetails(petId: petId, log: log)
+            
         case .remindersList(let items):
             showRemindersList(items: items)
+            
         case .selectTab(let tab):
             tabBarController.selectedIndex = tab.rawValue
+            
         default:
             break
         }
@@ -61,21 +76,30 @@ final class MainTabCoordinator: Coordinator {
     
     private func setupTabs() {
         let controllers = MainTab.allCases.map { tab -> UINavigationController in
-            let navigation = UINavigationController()
+            let nav = UINavigationController()
+            nav.tabBarItem = UITabBarItem(title: tab.title, image: tab.icon, tag: tab.rawValue)
             
-            navigation.tabBarItem = UITabBarItem(
-                title: tab.title,
-                image: tab.icon,
-                tag: tab.rawValue
-            )
+            let root = rootViewController(for: tab)
+            nav.setViewControllers([root], animated: false)
             
-            let rootViewController = rootViewController(for: tab)
-            navigation.setViewControllers([rootViewController], animated: false)
-            
-            return navigation
+            tabNavigations[tab] = nav
+            return nav
         }
         
         tabBarController.viewControllers = controllers
+    }
+    
+    private func currentTabNavigation() -> UINavigationController? {
+        tabBarController.selectedViewController as? UINavigationController
+    }
+    
+    private func hostingController<Content: View>(
+        _ view: Content,
+        hidesBottomBarWhenPushed: Bool = false
+    ) -> UIViewController {
+        let viewController = UIHostingController(rootView: view)
+        viewController.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
+        return viewController
     }
     
     private func rootViewController(for tab: MainTab) -> UIViewController {
@@ -86,7 +110,7 @@ final class MainTabCoordinator: Coordinator {
                 .environment(\.navigate) { [weak self] destination in
                     self?.handle(destination)
                 }
-            return UIHostingController(rootView: view)
+            return hostingController(view)
             
         case .map:
             let viewModel = container.makeMapViewModel()
@@ -97,7 +121,7 @@ final class MainTabCoordinator: Coordinator {
                 .environment(\.navigate) { [weak self] destination in
                     self?.handle(destination)
                 }
-            return UIHostingController(rootView: view)
+            return hostingController(view)
             
         case .profile:
             let viewModel = container.makeProfileViewModel()
@@ -105,75 +129,67 @@ final class MainTabCoordinator: Coordinator {
                 .environment(\.navigate) { [weak self] destination in
                     self?.handle(destination)
                 }
-            return UIHostingController(rootView: view)
+            return hostingController(view)
         }
     }
     
     private func showPetDetails(pet: Pet) {
-        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        guard let navigation = currentTabNavigation() else { return }
         
         let viewModel = container.makePetDetailsViewModel(pet: pet)
         let view = PetDetailsView(viewModel: viewModel)
             .environment(\.navigate) { [weak self] destination in
                 self?.handle(destination)
             }
-        let viewController = UIHostingController(rootView: view)
         
-        viewController.hidesBottomBarWhenPushed = true
-        currentNavigation.pushViewController(viewController, animated: true)
+        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
     }
     
     private func showAddPet(householdId: String) {
-        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        guard let navigation = currentTabNavigation() else { return }
         
         let viewModel = container.makeAddPetViewModel(householdId: householdId)
         let view = AddPetView(viewModel: viewModel)
         
-        let viewController = UIHostingController(rootView: view)
-        viewController.hidesBottomBarWhenPushed = true
-        currentNavigation.pushViewController(viewController, animated: true)
+        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
     }
     
     private func showEditPet(pet: Pet, onSave: @escaping (Pet) -> Void) {
-        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        guard let navigation = currentTabNavigation() else { return }
         
         let viewModel = container.makeEditPetViewModel(pet: pet)
-        let view = EditPetView(
-            viewModel: viewModel,
-            onSave: onSave
-        )
+        let view = EditPetView(viewModel: viewModel, onSave: onSave)
         
-        let viewController = UIHostingController(rootView: view)
-        currentNavigation.present(viewController, animated: true)
+        let viewController = hostingController(view)
+        viewController.modalPresentationStyle = .pageSheet
+        navigation.present(viewController, animated: true)
     }
     
+    
     private func showAddHealthLog(petId: String, category: LogCategory, onSave: @escaping () -> Void) {
-        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        guard let navigation = currentTabNavigation() else { return }
         
         let viewModel = container.makeAddHealthLogViewModel(petId: petId, category: category)
-        viewModel.onSaveSuccess = { [weak currentNavigation] in
-            currentNavigation?.dismiss(animated: true)
+        viewModel.onSaveSuccess = { [weak navigation] in
+            navigation?.dismiss(animated: true)
             onSave()
         }
         
         let view = AddHealthLogView(viewModel: viewModel)
-        let viewController = UIHostingController(rootView: view)
-        currentNavigation.present(viewController, animated: true)
+        navigation.present(hostingController(view), animated: true)
     }
     
     private func showLogDetails(petId: String, log: HealthLog) {
-        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        guard let navigation = currentTabNavigation() else { return }
         
         let viewModel = container.makeLogDetailsViewModel(petId: petId, log: log)
         let view = LogDetailsView(viewModel: viewModel)
         
-        let viewController = UIHostingController(rootView: view)
-        viewController.hidesBottomBarWhenPushed = true
-        currentNavigation.pushViewController(viewController, animated: true)
+        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
     }
     
     private func showRemindersList(items: [ReminderItem]) {
-        guard let currentNavigation = tabBarController.selectedViewController as? UINavigationController else { return }
+        guard let navigation = currentTabNavigation() else { return }
         
         let viewModel = RemindersViewModel(reminders: items)
         let view = RemindersView(viewModel: viewModel)
@@ -181,9 +197,6 @@ final class MainTabCoordinator: Coordinator {
                 self?.handle(destination)
             }
         
-        let viewController = UIHostingController(rootView: view)
-        viewController.hidesBottomBarWhenPushed = true
-        currentNavigation.pushViewController(viewController, animated: true)
+        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
     }
-
 }

@@ -14,12 +14,7 @@ private struct NavigationHandlerKey: EnvironmentKey {
 
 extension EnvironmentValues {
     var navigate: (Destination) -> Void {
-        get {
-            self[NavigationHandlerKey.self]
-        }
-        
-        set {
-            self[NavigationHandlerKey.self] = newValue
-        }
+        get { self[NavigationHandlerKey.self] }
+        set { self[NavigationHandlerKey.self] = newValue }
     }
 }
