@@ -13,15 +13,15 @@ extension Date {
     // MARK: - Boolean Checks
     
     var isToday: Bool {
-        Calendar.current.isDateInToday(self)
+        Calendar.app.isDateInToday(self)
     }
     
     var isTomorrow: Bool {
-        Calendar.current.isDateInTomorrow(self)
+        Calendar.app.isDateInTomorrow(self)
     }
     
     var isYesterday: Bool {
-        Calendar.current.isDateInYesterday(self)
+        Calendar.app.isDateInYesterday(self)
     }
     
     var isInPast: Bool {
@@ -35,38 +35,46 @@ extension Date {
     // MARK: - Manipulation
     
     var startOfDay: Date {
-        Calendar.current.startOfDay(for: self)
+        Calendar.app.startOfDay(for: self)
     }
     
     var endOfDay: Date {
         var components = DateComponents()
         components.day = 1
         components.second = -1
-        return Calendar.current.date(byAdding: components, to: startOfDay) ?? self
+        return Calendar.app.date(byAdding: components, to: startOfDay) ?? self
     }
     
     func adding(minutes: Int) -> Date {
-        Calendar.current.date(byAdding: .minute, value: minutes, to: self) ?? self
+        Calendar.app.date(byAdding: .minute, value: minutes, to: self) ?? self
     }
     
     func adding(hours: Int) -> Date {
-        Calendar.current.date(byAdding: .hour, value: hours, to: self) ?? self
+        Calendar.app.date(byAdding: .hour, value: hours, to: self) ?? self
     }
     
     func adding(days: Int) -> Date {
-        Calendar.current.date(byAdding: .day, value: days, to: self) ?? self
+        Calendar.app.date(byAdding: .day, value: days, to: self) ?? self
     }
     
     func adding(months: Int) -> Date {
-        Calendar.current.date(byAdding: .month, value: months, to: self) ?? self
+        Calendar.app.date(byAdding: .month, value: months, to: self) ?? self
     }
     
     func adding(years: Int) -> Date {
-        Calendar.current.date(byAdding: .year, value: years, to: self) ?? self
+        Calendar.app.date(byAdding: .year, value: years, to: self) ?? self
+    }
+    
+    func addingMonthsClamped(_ months: Int) -> Date {
+        Calendar.app.addingMonthsClamped(from: self, months: months) ?? self
+    }
+    
+    func addingYearsClamped(_ years: Int) -> Date {
+        Calendar.app.addingYearsClamped(from: self, years: years) ?? self
     }
     
     func replaceDate(with otherDate: Date) -> Date {
-        let calendar = Calendar.current
+        let calendar = Calendar.app
         let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: self)
         
         return calendar.date(
@@ -80,27 +88,27 @@ extension Date {
     // MARK: - Formatting
     
     var timeString: String {
-        DateFormats.time.string(from: self)
+        formatted(Date.FormatStyle(date: .omitted, time: .shortened))
     }
     
     var shortDateString: String {
-        DateFormats.shortDate.string(from: self)
+        formatted(.dateTime.day().month(.abbreviated))
     }
     
     var mediumDateString: String {
-        DateFormats.mediumDate.string(from: self)
+        formatted(.dateTime.year().month().day())
     }
     
     var monthAbbreviation: String {
-        DateFormats.monthAbbr.string(from: self).uppercased()
+        formatted(.dateTime.month(.abbreviated)).uppercased()
     }
     
     var dayNumber: String {
-        DateFormats.dayNum.string(from: self)
+        formatted(.dateTime.day())
     }
     
     var yearNumber: String {
-        DateFormats.yearNumber.string(from: self)
+        formatted(.dateTime.year())
     }
     
     var relativeDayString: String {
@@ -115,7 +123,7 @@ extension Date {
     }
     
     func ageDescription(to endDate: Date = Date()) -> String {
-        let calendar = Calendar.current
+        let calendar = Calendar.app
         let components = calendar.dateComponents([.year, .month], from: self, to: endDate)
         
         let years = components.year ?? 0
@@ -129,44 +137,81 @@ extension Date {
     }
 }
 
-// MARK: - Formatters
+// MARK: - Calendar Helpers
 
-fileprivate struct DateFormats {
-    static let time: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return formatter
+private extension Calendar {
+    
+    static var app: Calendar = {
+        var cal = Calendar.current
+        return cal
     }()
     
-    static let shortDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("dMMM")
-        return formatter
-    }()
+    func addingMonthsClamped(from date: Date, months: Int) -> Date? {
+        let comps = dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        
+        guard
+            let year = comps.year,
+            let month = comps.month,
+            let day = comps.day
+        else { return nil }
+        
+        var newMonth = month + months
+        var newYear = year
+        
+        while newMonth > 12 { newMonth -= 12; newYear += 1 }
+        while newMonth < 1 { newMonth += 12; newYear -= 1 }
+        
+        var monthStart = DateComponents()
+        monthStart.year = newYear
+        monthStart.month = newMonth
+        monthStart.day = 1
+        guard let startDate = self.date(from: monthStart),
+              let range = self.range(of: .day, in: .month, for: startDate)
+        else { return nil }
+        
+        let clampedDay = min(day, range.count)
+        
+        var result = DateComponents()
+        result.year = newYear
+        result.month = newMonth
+        result.day = clampedDay
+        result.hour = comps.hour
+        result.minute = comps.minute
+        result.second = comps.second
+        
+        return self.date(from: result)
+    }
     
-    static let mediumDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-    
-    static let monthAbbr: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM"
-        return formatter
-    }()
-    
-    static let dayNum: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d"
-        return formatter
-    }()
-    
-    static let yearNumber: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy"
-        return formatter
-    }()
+    func addingYearsClamped(from date: Date, years: Int) -> Date? {
+        let comps = dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        
+        guard
+            let year = comps.year,
+            let month = comps.month,
+            let day = comps.day
+        else { return nil }
+        
+        let newYear = year + years
+        
+        var monthStart = DateComponents()
+        monthStart.year = newYear
+        monthStart.month = month
+        monthStart.day = 1
+        
+        guard let startDate = self.date(from: monthStart),
+              let range = self.range(of: .day, in: .month, for: startDate)
+        else { return nil }
+        
+        let clampedDay = min(day, range.count)
+        
+        var result = DateComponents()
+        result.year = newYear
+        result.month = month
+        result.day = clampedDay
+        result.hour = comps.hour
+        result.minute = comps.minute
+        result.second = comps.second
+        
+        return self.date(from: result)
+    }
 }

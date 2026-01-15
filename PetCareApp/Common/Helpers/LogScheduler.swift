@@ -9,11 +9,21 @@
 import Foundation
 
 struct LogScheduler {
-    static func generateNextLog(currentLog: HealthLog, completionDate: Date = Date()) -> HealthLog? {
-        guard let nextDate = calculateNextDate(for: currentLog, from: completionDate) else { return nil }
+    
+    // MARK: - Public Methods
+    
+    static func generateNextLog(
+        currentLog: HealthLog,
+        completionDate: Date = Date()
+    ) -> HealthLog? {
+        guard let nextDate = calculateNextDate(for: currentLog, completionDate: completionDate) else {
+            return nil
+        }
         
         if currentLog.isMedication, let duration = currentLog.durationDays {
-            let endDate = currentLog.date.adding(days: duration)
+            let startAnchor = (currentLog.nextDueDate ?? currentLog.date)
+            let endDate = startAnchor.adding(days: duration)
+            
             if nextDate > endDate {
                 return nil
             }
@@ -29,20 +39,15 @@ struct LogScheduler {
         return newLog
     }
     
-    private static func calculateNextDate(for log: HealthLog, from completedDate: Date) -> Date? {
+    // MARK: - Private Methods
+    
+    private static func calculateNextDate(for log: HealthLog, completionDate: Date) -> Date? {
         let originalDueDate = log.nextDueDate ?? log.date
-        
-        let isOverdue = completedDate.startOfDay > originalDueDate.startOfDay
-        
         if log.isMedication {
             let timesPerDay = Double(max(1, log.timesPerDay ?? 1))
             let intervalMinutes = Int((24.0 / timesPerDay) * 60)
             
-            if isOverdue {
-                return originalDueDate.adding(minutes: intervalMinutes)
-            } else {
-                return completedDate.adding(minutes: intervalMinutes)
-            }
+            return originalDueDate.adding(minutes: intervalMinutes)
         }
         
         guard let rule = log.recurrence else { return nil }

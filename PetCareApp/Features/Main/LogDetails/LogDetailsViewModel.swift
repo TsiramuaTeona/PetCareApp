@@ -29,23 +29,22 @@ final class LogDetailsViewModel: ObservableObject {
     private let reminderService: ReminderSyncServiceProtocol
     private let notificationManager = NotificationManager.shared
     
+    private var groupingKey: String {
+        if sourceLog.category == .weight {
+            return "weight"
+        }
+        return "\(sourceLog.category.rawValue)|\(normalize(sourceLog.title))"
+    }
+    
     // MARK: - Computed Properties
     
-    var isWeightCategory: Bool {
-        sourceLog.category == .weight
-    }
-    
-    var categoryText: String {
-        sourceLog.category.rawValue
-    }
-    
-    var categoryIcon: String {
-        sourceLog.category.icon
-    }
+    var isWeightCategory: Bool { sourceLog.category == .weight }
+    var categoryText: String { sourceLog.category.rawValue }
+    var categoryIcon: String { sourceLog.category.icon }
     
     var hasScheduleInfo: Bool {
         return sourceLog.durationDays != nil ||
-        (sourceLog.reminderTimes != nil && !sourceLog.reminderTimes!.isEmpty)
+        (sourceLog.reminderTimes?.isEmpty == false)
     }
     
     // MARK: - Initializer
@@ -65,6 +64,8 @@ final class LogDetailsViewModel: ObservableObject {
     // MARK: - Methods
     
     func refresh() async {
+        state = .loading
+        
         do {
             let allLogs = try await healthService.fetchLogs(petId: petId)
             filterAndGroup(allLogs)
@@ -72,29 +73,6 @@ final class LogDetailsViewModel: ObservableObject {
         } catch {
             state = .error(error.localizedDescription)
         }
-    }
-    
-    private func filterAndGroup(_ logs: [HealthLog]) {
-        let relatedLogs = logs.filter { log in
-            if sourceLog.category == .weight {
-                return log.category == .weight
-            } else {
-                return log.category == sourceLog.category &&
-                log.title.localizedCaseInsensitiveContains(sourceLog.title)
-            }
-        }
-        
-        let now = Date()
-        
-        self.upcomingLogs = relatedLogs
-            .filter { !$0.isResolved }
-            .sorted { ($0.nextDueDate ?? Date.distantFuture) < ($1.nextDueDate ?? Date.distantFuture) }
-        
-        self.historyLogs = relatedLogs
-            .filter { ( $0.isResolved || ($0.nextDueDate ?? Date.distantFuture) < now ) && !$0.isUrgent }
-            .sorted { $0.date > $1.date }
-        
-        self.chartData = self.historyLogs.sorted { $0.date < $1.date }
     }
     
     func saveLogEdits(
@@ -107,42 +85,44 @@ final class LogDetailsViewModel: ObservableObject {
         var logToUpdate = originalLog
         
         logToUpdate.date = newDate
-        if !logToUpdate.isResolved {
-            logToUpdate.nextDueDate = newDate
-            logToUpdate.reminderTimes = nil
-        }
-        
         logToUpdate.note = newNote.trimmed
         
         if logToUpdate.category == .medication {
             logToUpdate.dosage = dosage.trimmed
         }
         
-        if logToUpdate.category == .weight {
-            if let value = valueString.doubleValue {
-                logToUpdate.value = value
+        if logToUpdate.category == .weight, let value = valueString.doubleValue {
+            logToUpdate.value = value
+        }
+        
+        if !logToUpdate.isResolved {
+            
+            if logToUpdate.category == .medication {
+                let frequency = logToUpdate.timesPerDay ?? 1
+                let schedule = MedicationScheduler.generateSchedule(
+                    start: newDate,
+                    frequency: frequency
+                )
+                
+                logToUpdate.reminderTimes = schedule
+                logToUpdate.nextDueDate = schedule.first
+                
+            } else {
+                logToUpdate.nextDueDate = newDate
+                logToUpdate.reminderTimes = nil
             }
-        }
-        
-        if sourceLog.id == logToUpdate.id {
-            self.sourceLog = logToUpdate
-        }
-        
-        if let index = upcomingLogs.firstIndex(where: { $0.id == logToUpdate.id }) {
-            upcomingLogs[index] = logToUpdate
-        }
-        
-        if let index = historyLogs.firstIndex(where: { $0.id == logToUpdate.id }) {
-            historyLogs[index] = logToUpdate
         }
         
         do {
             try await healthService.updateLog(logToUpdate)
             
+            notificationManager.cancelNotification(for: logToUpdate)
+            
             if !logToUpdate.isResolved {
                 await reminderService.scheduleReminder(for: logToUpdate)
             }
             
+            await refresh()
         } catch {
             state = .error(error.localizedDescription)
         }
@@ -150,12 +130,19 @@ final class LogDetailsViewModel: ObservableObject {
     
     func deleteLog(_ log: HealthLog) async {
         guard let id = log.id else { return }
-        try? await healthService.deleteLog(petId: petId, logId: id)
-        await refresh()
+        
+        notificationManager.cancelNotification(for: log)
+        
+        do {
+            try await healthService.deleteLog(petId: petId, logId: id)
+            await refresh()
+        } catch {
+            state = .error(error.localizedDescription)
+        }
     }
     
     func resolveLog(_ log: HealthLog) async {
-        guard let _ = log.id else { return }
+        guard log.id != nil else { return }
         
         let now = Date()
         
@@ -165,25 +152,62 @@ final class LogDetailsViewModel: ObservableObject {
         historyLog.date = now
         historyLog.nextDueDate = nil
         
-        if let nextLog = LogScheduler.generateNextLog(currentLog: log, completionDate: now) {
-            do {
-                let newId = try await healthService.addLog(nextLog)
-                
-                var scheduledLog = nextLog
-                scheduledLog.id = newId
-                
-                await reminderService.scheduleReminder(for: log)
-            } catch {
-                state = .error("Failed to schedule next dose: \(error.localizedDescription)")
-            }
-        }
+        historyLog.reminderTimes = nil
         
         do {
             try await healthService.updateLog(historyLog)
+            
             notificationManager.cancelNotification(for: log)
+            
+            if let nextLog = LogScheduler.generateNextLog(currentLog: log, completionDate: now) {
+                let newId = try await healthService.addLog(nextLog)
+                
+                var scheduledNextLog = nextLog
+                scheduledNextLog.id = newId
+                
+                await reminderService.scheduleReminder(for: scheduledNextLog)
+            }
+            
             await refresh()
         } catch {
             state = .error(error.localizedDescription)
         }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func filterAndGroup(_ logs: [HealthLog]) {
+        let relatedLogs = logs.filter { log in
+            if sourceLog.category == .weight {
+                return log.category == .weight
+            } else {
+                return "\(log.category.rawValue)|\(normalize(log.title))" == groupingKey
+            }
+        }
+        
+        let now = Date()
+        
+        upcomingLogs = relatedLogs
+            .filter { !$0.isResolved }
+            .sorted { ($0.nextDueDate ?? Date.distantFuture) < ($1.nextDueDate ?? Date.distantFuture) }
+        
+        
+        historyLogs = relatedLogs
+            .filter { ( $0.isResolved || ($0.nextDueDate ?? Date.distantFuture) < now ) && !$0.isUrgent }
+            .sorted { $0.date > $1.date }
+        
+        chartData = historyLogs.sorted { $0.date < $1.date }
+        
+        if let sourceId = sourceLog.id,
+           let updatedSource = relatedLogs.first(where: { $0.id == sourceId }) {
+            sourceLog = updatedSource
+        }
+    }
+    
+    private func normalize(_ string: String) -> String {
+        string
+            .trimmed
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .lowercased()
     }
 }

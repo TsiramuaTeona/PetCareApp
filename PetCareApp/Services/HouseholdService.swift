@@ -34,7 +34,7 @@ final class HouseholdService: HouseholdServiceProtocol {
         let newHouseholdId = householdRef.documentID
         
         let household = Household(
-            id: nil,
+            id: newHouseholdId,
             name: name,
             joinCode: joinCode,
             adminId: adminId,
@@ -63,8 +63,8 @@ final class HouseholdService: HouseholdServiceProtocol {
         
         let householdRef = document.reference
         let householdId = document.documentID
-        let batch = db.batch()
         
+        let batch = db.batch()
         batch.updateData(["memberIds": FieldValue.arrayUnion([userId])], forDocument: householdRef)
         
         let userRef = db.collection("users").document(userId)
@@ -72,7 +72,12 @@ final class HouseholdService: HouseholdServiceProtocol {
         
         try await batch.commit()
         
-        return try document.data(as: Household.self)
+        var household = try document.data(as: Household.self)
+        if household.id == nil {
+            household.id = householdId
+        }
+        
+        return household
     }
     
     func getHousehold(id: String) async throws -> Household {
