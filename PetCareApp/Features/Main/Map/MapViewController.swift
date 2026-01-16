@@ -17,7 +17,7 @@ final class MapViewController: UIViewController {
     
     private let mapView: MKMapView = {
         let map = MKMapView()
-        map.mapType = .satellite
+        map.mapType = .satelliteFlyover
         map.showsCompass = true
         map.showsScale = true
         map.showsUserLocation = true
@@ -93,51 +93,24 @@ final class MapViewController: UIViewController {
     
     private func setupBindings() {
         viewModel.onAnnotationsUpdated = { [weak self] annotations in
-            guard let self = self else { return }
-            
-            let nonUserAnnotations = self.mapView.annotations.filter { !($0 is MKUserLocation) }
-            self.mapView.removeAnnotations(nonUserAnnotations)
-            
-            self.mapView.addAnnotations(annotations)
+            guard let self else { return }
+            DispatchQueue.main.async {
+                let nonUser = self.mapView.annotations.filter { !($0 is MKUserLocation) }
+                self.mapView.removeAnnotations(nonUser)
+                self.mapView.addAnnotations(annotations)
+            }
         }
         
         viewModel.onLoadingStateChanged = { [weak self] isLoading in
+            guard let self else { return }
             if isLoading {
                 let spinner = UIActivityIndicatorView(style: .medium)
                 spinner.startAnimating()
-                self?.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: spinner)
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: spinner)
             } else {
-                self?.navigationItem.rightBarButtonItem = nil
+                self.navigationItem.rightBarButtonItem = nil
             }
         }
-    }
-    
-    private func presentActions(for vet: VetAnnotation) {
-        let sheet = UIAlertController(
-            title: vet.title,
-            message: vet.subtitle,
-            preferredStyle: .actionSheet
-        )
-        
-        sheet.addAction(UIAlertAction(title: "Directions", style: .default) { _ in
-            self.openDirections(to: vet.mapItem)
-        })
-        
-        if let phone = vet.phoneNumber,
-           let url = URL(string: "tel://\(phone)") {
-            sheet.addAction(UIAlertAction(title: "Call", style: .default) {
-                _ in UIApplication.shared.open(url)
-            })
-        }
-        
-        if let website = vet.website {
-            sheet.addAction(UIAlertAction(title: "Website", style: .default) {
-                _ in UIApplication.shared.open(website)
-            })
-        }
-        
-        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(sheet, animated: true)
     }
     
     private func openDirections(to mapItem: MKMapItem) {
@@ -202,9 +175,9 @@ extension MapViewController: MKMapViewDelegate {
         calloutAccessoryControlTapped control: UIControl
     ) {
         guard let vet = view.annotation as? VetAnnotation else { return }
-        let sheetViewControlle = VetActionSheetViewController(vet: vet)
-        sheetViewControlle.modalPresentationStyle = .pageSheet
-        present(sheetViewControlle, animated: true)
+        let sheetViewController = VetActionSheetViewController(vet: vet)
+        sheetViewController.modalPresentationStyle = .pageSheet
+        present(sheetViewController, animated: true)
         
     }
 }

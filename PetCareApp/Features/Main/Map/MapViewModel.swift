@@ -40,6 +40,7 @@ final class MapViewModel {
     // MARK: - Methods
     
     func load(around location: CLLocation) async {
+        guard !isLoading else { return }
         guard shouldReload(for: location.coordinate) else { return }
         
         isLoading = true
