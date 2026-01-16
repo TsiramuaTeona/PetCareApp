@@ -158,6 +158,7 @@ final class ChatViewModel {
             guard let householdId, !householdId.isEmpty else {
                 let context = AIChatContextBuilder.build(pets: [], logsByPetId: [:])
                 aiService.startSession(context: context)
+                post(ChatMessageProvider.householdUpdated(hasHousehold: false))
                 return
             }
             
