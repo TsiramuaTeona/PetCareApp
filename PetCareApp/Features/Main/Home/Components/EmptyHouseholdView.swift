@@ -17,6 +17,13 @@ struct EmptyHouseholdView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .padding(.horizontal, 24)
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         VStack(spacing: 24) {
             Spacer()
             
@@ -43,6 +50,5 @@ struct EmptyHouseholdView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 24)
     }
 }

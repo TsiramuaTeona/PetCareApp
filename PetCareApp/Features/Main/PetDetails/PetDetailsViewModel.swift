@@ -81,9 +81,7 @@ final class PetDetailsViewModel: ObservableObject {
         var historyLog = log
         historyLog.isResolved = true
         historyLog.completedDate = now
-    
         historyLog.date = now
-        
         historyLog.nextDueDate = nil
         
         if let nextLog = LogScheduler.generateNextLog(currentLog: log, completionDate: now) {

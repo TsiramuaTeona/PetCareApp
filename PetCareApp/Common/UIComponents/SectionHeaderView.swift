@@ -6,8 +6,6 @@
 //
 
 
-
-
 import SwiftUI
 
 struct SectionHeaderView: View {

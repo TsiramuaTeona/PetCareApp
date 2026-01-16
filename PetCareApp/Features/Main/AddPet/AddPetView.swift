@@ -20,22 +20,8 @@ struct AddPetView: View {
     // MARK: - Body
     
     var body: some View {
-        content
-    }
-    
-    // MARK: - Subviews
-    
-    private var content: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                PhotoPickerView(
-                    imageData: $viewModel.photoData,
-                    size: 120
-                )
-
-                formSection
-            }
-            .padding(24)
+            content
         }
         .background(.mainBackground)
         .navigationBarHidden(false)
@@ -46,6 +32,20 @@ struct AddPetView: View {
                 dismiss()
             }
         }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
+        VStack(spacing: 16) {
+            PhotoPickerView(
+                imageData: $viewModel.photoData,
+                size: 120
+            )
+            
+            formSection
+        }
+        .padding(24)
     }
     
     @ViewBuilder

@@ -12,11 +12,11 @@ import PhotosUI
 struct PhotoPickerView: View {
     // MARK: - Properties
     
+    @State private var selectedItem: PhotosPickerItem?
+    
     @Binding var imageData: Data?
     var imageURL: String? = nil
     let size: CGFloat
-    
-    @State private var selectedItem: PhotosPickerItem?
     
     private var hasImage: Bool {
         return imageData != nil || imageURL != nil
@@ -30,30 +30,7 @@ struct PhotoPickerView: View {
             matching: .images,
             photoLibrary: .shared()
         ) {
-            VStack(spacing: 12) {
-                
-                ZStack {
-                    if let imageData, let image = UIImage(data: imageData) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                    } else if let imageURL {
-                        ImageView(urlString: imageURL, contentMode: .fill)
-                    } else {
-                        placeholderView
-                    }
-                }
-                .frame(width: size, height: size)
-                .clipShape(Circle())
-                .overlay(alignment: .bottomTrailing) {
-                    cameraBadge
-                }
-                
-                Text(hasImage ? "Change Photo" : "Add Photo")
-                    .font(.appBody)
-                    .fontWeight(.medium)
-                    .foregroundColor(.brandPrimary)
-            }
+            content
         }
         .onChange(of: selectedItem) { _, item in
             Task {
@@ -67,6 +44,30 @@ struct PhotoPickerView: View {
     }
     
     // MARK: - Subviews
+    
+    private var content: some View {
+        VStack(spacing: 12) {
+            ZStack {
+                if let imageData, let image = UIImage(data: imageData) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                } else if let imageURL {
+                    ImageView(urlString: imageURL, contentMode: .fill)
+                } else {
+                    placeholderView
+                }
+            }
+            .frame(width: size, height: size)
+            .clipShape(Circle())
+            .overlay(alignment: .bottomTrailing) { cameraBadge }
+            
+            Text(hasImage ? "Change Photo" : "Add Photo")
+                .font(.appBody)
+                .fontWeight(.medium)
+                .foregroundColor(.brandPrimary)
+        }
+    }
     
     private var placeholderView: some View {
         ZStack {

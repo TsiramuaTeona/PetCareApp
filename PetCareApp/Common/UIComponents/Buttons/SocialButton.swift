@@ -19,25 +19,30 @@ struct SocialButton: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .font(.appBody)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color(.systemGray6))
+            .foregroundColor(.textPrimary)
+            .cornerRadius(10)
+            .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+            .disabled(isLoading)
+    }
+    
+    private var content: some View {
         Button(action: action) {
             if isLoading {
                 ProgressView()
                     .tint(.textPrimary)
             } else {
-               
+                
                 HStack {
                     Image(iconName)
                     Text(title)
                 }
             }
         }
-        .font(.appBody)
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color(.systemGray6))
-        .foregroundColor(.textPrimary)
-        .cornerRadius(10)
-        .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-        .disabled(isLoading)
+        
     }
 }

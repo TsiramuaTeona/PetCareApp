@@ -45,68 +45,7 @@ struct EditLogView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        SectionHeaderView(text: "Time & Date")
-                        
-                        DatePicker(
-                            "Date",
-                            selection: $date,
-                            in: isHistory ? Date.distantPast...Date() : Date()...Date.distantFuture,
-                            displayedComponents: [.date, .hourAndMinute]
-                        )
-                        .borderedSection()
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 16) {
-                        SectionHeaderView(text: "Details")
-                        
-                        VStack(spacing: 16) {
-                            
-                            if editedLog.category == .weight {
-                                PrimaryTextField(
-                                    title: "Weight (kg)",
-                                    placeholder: "0.0",
-                                    text: $valueString,
-                                    keyboardType: .decimalPad
-                                )
-                            }
-                            
-                            if editedLog.category == .medication {
-                                PrimaryTextField(
-                                    title: "Dosage",
-                                    placeholder: "e.g. 1 pill, 5ml",
-                                    text: $dosage
-                                )
-                            }
-                            
-                            PrimaryTextField(
-                                title: "Note",
-                                placeholder: "Add a note...",
-                                text: $note
-                            )
-                        }
-                    }
-                    
-                    Button(action: {
-                        onDelete()
-                        dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "trash")
-                            Text("Delete Log")
-                        }
-                        .foregroundColor(.error)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(.error.opacity(0.1))
-                        .cornerRadius(10)
-                    }
-                    .padding(.top, 20)
-                    
-                    Spacer()
-                }
-                .padding(24)
+                content
             }
             .navigationTitle(isHistory ? "Edit History" : "Reschedule")
             .navigationBarTitleDisplayMode(.inline)
@@ -124,5 +63,84 @@ struct EditLogView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
+        VStack(spacing: 24) {
+            dateSection
+            
+            detailsSection
+            
+            deleteButton
+            
+            Spacer()
+        }
+        .padding(24)
+    }
+    
+    private var dateSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeaderView(text: "Time & Date")
+            
+            DatePicker(
+                "Date",
+                selection: $date,
+                in: isHistory ? Date.distantPast...Date() : Date()...Date.distantFuture,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            .borderedSection()
+        }
+    }
+    
+    private var detailsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeaderView(text: "Details")
+            
+            VStack(spacing: 16) {
+                
+                if editedLog.category == .weight {
+                    PrimaryTextField(
+                        title: "Weight (kg)",
+                        placeholder: "0.0",
+                        text: $valueString,
+                        keyboardType: .decimalPad
+                    )
+                }
+                
+                if editedLog.category == .medication {
+                    PrimaryTextField(
+                        title: "Dosage",
+                        placeholder: "e.g. 1 pill, 5ml",
+                        text: $dosage
+                    )
+                }
+                
+                PrimaryTextField(
+                    title: "Note",
+                    placeholder: "Add a note...",
+                    text: $note
+                )
+            }
+        }
+    }
+    
+    private var deleteButton: some View {
+        Button(action: {
+            onDelete()
+            dismiss()
+        }) {
+            HStack {
+                Image(systemName: "trash")
+                Text("Delete Log")
+            }
+            .foregroundColor(.error)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(.error.opacity(0.1))
+            .cornerRadius(10)
+        }
+        .padding(.top, 20)
     }
 }

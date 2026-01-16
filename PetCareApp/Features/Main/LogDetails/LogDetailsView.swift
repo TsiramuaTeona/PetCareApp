@@ -27,6 +27,8 @@ struct LogDetailsView: View {
         }
         .navigationBarHidden(false)
         .navigationTitle(viewModel.sourceLog.title)
+        .alert(item: $viewModel.alert) { $0.toAlert() }
+        .task { await viewModel.refresh() }
         .toolbar {
             Button {
                 viewModel.requestAddToCalendar()
@@ -34,8 +36,6 @@ struct LogDetailsView: View {
                 Image(systemName: "calendar.badge.plus")
             }
         }
-        .alert(item: $viewModel.alert) { $0.toAlert() }
-        .task { await viewModel.refresh() }
         .sheet(item: $logToEdit) { log in
             EditLogView(
                 log: log,

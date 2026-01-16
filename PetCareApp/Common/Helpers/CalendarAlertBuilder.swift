@@ -34,7 +34,7 @@ struct CalendarAlertBuilder {
     private static func buildMessage(petName: String?, log: HealthLog) -> String {
         var lines: [String] = []
         
-        if let petName, !petName.trimmed.isEmpty {
+        if let petName, !petName.isEmptyOrWhitespace {
             lines.append("🐾 Pet: \(petName.trimmed)")
         }
         
@@ -56,7 +56,7 @@ struct CalendarAlertBuilder {
             }
         }
         
-        if let note = log.note, !note.trimmed.isEmpty {
+        if let note = log.note, !note.isEmptyOrWhitespace {
             lines.append("")
             lines.append("📌 Notes:")
             lines.append(note.trimmed)

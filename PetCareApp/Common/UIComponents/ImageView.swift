@@ -35,6 +35,18 @@ struct ImageView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .onAppear {
+                imageLoader.load(from: urlString)
+            }
+            .onChange(of: urlString) { _, newValue in
+                imageLoader.load(from: newValue)
+            }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         ZStack {
             Color(.brandSecondary).opacity(0.1)
             
@@ -48,15 +60,7 @@ struct ImageView: View {
                 placeholderView
             }
         }
-        .onAppear {
-            imageLoader.load(from: urlString)
-        }
-        .onChange(of: urlString) { _, newValue in
-            imageLoader.load(from: newValue)
-        }
     }
-    
-    // MARK: - Subviews
     
     private var placeholderView: some View {
         Image(systemName: placeholderSystemImage)

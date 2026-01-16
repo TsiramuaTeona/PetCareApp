@@ -50,7 +50,7 @@ final class AddPetViewModel: ObservableObject {
     func savePet() async {
         errorMessage = nil
         
-        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        guard !name.isEmptyOrWhitespace else {
             errorMessage = "Please enter a name."
             return
         }

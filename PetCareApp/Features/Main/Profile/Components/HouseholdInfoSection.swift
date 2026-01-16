@@ -16,62 +16,79 @@ struct HouseholdInfoSection: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .shadowCard()
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Label("My Household", systemImage: "house.fill")
+            titleSection
+            
+            Divider()
+            
+            nameSection
+            codeSection
+        }
+    }
+    
+    private var titleSection: some View {
+        HStack {
+            Label("My Household", systemImage: "house.fill")
+                .font(.appHeader)
+            
+            Spacer()
+            
+            Button {
+                Task {
+                    await viewModel.leaveHousehold()
+                }
+            } label: {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                    .foregroundColor(.brandPrimary)
                     .font(.appHeader)
+            }
+        }
+    }
+    
+    private var nameSection: some View {
+        HStack {
+            Text(viewModel.householdName)
+                .font(.appTitle)
+            
+            Spacer()
+            
+            Text("\(viewModel.householdMemberCount) Members")
+                .font(.appBody)
+                .foregroundColor(.textSecondary)
+        }
+    }
+    
+    private var codeSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("INVITE CODE")
+                .font(.appCaption)
+                .fontWeight(.bold)
+                .foregroundColor(.textSecondary)
+            
+            HStack {
+                Text(viewModel.householdJoinCode)
+                    .font(.appHeader)
+                    .foregroundColor(.brandPrimary)
                 
                 Spacer()
                 
                 Button {
-                    Task {
-                        await viewModel.leaveHousehold()
-                    }
+                    UIPasteboard.general.string = viewModel.householdJoinCode
                 } label: {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Image(systemName: "doc.on.doc")
                         .foregroundColor(.brandPrimary)
-                        .font(.appHeader)
                 }
             }
-            
-            Divider()
-            
-            HStack {
-                Text(viewModel.householdName)
-                    .font(.appTitle)
-                
-                Spacer()
-                
-                Text("\(viewModel.householdMemberCount) Members")
-                    .font(.appBody)
-                    .foregroundColor(.textSecondary)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("INVITE CODE")
-                    .font(.appCaption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.textSecondary)
-                
-                HStack {
-                    Text(viewModel.householdJoinCode)
-                        .font(.appHeader)
-                        .foregroundColor(.brandPrimary)
-                    
-                    Spacer()
-                    
-                    Button {
-                        UIPasteboard.general.string = viewModel.householdJoinCode
-                    } label: {
-                        Image(systemName: "doc.on.doc")
-                            .foregroundColor(.brandPrimary)
-                    }
-                }
-                .padding()
-                .background(.brandPrimary.opacity(0.1))
-                .cornerRadius(10)
-            }
+            .padding()
+            .background(.brandPrimary.opacity(0.1))
+            .cornerRadius(10)
         }
-        .shadowCard()
     }
 }

@@ -16,6 +16,25 @@ struct ErrorView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .foregroundStyle(.error)
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.error.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.error.opacity(0.35), lineWidth: 1)
+            )
+            .opacity(message == nil ? 0 : 1)
+            .accessibilityHidden(message == nil)
+            .animation(.easeInOut, value: message)
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill")
             Text(message ?? " ")
@@ -24,18 +43,5 @@ struct ErrorView: View {
             
             Spacer()
         }
-        .foregroundStyle(.error)
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.error.opacity(0.08))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.error.opacity(0.35), lineWidth: 1)
-        )
-        .opacity(message == nil ? 0 : 1)
-        .accessibilityHidden(message == nil)
-        .animation(.easeInOut, value: message)
     }
 }

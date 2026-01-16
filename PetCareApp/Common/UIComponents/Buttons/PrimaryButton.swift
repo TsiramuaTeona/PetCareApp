@@ -18,6 +18,19 @@ struct PrimaryButton: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .font(.appButton)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(.brandPrimary)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .disabled(isLoading)
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         Button(action: action) {
             if isLoading {
                 ProgressView()
@@ -26,12 +39,5 @@ struct PrimaryButton: View {
                 Text(title)
             }
         }
-        .font(.appButton)
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(.brandPrimary)
-        .foregroundColor(.white)
-        .cornerRadius(10)
-        .disabled(isLoading)
     }
 }

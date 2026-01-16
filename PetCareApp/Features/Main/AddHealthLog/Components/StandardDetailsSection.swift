@@ -16,6 +16,12 @@ struct StandardDetailsSection: View {
     // MARK: - Body
     
     var body: some View {
+        content
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeaderView(text: "Details")
             
@@ -49,15 +55,19 @@ struct StandardDetailsSection: View {
                 }
             }
             
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Notes")
-                    .font(.appBody)
-                    .foregroundColor(.textSecondary)
-                
-                TextField("Optional notes...", text: $viewModel.note, axis: .vertical)
-                    .lineLimit(3...6)
-                    .borderedSection()
-            }
+            notesSection
+        }
+    }
+    
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Notes")
+                .font(.appBody)
+                .foregroundColor(.textSecondary)
+            
+            TextField("Optional notes...", text: $viewModel.note, axis: .vertical)
+                .lineLimit(3...6)
+                .borderedSection()
         }
     }
 }

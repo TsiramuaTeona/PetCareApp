@@ -19,6 +19,19 @@ struct ResetPasswordView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .background(.mainBackground)
+            .scrollDismissesKeyboard(.interactively)
+            .alert("Success", isPresented: $viewModel.showSuccessAlert) {
+                Button("OK", action: dismiss.callAsFunction)
+            } message: {
+                Text("Reset link has been sent. Please check your email.")
+            }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         ScrollView {
             VStack(spacing: 16) {
                 AuthHeader(
@@ -29,16 +42,7 @@ struct ResetPasswordView: View {
             }
             .padding(24)
         }
-        .background(.mainBackground)
-        .scrollDismissesKeyboard(.interactively)
-        .alert("Success", isPresented: $viewModel.showSuccessAlert) {
-            Button("OK", action: dismiss.callAsFunction)
-        } message: {
-            Text("Reset link has been sent. Please check your email.")
-        }
     }
-    
-    // MARK: - Subviews
     
     @ViewBuilder
     private var formSection: some View {
@@ -58,7 +62,7 @@ struct ResetPasswordView: View {
             title: "Send Reset Link",
             isLoading: viewModel.isLoading
         ) {
-            isEmailFocused = false 
+            isEmailFocused = false
             Task {
                 await viewModel.resetPassword()
             }

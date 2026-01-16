@@ -17,9 +17,7 @@ final class LogDetailsViewModel: ObservableObject {
     @Published var upcomingLogs: [HealthLog] = []
     @Published var historyLogs: [HealthLog] = []
     @Published var chartData: [HealthLog] = []
-    
     @Published var sourceLog: HealthLog
-    
     @Published var alert: AppAlert?
     @Published private(set) var state: ScreenState = .loading
     

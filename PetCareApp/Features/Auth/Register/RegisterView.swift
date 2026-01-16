@@ -16,6 +16,19 @@ struct RegisterView: View {
     
     // MARK: - Body
     var body: some View {
+        content
+            .background(.mainBackground)
+            .scrollDismissesKeyboard(.interactively)
+            .alert("Account created", isPresented: $viewModel.showSuccessAlert) {
+                Button("OK", action: dismiss.callAsFunction)
+            } message: {
+                Text("Your account has been created successfully.")
+            }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         ScrollView {
             VStack(spacing: 6) {
                 AuthHeader(
@@ -26,16 +39,7 @@ struct RegisterView: View {
             }
             .padding(24)
         }
-        .background(.mainBackground)
-        .scrollDismissesKeyboard(.interactively)
-        .alert("Account created", isPresented: $viewModel.showSuccessAlert) {
-            Button("OK", action: dismiss.callAsFunction)
-        } message: {
-            Text("Your account has been created successfully.")
-        }
     }
-    
-    // MARK: - Subviews
     
     @ViewBuilder
     private var formSection: some View {

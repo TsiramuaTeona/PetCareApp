@@ -16,12 +16,10 @@ final class ProfileViewModel: ObservableObject {
     
     @Published var user: UserProfile?
     @Published var household: Household?
-    
     @Published var newHouseholdName: String = ""
     @Published var joinCodeInput: String = ""
-    
-    @Published private(set) var state: ScreenState = .loading
     @Published var alert: AppAlert?
+    @Published private(set) var state: ScreenState = .loading
     
     // MARK: - Private Properties
     

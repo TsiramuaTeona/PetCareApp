@@ -16,6 +16,12 @@ struct MedicationDetailsSection: View {
     // MARK: - Body
     
     var body: some View {
+        content
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeaderView(text: "Schedule")
             
@@ -31,35 +37,43 @@ struct MedicationDetailsSection: View {
                 text: $viewModel.dosage
             )
             
-            HStack {
-                Text("Frequency")
-                    .font(.appTitle)
-                    .foregroundColor(.textPrimary)
-                
-                Spacer()
-                
-                Stepper("\(viewModel.timesPerDay)x daily", value: $viewModel.timesPerDay, in: 1...4)
-                    .labelsHidden()
-                
-                Text("\(viewModel.timesPerDay)x daily")
-                    .foregroundColor(.brandPrimary)
-                    .font(.appBody)
-            }
-            .borderedSection()
+            frequencyPicker
             
             ToggleRow(title: "Chronic Condition", isOn: $viewModel.isChronic)
             
             if !viewModel.isChronic {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Duration: \(Int(viewModel.durationDays)) days")
-                        .font(.appBody)
-                        .foregroundColor(.textSecondary)
-                    
-                    Slider(value: $viewModel.durationDays, in: 1...30, step: 1)
-                        .tint(.brandPrimary)
-                }
-                .borderedSection()
+                durationSection
             }
         }
+    }
+    
+    private var frequencyPicker: some View {
+        HStack {
+            Text("Frequency")
+                .font(.appTitle)
+                .foregroundColor(.textPrimary)
+            
+            Spacer()
+            
+            Stepper("\(viewModel.timesPerDay)x daily", value: $viewModel.timesPerDay, in: 1...4)
+                .labelsHidden()
+            
+            Text("\(viewModel.timesPerDay)x daily")
+                .foregroundColor(.brandPrimary)
+                .font(.appBody)
+        }
+        .borderedSection()
+    }
+    
+    private var durationSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Duration: \(Int(viewModel.durationDays)) days")
+                .font(.appBody)
+                .foregroundColor(.textSecondary)
+            
+            Slider(value: $viewModel.durationDays, in: 1...30, step: 1)
+                .tint(.brandPrimary)
+        }
+        .borderedSection()
     }
 }

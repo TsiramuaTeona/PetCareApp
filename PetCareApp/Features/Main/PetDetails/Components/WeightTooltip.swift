@@ -18,6 +18,18 @@ struct WeightTooltip: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .padding(.leading, 12)
+            .padding(.trailing, 8)
+            .padding(.vertical, 8)
+            .background(.brandSecondary)
+            .cornerRadius(30)
+            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(log.date.formatted(date: .abbreviated, time: .omitted))
@@ -51,11 +63,5 @@ struct WeightTooltip: View {
                     .padding(4)
             }
         }
-        .padding(.leading, 12)
-        .padding(.trailing, 8)
-        .padding(.vertical, 8)
-        .background(.brandSecondary)
-        .cornerRadius(30)
-        .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
     }
 }

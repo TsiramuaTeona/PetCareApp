@@ -18,6 +18,17 @@ struct LoadingView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(.mainBackground)
+            .onAppear {
+                isAnimating = true
+            }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         VStack(spacing: 20) {
             HStack(spacing: 15) {
                 ForEach(0..<pawCount, id: \.self) { index in
@@ -37,11 +48,6 @@ struct LoadingView: View {
                         )
                 }
             }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.mainBackground)
-        .onAppear {
-            isAnimating = true
         }
     }
 }

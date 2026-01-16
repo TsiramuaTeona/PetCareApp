@@ -18,11 +18,17 @@ struct ResolveButton: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .buttonStyle(.plain)
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         Button(action: action) {
             Image(systemName: "checkmark.arrow.trianglehead.counterclockwise")
                 .font(.system(size: 28))
                 .foregroundColor(isUrgent ? .error : categoryColor)
         }
-        .buttonStyle(.plain)
     }
 }

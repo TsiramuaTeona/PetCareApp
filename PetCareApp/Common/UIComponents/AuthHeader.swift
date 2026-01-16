@@ -17,6 +17,13 @@ struct AuthHeader: View {
     // MARK: - Body
     
     var body: some View {
+        content
+    }
+    
+    // MARK: - Subviews
+    
+    @ViewBuilder
+    private var content: some View {
         Text(title)
             .font(.appDisplay)
             .foregroundStyle(.brandPrimary)

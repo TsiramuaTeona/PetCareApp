@@ -27,9 +27,7 @@ struct HomeView: View {
         }
         .navigationTitle("Home")
         .toolbar(.hidden, for: .navigationBar)
-        .task {
-            await viewModel.loadData()
-        }
+        .task { await viewModel.loadData() }
     }
     
     // MARK: - Subviews

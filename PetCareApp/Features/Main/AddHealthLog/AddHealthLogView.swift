@@ -17,41 +17,9 @@ struct AddHealthLogView: View {
     // MARK: - Body
     
     var body: some View {
-        content
-    }
-    
-    // MARK: - Subviews
-    
-    private var content: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    Text("Please fill in the details below to add a new \(viewModel.isMedication ? "medication" : "health log").")
-                        .font(.appBody)
-                        .foregroundColor(.textSecondary)
-                        .multilineTextAlignment(.center)
-                    
-                    CategorySection(viewModel: viewModel)
-                    
-                    if viewModel.isMedication {
-                        MedicationDetailsSection(viewModel: viewModel)
-                    } else {
-                        StandardDetailsSection(viewModel: viewModel)
-                    }
-                    
-                    if !viewModel.isMedication && !viewModel.isWeight {
-                        ReminderSection(viewModel: viewModel)
-                    }
-                    
-                    ErrorView(message: viewModel.errorMessage)
-                    PrimaryButton(
-                        title: "Save",
-                        isLoading: viewModel.isLoading
-                    ) {
-                        Task { await viewModel.save() }
-                    }
-                }
-                .padding(24)
+                content
             }
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(viewModel.isMedication ? "Add Medication" : "Add Health Log")
@@ -63,5 +31,41 @@ struct AddHealthLogView: View {
                 }
             }
         }
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
+        VStack(spacing: 24) {
+            infoMessage
+            
+            CategorySection(viewModel: viewModel)
+            
+            if viewModel.isMedication {
+                MedicationDetailsSection(viewModel: viewModel)
+            } else {
+                StandardDetailsSection(viewModel: viewModel)
+            }
+            
+            if !viewModel.isMedication && !viewModel.isWeight {
+                ReminderSection(viewModel: viewModel)
+            }
+            
+            ErrorView(message: viewModel.errorMessage)
+            PrimaryButton(
+                title: "Save",
+                isLoading: viewModel.isLoading
+            ) {
+                Task { await viewModel.save() }
+            }
+        }
+        .padding(24)
+    }
+    
+    private var infoMessage: some View {
+        Text("Please fill in the details below to add a new \(viewModel.isMedication ? "medication" : "health log").")
+            .font(.appBody)
+            .foregroundColor(.textSecondary)
+            .multilineTextAlignment(.center)
     }
 }

@@ -5,6 +5,7 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
+
 import SwiftUI
 
 struct LoginView: View {
@@ -16,6 +17,14 @@ struct LoginView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .background(.mainBackground)
+            .scrollDismissesKeyboard(.interactively)
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         ScrollView {
             VStack(spacing: 16) {
                 AuthHeader(title: "Welcome Back")
@@ -23,11 +32,7 @@ struct LoginView: View {
             }
             .padding(24)
         }
-        .background(.mainBackground)
-        .scrollDismissesKeyboard(.interactively)
     }
-    
-    // MARK: - Subviews
     
     @ViewBuilder
     private var formSection: some View {

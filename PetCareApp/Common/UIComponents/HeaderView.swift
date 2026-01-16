@@ -12,6 +12,12 @@ struct HeaderView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         HStack(alignment: .center) {
             Image("AppLogo")
                 .resizable()

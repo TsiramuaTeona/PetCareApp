@@ -9,7 +9,7 @@
 import Foundation
 import Combine
 
-
+@MainActor
 final class RemindersViewModel: ObservableObject {
     // MARK: - Properties
     

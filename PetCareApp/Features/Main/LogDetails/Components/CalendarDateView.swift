@@ -18,6 +18,19 @@ struct CalendarDateView: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .frame(width: 55)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(.gray.opacity(0.1), lineWidth: 1)
+                    .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+            )
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         VStack(spacing: 0) {
             Text(day)
                 .font(.caption2)
@@ -40,12 +53,5 @@ struct CalendarDateView: View {
                 .frame(maxWidth: .infinity)
                 .foregroundColor(.brandPrimary)
         }
-        .frame(width: 55)
-        .cornerRadius(10)
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(.gray.opacity(0.1), lineWidth: 1)
-                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
-        )
     }
 }

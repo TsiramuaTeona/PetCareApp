@@ -17,40 +17,16 @@ struct FunFactCard: View {
     // MARK: - Body
     
     var body: some View {
+        content
+            .shadowCard()
+    }
+    
+    // MARK: - Subviews
+    
+    private var content: some View {
         HStack(alignment: .top, spacing: 16) {
-            
-            ZStack {
-                LinearGradient(
-                    colors: [.brandPink, .brandOrange],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                .mask(Circle())
-                .opacity(0.15)
-                
-                Image(systemName: "sparkles")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.brandPink, .brandOrange],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-            }
-            .frame(width: 48, height: 48)
-            
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Did you know?")
-                    .font(.appCaption)
-                    .fontWeight(.bold)
-                    .textCase(.uppercase)
-                    .foregroundColor(.brandSecondary)
-                
-                Text(fact)
-                    .font(.appBody)
-                    .foregroundColor(.textPrimary)
-            }
+            iconSection
+            factSection
             
             Spacer()
             
@@ -60,6 +36,42 @@ struct FunFactCard: View {
                     .font(.caption)
             }
         }
-        .shadowCard()
+    }
+    
+    private var iconSection: some View {
+        ZStack {
+            LinearGradient(
+                colors: [.brandPink, .brandOrange],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .mask(Circle())
+            .opacity(0.15)
+            
+            Image(systemName: "sparkles")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.brandPink, .brandOrange],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        }
+        .frame(width: 48, height: 48)
+    }
+    
+    private var factSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Did you know?")
+                .font(.appCaption)
+                .fontWeight(.bold)
+                .textCase(.uppercase)
+                .foregroundColor(.brandSecondary)
+            
+            Text(fact)
+                .font(.appBody)
+                .foregroundColor(.textPrimary)
+        }
     }
 }

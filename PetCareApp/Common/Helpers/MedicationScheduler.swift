@@ -33,8 +33,8 @@ struct MedicationScheduler {
         }
         
         for i in 0..<count {
-            let t = startToday.adding(minutes: i * intervalMinutes)
-            times.append(t)
+            let time = startToday.adding(minutes: i * intervalMinutes)
+            times.append(time)
         }
         
         return normalizeTimes(times)
@@ -81,13 +81,13 @@ struct MedicationScheduler {
         var seen = Set<String>()
         var unique: [Date] = []
         
-        for t in times {
-            let comps = calendar.dateComponents([.hour, .minute], from: t)
+        for time in times {
+            let comps = calendar.dateComponents([.hour, .minute], from: time)
             let key = "\(comps.hour ?? 0):\(comps.minute ?? 0)"
             
             if !seen.contains(key) {
                 seen.insert(key)
-                unique.append(t)
+                unique.append(time)
             }
         }
         
@@ -107,8 +107,7 @@ struct MedicationScheduler {
 
 private extension Calendar {
     static var app: Calendar {
-        // Keep consistent with your Date extension’s Calendar.app (if you adopt my replacement).
-        let cal = Calendar.current
-        return cal
+        let calendar = Calendar.current
+        return calendar
     }
 }

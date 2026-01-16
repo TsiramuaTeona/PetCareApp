@@ -13,8 +13,13 @@ import Combine
 final class AddHealthLogViewModel: ObservableObject {
     
     // MARK: - Published Properties
+    @Published var category: LogCategory = .weight {
+        didSet {
+            guard oldValue != category else { return }
+            onCategoryChanged(from: oldValue, to: category)
+        }
+    }
     
-    @Published var category: LogCategory = .vaccine
     @Published var title: String = ""
     @Published var note: String = ""
     @Published var actionDate: Date = Date()
@@ -43,11 +48,7 @@ final class AddHealthLogViewModel: ObservableObject {
     
     var isMedication: Bool { category == .medication }
     var isWeight: Bool { category == .weight }
-    
-    var isHistoryLog: Bool {
-        actionDate.startOfDay <= Date().startOfDay
-    }
-    
+    var isHistoryLog: Bool { actionDate.startOfDay <= Date().startOfDay }
     var titlePlaceholder: String { category.titlePlaceholder }
     var titleSuggestions: [String] { category.titleSuggestions }
     var reminderLabel: String { category.reminderLabel(isHistory: isHistoryLog) }
@@ -58,7 +59,7 @@ final class AddHealthLogViewModel: ObservableObject {
     }
     
     private var resolvedNote: String? {
-        note.trimmed.isEmpty ? nil : note.trimmed
+        note.isEmptyOrWhitespace ? nil : note.trimmed
     }
     
     // MARK: - Callbacks
@@ -114,6 +115,19 @@ final class AddHealthLogViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
+    private func onCategoryChanged(from old: LogCategory, to new: LogCategory) {
+        errorMessage = nil
+        title = ""
+        note = ""
+        valueString = ""
+        addReminder = false
+        recurrence = .none
+        nextDueDate = Date()
+        dosage = ""
+        timesPerDay = 1
+        isChronic = false
+        durationDays = 7
+    }
     
     private func shouldCreateFutureMedicationLog(now: Date) -> Bool {
         if isChronic { return true }
@@ -215,13 +229,13 @@ final class AddHealthLogViewModel: ObservableObject {
     }
     
     private func validate() -> Bool {
-        if category != .weight && title.trimmed.isEmpty {
+        if category != .weight && title.isEmptyOrWhitespace {
             errorMessage = "Please enter a title."
             return false
         }
         
         if isMedication {
-            if dosage.trimmed.isEmpty {
+            if dosage.isEmptyOrWhitespace {
                 errorMessage = "Please enter dosage."
                 return false
             }

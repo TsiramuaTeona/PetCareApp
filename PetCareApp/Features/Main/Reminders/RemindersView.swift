@@ -18,16 +18,7 @@ struct RemindersView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
-            filterBar
-            
-            ZStack {
-                if viewModel.isLoading {
-                    LoadingView()
-                } else {
-                    remindersList
-                }
-            }
+            content
         }
         .background(.mainBackground)
         .navigationBarHidden(false)
@@ -35,6 +26,19 @@ struct RemindersView: View {
     }
     
     // MARK: - Subviews
+    
+    @ViewBuilder
+    private var content: some View {
+        filterBar
+        
+        ZStack {
+            if viewModel.isLoading {
+                LoadingView()
+            } else {
+                remindersList
+            }
+        }
+    }
     
     private var filterBar: some View {
         ScrollViewReader { proxy in

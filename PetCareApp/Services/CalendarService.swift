@@ -5,6 +5,7 @@
 //  Created by Teona Tsiramua on 16.01.26.
 //
 
+
 import Foundation
 import EventKit
 
@@ -121,14 +122,14 @@ final class CalendarService: CalendarServiceProtocol {
         lines.append("🐾 Category: \(log.category.rawValue)")
         lines.append("📝 Title: \(log.title)")
         
-        if let note = log.note, !note.trimmed.isEmpty {
+        if let note = log.note, !note.isEmptyOrWhitespace{
             lines.append("")
             lines.append("📌 Notes:")
             lines.append(note.trimmed)
         }
         
         if log.category == .medication {
-            if let dosage = log.dosage, !dosage.trimmed.isEmpty {
+            if let dosage = log.dosage, !dosage.isEmptyOrWhitespace {
                 lines.append("")
                 lines.append("💊 Dosage: \(dosage.trimmed)")
             }
