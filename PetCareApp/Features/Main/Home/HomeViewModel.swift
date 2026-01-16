@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
 
 @MainActor
 final class HomeViewModel: ObservableObject {
@@ -94,7 +95,23 @@ final class HomeViewModel: ObservableObject {
                 return
             }
             
-            let userProfile = try await userService.getUser(userId: userId)
+            let userProfile: UserProfile
+            
+            do {
+                userProfile = try await userService.getUser(userId: userId)
+            } catch UserServiceError.userDocumentMissing {
+                let firebaseUser = Auth.auth().currentUser
+                let profile = UserProfile(
+                    id: userId,
+                    email: firebaseUser?.email ?? "",
+                    fullName: firebaseUser?.displayName,
+                    householdId: nil,
+                    createdAt: Date()
+                )
+                try await userService.createUserProfile(user: profile)
+                userProfile = try await userService.getUser(userId: userId)
+            }
+            
             user = userProfile
             
             guard let householdId = userProfile.householdId, !householdId.isEmpty else {

@@ -9,6 +9,19 @@
 import FirebaseFirestore
 import Combine
 
+// MARK: - UserServiceError
+
+enum UserServiceError: LocalizedError {
+    case userDocumentMissing(userId: String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .userDocumentMissing(let id):
+            return "User profile document is missing for uid: \(id)"
+        }
+    }
+}
+
 // MARK: - UserServiceProtocol
 
 protocol UserServiceProtocol {
@@ -24,22 +37,30 @@ final class UserService: UserServiceProtocol {
     // MARK: - Properties
     
     private let db = Firestore.firestore()
-    private var userListeners: [String: ListenerRegistration] = [:]
     
     // MARK: - Methods
     
     func createUserProfile(user: UserProfile) async throws {
-        try db.collection("users").document(user.id).setData(from: user)
+        try db.collection("users")
+            .document(user.id)
+            .setData(from: user, merge: true)
     }
     
     func getUser(userId: String) async throws -> UserProfile {
         let snapshot = try await db.collection("users").document(userId).getDocument()
+        
+        guard snapshot.exists else {
+            throw UserServiceError.userDocumentMissing(userId: userId)
+        }
+        
         return try snapshot.data(as: UserProfile.self)
     }
     
     func updateUserHousehold(userId: String, householdId: String?) async throws {
         let data: [String: Any] = [
-            "householdId": householdId ?? FieldValue.delete()
+            "householdId": householdId?.isEmptyOrWhitespace == false
+            ? householdId as Any
+            : FieldValue.delete()
         ]
         
         try await db.collection("users").document(userId).updateData(data)

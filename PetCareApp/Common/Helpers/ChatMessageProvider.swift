@@ -59,7 +59,7 @@ enum ChatMessageProvider {
         system(
             hasHousehold
             ? "Household updated. Refreshing pet profiles and health data…"
-            : "No household selected — switching to general pet-care mode."
+            : "No household selected - switching to general pet-care mode."
         )
     }
     

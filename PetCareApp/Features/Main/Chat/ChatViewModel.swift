@@ -74,6 +74,9 @@ final class ChatViewModel {
         if !didStart {
             didStart = true
             post(ChatMessageProvider.welcome())
+            
+            let context = AIChatContextBuilder.build(pets: [], logsByPetId: [:])
+            aiService.startSession(context: context)
         }
         
         startHouseholdListening()
@@ -129,7 +132,11 @@ final class ChatViewModel {
     }
     
     private func handleHouseholdChange(_ householdId: String?) {
-        guard householdId != currentHouseholdId else { return }
+        guard householdId != currentHouseholdId else {
+            post(ChatMessageProvider.householdUpdated(hasHousehold: householdId?.isEmpty == false))
+            return
+        }
+        
         currentHouseholdId = householdId
         
         contextLoadTask?.cancel()
@@ -151,7 +158,6 @@ final class ChatViewModel {
             guard let householdId, !householdId.isEmpty else {
                 let context = AIChatContextBuilder.build(pets: [], logsByPetId: [:])
                 aiService.startSession(context: context)
-                post(ChatMessageProvider.fallbackContext())
                 return
             }
             

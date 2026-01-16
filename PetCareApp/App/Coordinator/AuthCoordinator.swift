@@ -101,20 +101,21 @@ final class AuthCoordinator: Coordinator {
             
             let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
             
-            guard let idToken = result.user.idToken?.tokenString else {
+            guard let idToken = result.user.idToken?.tokenString, !idToken.isEmpty else {
                 throw AuthError.unknown("Missing ID token")
             }
             
             let accessToken = result.user.accessToken.tokenString
+            guard !accessToken.isEmpty else {
+                throw AuthError.unknown("Missing access token")
+            }
             
-            let isNewUser = try await container.authService.signInWithGoogle(
+            _ = try await container.authService.signInWithGoogle(
                 idToken: idToken,
                 accessToken: accessToken
             )
             
-            if isNewUser {
-                try await createGoogleUserProfile()
-            }
+            try await ensureUserProfileExists()
             
             viewModel.handleGoogleSignInResult(.success(()))
         } catch {
@@ -122,25 +123,39 @@ final class AuthCoordinator: Coordinator {
         }
     }
     
+    private func ensureUserProfileExists() async throws {
+        guard let firebaseUser = Auth.auth().currentUser else { return }
+        
+        do {
+            _ = try await container.userService.getUser(userId: firebaseUser.uid)
+            return
+        } catch {
+            let profile = UserProfile(
+                id: firebaseUser.uid,
+                email: firebaseUser.email ?? "",
+                fullName: firebaseUser.displayName,
+                householdId: nil,
+                createdAt: Date()
+            )
+            
+            try await container.userService.createUserProfile(user: profile)
+        }
+    }
+    
     private func topMostPresenter() -> UIViewController {
-        var presenter: UIViewController = navigationController
+        guard
+            let scene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first(where: { $0.activationState == .foregroundActive }),
+            let root = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController
+        else {
+            return navigationController
+        }
+        
+        var presenter = root
         while let presented = presenter.presentedViewController {
             presenter = presented
         }
         return presenter
-    }
-    
-    private func createGoogleUserProfile() async throws {
-        guard let firebaseUser = Auth.auth().currentUser else { return }
-        
-        let newProfile = UserProfile(
-            id: firebaseUser.uid,
-            email: firebaseUser.email ?? "",
-            fullName: firebaseUser.displayName,
-            householdId: nil,
-            createdAt: Date()
-        )
-        
-        try await container.userService.createUserProfile(user: newProfile)
     }
 }
