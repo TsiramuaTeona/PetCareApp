@@ -14,10 +14,11 @@
 		E41802A62F09623100758D9F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A52F09623100758D9F /* GoogleSignIn */; };
 		E41802A82F09623100758D9F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E41802A72F09623100758D9F /* GoogleSignInSwift */; };
 		E41804342F0BF47C00758D9F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E41804332F0BF47C00758D9F /* FirebaseStorage */; };
+		E4BB74D62F17FFFA00ECB834 /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = E4BB74D52F17FFFA00ECB834 /* FirebaseAILogic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E4BF82782F14EF1800E22D61 /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4BB75ED2F18F33300ECB834 /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -46,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4BB74D62F17FFFA00ECB834 /* FirebaseAILogic in Frameworks */,
 				E41802A62F09623100758D9F /* GoogleSignIn in Frameworks */,
 				E418029F2F0957F300758D9F /* FirebaseDatabase in Frameworks */,
 				E41802A12F0957F300758D9F /* FirebaseFirestore in Frameworks */,
@@ -63,7 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				E41800A82F092E8300758D9F /* PetCareApp */,
-				E4BF82782F14EF1800E22D61 /* PetCareApp.app */,
+				E4BB75ED2F18F33300ECB834 /* PetCareApp.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,9 +96,10 @@
 				E41802A52F09623100758D9F /* GoogleSignIn */,
 				E41802A72F09623100758D9F /* GoogleSignInSwift */,
 				E41804332F0BF47C00758D9F /* FirebaseStorage */,
+				E4BB74D52F17FFFA00ECB834 /* FirebaseAILogic */,
 			);
 			productName = PetCareApp;
-			productReference = E4BF82782F14EF1800E22D61 /* PetCareApp.app */;
+			productReference = E4BB75ED2F18F33300ECB834 /* PetCareApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -424,6 +427,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		E4BB74D52F17FFFA00ECB834 /* FirebaseAILogic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E41802492F0955F200758D9F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAILogic;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

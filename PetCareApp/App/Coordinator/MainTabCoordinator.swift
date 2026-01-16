@@ -38,12 +38,6 @@ final class MainTabCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(true, animated: false)
     }
     
-    //    func stop() {
-    //        childCoordinators.forEach { $0.stop() }
-    //        childCoordinators.removeAll()
-    //        tabNavigations.removeAll()
-    //    }
-    
     func handle(_ destination: Destination) {
         switch destination {
         case .petDetails(let pet):
@@ -116,12 +110,10 @@ final class MainTabCoordinator: Coordinator {
             let viewModel = container.makeMapViewModel()
             return MapViewController(viewModel: viewModel, locationService: container.locationService)
             
-        case .shop:
-            let view = ShopView()
-                .environment(\.navigate) { [weak self] destination in
-                    self?.handle(destination)
-                }
-            return hostingController(view)
+        case .chat:
+            let viewModel = container.makeChatViewModel()
+            return ChatViewController(viewModel: viewModel)
+
             
         case .profile:
             let viewModel = container.makeProfileViewModel()

@@ -18,6 +18,7 @@ final class AppDIContainer {
     lazy var mapService: MapServiceProtocol = MapService()
     lazy var locationService: LocationServiceProtocol = LocationService()
     lazy var healthService: HealthServiceProtocol = HealthService()
+    lazy var aiService: AIChatServiceProtocol = AIChatService()
     
     lazy var reminderSyncService: ReminderSyncServiceProtocol = {
         ReminderSyncService(petService: petService, healthService: healthService)
@@ -101,4 +102,17 @@ final class AppDIContainer {
     func makeMapViewModel() -> MapViewModel {
         MapViewModel(mapService: mapService)
     }
+    
+    func makeChatViewModel() -> ChatViewModel {
+        let aiService: AIChatServiceProtocol = AIChatService()
+        
+        return ChatViewModel(
+            authService: authService,
+            userService: userService,
+            petService: petService,
+            healthService: healthService,
+            aiService: aiService
+        )
+    }
+
 }
