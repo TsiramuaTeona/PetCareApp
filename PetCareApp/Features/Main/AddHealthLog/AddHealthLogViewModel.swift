@@ -235,6 +235,11 @@ final class AddHealthLogViewModel: ObservableObject {
             }
         }
         
+        if isWeight && valueString.trimmed.doubleValue == nil {
+            errorMessage = "Please enter a valid weight value."
+            return false
+        }
+        
         return true
     }
 }

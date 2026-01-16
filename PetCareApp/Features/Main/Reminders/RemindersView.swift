@@ -84,7 +84,9 @@ struct RemindersView: View {
                     ForEach(viewModel.filteredReminders) { item in
                         ReminderCard(item: item)
                             .onTapGesture {
-                                navigate(.logDetails(petId: item.petId, log: item.log))
+                                navigate(
+                                    .logDetails(petId: item.petId, petName: item.petName, log: item.log)
+                                )
                             }
                     }
                 }

@@ -71,7 +71,9 @@ struct StatusSection: View {
                 HistoryLogRow(
                     log: log,
                     onInfoTap: {
-                        navigate(.logDetails(petId: viewModel.petId, log: log))
+                        navigate(
+                            .logDetails(petId: viewModel.petId, petName: viewModel.pet.name, log: log)
+                        )
                     },
                     onDelete: {
                         Task { await viewModel.deleteLog(log) }

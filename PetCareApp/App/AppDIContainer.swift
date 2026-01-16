@@ -19,6 +19,7 @@ final class AppDIContainer {
     lazy var locationService: LocationServiceProtocol = LocationService()
     lazy var healthService: HealthServiceProtocol = HealthService()
     lazy var aiService: AIChatServiceProtocol = AIChatService()
+    lazy var calendarService: CalendarServiceProtocol = CalendarService()
     
     lazy var reminderSyncService: ReminderSyncServiceProtocol = {
         ReminderSyncService(petService: petService, healthService: healthService)
@@ -90,11 +91,13 @@ final class AppDIContainer {
         )
     }
     
-    func makeLogDetailsViewModel(petId: String, log: HealthLog) -> LogDetailsViewModel {
+    func makeLogDetailsViewModel(petId: String, petName: String, log: HealthLog) -> LogDetailsViewModel {
         LogDetailsViewModel(
             petId: petId,
+            petName: petName,
             sourceLog: log,
             healthService: healthService,
+            calendarService: calendarService,
             reminderService: reminderSyncService
         )
     }

@@ -20,20 +20,23 @@ final class LogDetailsViewModel: ObservableObject {
     
     @Published var sourceLog: HealthLog
     
+    @Published var alert: AppAlert?
     @Published private(set) var state: ScreenState = .loading
     
     // MARK: - Private Properties
     
     private let petId: String
+    private let petName: String
     private let healthService: HealthServiceProtocol
     private let reminderService: ReminderSyncServiceProtocol
+    private let calendarService: CalendarServiceProtocol
     private let notificationManager = NotificationManager.shared
     
     private var groupingKey: String {
         if sourceLog.category == .weight {
             return "weight"
         }
-        return "\(sourceLog.category.rawValue)|\(normalize(sourceLog.title))"
+        return "\(sourceLog.category.rawValue)|\(sourceLog.title.normalize)"
     }
     
     // MARK: - Computed Properties
@@ -51,17 +54,21 @@ final class LogDetailsViewModel: ObservableObject {
     
     init(
         petId: String,
+        petName: String,
         sourceLog: HealthLog,
         healthService: HealthServiceProtocol,
+        calendarService: CalendarServiceProtocol,
         reminderService: ReminderSyncServiceProtocol
     ) {
         self.petId = petId
+        self.petName = petName
         self.sourceLog = sourceLog
         self.healthService = healthService
+        self.calendarService = calendarService
         self.reminderService = reminderService
     }
     
-    // MARK: - Methods
+    // MARK: - Data Loading Methods
     
     func refresh() async {
         state = .loading
@@ -74,6 +81,8 @@ final class LogDetailsViewModel: ObservableObject {
             state = .error(error.localizedDescription)
         }
     }
+    
+    // MARK: - Log Editing Methods
     
     func saveLogEdits(
         originalLog: HealthLog,
@@ -174,14 +183,65 @@ final class LogDetailsViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Private Methods
+    // MARK: - Calendar Methods
+    
+    func requestAddToCalendar() {
+        let newAlert = CalendarAlertBuilder.confirmAddToCalendar(
+            petName: petName,
+            log: sourceLog,
+            onConfirm: { [weak self] in
+                guard let self else { return }
+                Task { await self.addToCalendarConfirmed() }
+            }
+        )
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.alert = newAlert
+        }
+    }
+    
+    private func addToCalendarConfirmed() async {
+        do {
+            try await calendarService.addHealthLogEvent(
+                log: sourceLog,
+                petName: petName
+            )
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.alert = .success("Added to Calendar 📅")
+            }
+            
+        } catch let calendarError as CalendarError {
+            let alertToShow: AppAlert
+            
+            switch calendarError {
+            case .accessDenied:
+                alertToShow = .openSettings(message: calendarError.localizedDescription)
+            case .accessRestricted:
+                alertToShow = .error(calendarError.localizedDescription)
+            case .saveFailed:
+                alertToShow = .error(calendarError.localizedDescription)
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.alert = alertToShow
+            }
+            
+        } catch {
+            DispatchQueue.main.async { [weak self] in
+                self?.alert = .error(error.localizedDescription)
+            }
+        }
+    }
+    
+    // MARK: - Helper Methods
     
     private func filterAndGroup(_ logs: [HealthLog]) {
         let relatedLogs = logs.filter { log in
             if sourceLog.category == .weight {
                 return log.category == .weight
             } else {
-                return "\(log.category.rawValue)|\(normalize(log.title))" == groupingKey
+                return "\(log.category.rawValue)|\(log.title.normalize)" == groupingKey
             }
         }
         
@@ -202,12 +262,5 @@ final class LogDetailsViewModel: ObservableObject {
            let updatedSource = relatedLogs.first(where: { $0.id == sourceId }) {
             sourceLog = updatedSource
         }
-    }
-    
-    private func normalize(_ string: String) -> String {
-        string
-            .trimmed
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-            .lowercased()
     }
 }

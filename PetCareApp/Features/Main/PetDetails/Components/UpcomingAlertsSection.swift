@@ -29,7 +29,7 @@ struct UpcomingAlertsSection: View {
                             Task { await viewModel.resolveLog(log) }
                         }
                         .onTapGesture {
-                            navigate(.logDetails(petId: viewModel.petId, log: log))
+                            navigate(.logDetails(petId: viewModel.petId, petName: viewModel.pet.name, log: log))
                         }
                     }
                 }

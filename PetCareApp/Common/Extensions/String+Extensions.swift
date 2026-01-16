@@ -24,4 +24,10 @@ extension String {
     var isEmptyOrWhitespace: Bool {
         trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
+    
+    var normalize: String {
+        trimmed
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .lowercased()
+    }
 }

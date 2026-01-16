@@ -27,6 +27,14 @@ struct LogDetailsView: View {
         }
         .navigationBarHidden(false)
         .navigationTitle(viewModel.sourceLog.title)
+        .toolbar {
+            Button {
+                viewModel.requestAddToCalendar()
+            } label: {
+                Image(systemName: "calendar.badge.plus")
+            }
+        }
+        .alert(item: $viewModel.alert) { $0.toAlert() }
         .task { await viewModel.refresh() }
         .sheet(item: $logToEdit) { log in
             EditLogView(

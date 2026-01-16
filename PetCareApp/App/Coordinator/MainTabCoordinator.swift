@@ -52,8 +52,8 @@ final class MainTabCoordinator: Coordinator {
         case .addHealthLog(let petId, let category, let onSave):
             showAddHealthLog(petId: petId, category: category, onSave: onSave)
             
-        case .logDetails(let petId, let log):
-            showLogDetails(petId: petId, log: log)
+        case .logDetails(let petId, let petName, let log):
+            showLogDetails(petId: petId, petName: petName, log: log)
             
         case .remindersList(let items):
             showRemindersList(items: items)
@@ -171,10 +171,10 @@ final class MainTabCoordinator: Coordinator {
         navigation.present(hostingController(view), animated: true)
     }
     
-    private func showLogDetails(petId: String, log: HealthLog) {
+    private func showLogDetails(petId: String, petName: String, log: HealthLog) {
         guard let navigation = currentTabNavigation() else { return }
         
-        let viewModel = container.makeLogDetailsViewModel(petId: petId, log: log)
+        let viewModel = container.makeLogDetailsViewModel(petId: petId, petName: petName, log: log)
         let view = LogDetailsView(viewModel: viewModel)
         
         navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)

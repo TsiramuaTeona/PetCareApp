@@ -63,4 +63,19 @@ extension AppAlert {
             secondaryButton: .cancel()
         )
     }
+    
+    static func openSettings(
+        title: String = "Permission Needed",
+        message: String
+    ) -> AppAlert {
+        AppAlert(
+            title: title,
+            message: message,
+            primaryButton: .default(Text("Open Settings"), action: {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                UIApplication.shared.open(url)
+            }),
+            secondaryButton: .cancel(Text("Cancel"))
+        )
+    }
 }

@@ -58,7 +58,9 @@ struct MedicationSection: View {
                 ForEach(viewModel.medicationLogs) { log in
                     MedicationCard(log: log)
                         .onTapGesture {
-                            navigate(.logDetails(petId: viewModel.petId, log: log))
+                            navigate(
+                                .logDetails(petId: viewModel.petId, petName: viewModel.pet.name, log: log)
+                            )
                         }
                 }
             }
