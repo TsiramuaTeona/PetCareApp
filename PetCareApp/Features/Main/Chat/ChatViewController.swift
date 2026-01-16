@@ -79,6 +79,15 @@ final class ChatViewController: UIViewController {
             target: self,
             action: #selector(refreshTapped)
         )
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        
+        appearance.shadowColor = UIColor.label.withAlphaComponent(0.15)
+        appearance.shadowImage = UIImage()
+        appearance.backgroundColor = .mainBackground
+        
+        navigationController?.navigationBar.standardAppearance = appearance
     }
     
     private func setupTableView() {

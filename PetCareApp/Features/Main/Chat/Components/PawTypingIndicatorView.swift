@@ -96,7 +96,7 @@ final class PawTypingIndicatorView: UIView {
             let paw = UIImageView(image: UIImage(systemName: "pawprint.fill"))
             paw.translatesAutoresizingMaskIntoConstraints = false
             paw.contentMode = .scaleAspectFit
-            paw.tintColor = (index == 0) ? .brandPrimary : .brandSecondary.withAlphaComponent(0.7)
+            paw.tintColor = (index == 0) ? .textPrimary : .textPrimary.withAlphaComponent(0.7)
             paw.alpha = (index == 0) ? 1.0 : 0.45
             paw.transform = .identity
             
@@ -134,7 +134,7 @@ final class PawTypingIndicatorView: UIView {
                 delay: delay,
                 options: [.autoreverse, .repeat, .allowUserInteraction],
                 animations: {
-                    paw.tintColor = .brandPrimary
+                    paw.tintColor = .textPrimary
                 },
                 completion: nil
             )

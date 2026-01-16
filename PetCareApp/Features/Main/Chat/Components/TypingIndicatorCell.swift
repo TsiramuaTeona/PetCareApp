@@ -17,7 +17,7 @@ final class TypingIndicatorCell: UITableViewCell {
     private let bubbleView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .brandSecondary.withAlphaComponent(0.1)
+        view.backgroundColor = .brandPrimary.withAlphaComponent(0.1)
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
         return view

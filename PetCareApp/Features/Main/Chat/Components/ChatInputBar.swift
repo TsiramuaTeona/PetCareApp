@@ -58,10 +58,10 @@ final class ChatInputBar: UIView {
         backgroundColor = .mainBackground
         translatesAutoresizingMaskIntoConstraints = false
         
-        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOpacity = 0.06
-        layer.shadowRadius = 10
-        layer.shadowOffset = CGSize(width: 0, height: -3)
+        layer.shadowRadius = 2
+        layer.shadowOffset = CGSize(width: 0, height: -2)
         
         addSubview(textView)
         addSubview(sendButton)
