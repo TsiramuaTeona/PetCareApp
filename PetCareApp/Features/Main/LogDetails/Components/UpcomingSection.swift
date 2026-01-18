@@ -64,11 +64,12 @@ struct UpcomingSection: View {
                 Spacer()
                 
                 if log.isActionable {
-                    ResolveButton(
-                        action: { resolveAction(log) },
-                        isUrgent: log.isUrgent,
-                        categoryColor: log.category.color
+                    Button(
+                        "",
+                        role: log.isUrgent ? .destructive : .none,
+                        action: { resolveAction(log) }
                     )
+                    .buttonStyle(.resolve(categoryColor: log.category.color))
                 }
             }
             .padding(.vertical)

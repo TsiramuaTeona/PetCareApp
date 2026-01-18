@@ -41,12 +41,9 @@ struct EmptyHouseholdView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.textSecondary)
             
-            PrimaryButton(
-                title: "Setup Household",
-                isLoading: false,
-                action: action
-            )
-            .padding(.horizontal)
+            Button("Setup Household", action: action)
+                .buttonStyle(.primary(isLoading: false))
+                .padding(.horizontal)
             
             Spacer()
         }

@@ -52,12 +52,12 @@ struct AddHealthLogView: View {
             }
             
             ErrorView(message: viewModel.errorMessage)
-            PrimaryButton(
-                title: "Save",
-                isLoading: viewModel.isLoading
-            ) {
+            
+            Button("Save") {
                 Task { await viewModel.save() }
             }
+            .buttonStyle(.primary(isLoading: viewModel.isLoading))
+            .disabled(viewModel.isLoading)
         }
         .padding(24)
     }

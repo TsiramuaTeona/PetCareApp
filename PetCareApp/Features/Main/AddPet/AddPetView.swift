@@ -104,13 +104,12 @@ struct AddPetView: View {
         
         ErrorView(message: viewModel.errorMessage)
         
-        PrimaryButton(
-            title: "Add Pet",
-            isLoading: viewModel.isLoading
-        ) {
+        Button("Add Pet") {
             Task {
                 await viewModel.savePet()
             }
         }
+        .buttonStyle(.primary(isLoading: viewModel.isLoading))
+        .disabled(viewModel.isLoading)
     }
 }

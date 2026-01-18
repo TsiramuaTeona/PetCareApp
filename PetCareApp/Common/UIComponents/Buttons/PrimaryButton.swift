@@ -8,36 +8,47 @@
 
 import SwiftUI
 
-struct PrimaryButton: View {
+// MARK: - PrimaryButton Style
+
+struct PrimaryButton: ButtonStyle {
     // MARK: - Properties
     
-    let title: String
     let isLoading: Bool
-    let action: () -> Void
     
     // MARK: - Body
     
-    var body: some View {
-        content
-            .font(.appButton)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(.brandPrimary)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .disabled(isLoading)
-    }
-    
-    // MARK: - Subviews
-    
-    private var content: some View {
-        Button(action: action) {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
             if isLoading {
                 ProgressView()
                     .tint(.white)
-            } else {
-                Text(title)
             }
+            
+            configuration.label
+            
         }
+        .font(.appButton)
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(
+            isLoading
+            ? .brandPrimary.opacity(0.6)
+            : (configuration.isPressed
+               ? .brandPrimary.opacity(0.8)
+               : .brandPrimary)
+        )
+        .foregroundColor(.white)
+        .cornerRadius(10)
+        .scaleEffect(configuration.isPressed && !isLoading ? 0.98 : 1)
+        .opacity(isLoading ? 0.9 : 1)
+        .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+// MARK: - ButtonStyle Extension
+
+extension ButtonStyle where Self == PrimaryButton {
+    static func primary(isLoading: Bool) -> PrimaryButton {
+        PrimaryButton(isLoading: isLoading)
     }
 }

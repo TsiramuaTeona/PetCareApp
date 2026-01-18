@@ -58,15 +58,14 @@ struct ResetPasswordView: View {
         
         Spacer()
         
-        PrimaryButton(
-            title: "Send Reset Link",
-            isLoading: viewModel.isLoading
-        ) {
+        Button("Send Reset Link") {
             isEmailFocused = false
             Task {
                 await viewModel.resetPassword()
             }
         }
+        .buttonStyle(.primary(isLoading: viewModel.isLoading))
+        .disabled(viewModel.isLoading)
         
         Button {
             dismiss()

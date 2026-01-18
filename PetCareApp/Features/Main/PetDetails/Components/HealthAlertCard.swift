@@ -26,11 +26,12 @@ struct HealthAlertCard: View {
             Spacer()
             
             if log.isActionable {
-                ResolveButton(
-                    action: resolveAction,
-                    isUrgent: log.isUrgent,
-                    categoryColor: log.category.color
+                Button(
+                    "",
+                    role: log.isUrgent ? .destructive : .none,
+                    action: resolveAction
                 )
+                .buttonStyle(.resolve(categoryColor: log.category.color))
             }
         }
         .shadowCard()
@@ -41,7 +42,11 @@ struct HealthAlertCard: View {
     private var icon: some View {
         ZStack {
             Circle()
-                .fill(log.isUrgent ? .error.opacity(0.12) : log.category.color.opacity(0.12))
+                .fill(
+                    log.isUrgent
+                    ? .error.opacity(0.12)
+                    : log.category.color.opacity(0.12)
+                )
                 .frame(width: 44, height: 44)
             
             Image(systemName: log.category.icon)
@@ -58,9 +63,9 @@ struct HealthAlertCard: View {
             
             Text(log.statusText)
                 .font(.appCaption)
-                .foregroundColor(log.isUrgent ? .error.opacity(0.8) : .textSecondary)
+                .foregroundColor(
+                    log.isUrgent ? .error.opacity(0.8) : .textSecondary
+                )
         }
     }
 }
-
-

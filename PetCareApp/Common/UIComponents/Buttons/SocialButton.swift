@@ -8,41 +8,46 @@
 
 import SwiftUI
 
-struct SocialButton: View {
+// MARK: - SocialButton Style
+
+struct SocialButton: ButtonStyle {
     // MARK: - Properties
-    
-    let title: String
-    let iconName: String
+
     let isLoading: Bool
-    let action: () -> Void
-    
+
     // MARK: - Body
-    
-    var body: some View {
-        content
-            .font(.appBody)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color(.systemGray6))
-            .foregroundColor(.textPrimary)
-            .cornerRadius(10)
-            .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-            .disabled(isLoading)
-    }
-    
-    private var content: some View {
-        Button(action: action) {
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
             if isLoading {
                 ProgressView()
                     .tint(.textPrimary)
-            } else {
-                
-                HStack {
-                    Image(iconName)
-                    Text(title)
-                }
             }
+
+            configuration.label
+                .opacity(isLoading ? 0.6 : 1)
+
         }
-        
+        .font(.appButton)
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(
+            configuration.isPressed
+                ? Color(.systemGray6).opacity(0.8)
+                : Color(.systemGray6)
+        )
+        .foregroundColor(.textPrimary)
+        .cornerRadius(10)
+        .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+        .scaleEffect(configuration.isPressed && !isLoading ? 0.98 : 1)
+        .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+// MARK: - ButtonStyle Extension
+
+extension ButtonStyle where Self == SocialButton {
+    static func social(isLoading: Bool) -> SocialButton {
+        SocialButton(isLoading: isLoading)
     }
 }

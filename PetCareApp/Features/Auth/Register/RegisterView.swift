@@ -76,14 +76,11 @@ struct RegisterView: View {
         
         ErrorView(message: viewModel.formError)
         
-        PrimaryButton(
-            title: "Sign Up",
-            isLoading: viewModel.isLoading
-        ) {
-            Task {
-                await viewModel.register()
-            }
+        Button("Sign Up") {
+            Task { await viewModel.register() }
         }
+        .buttonStyle(.primary(isLoading: viewModel.isLoading))
+        .disabled(viewModel.isLoading)
         
         Button {
             dismiss()

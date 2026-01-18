@@ -66,14 +66,11 @@ struct LoginView: View {
         
         Spacer()
         
-        PrimaryButton(
-            title: "Log In",
-            isLoading: viewModel.isLoading,
-        ) {
-            Task {
-                await viewModel.login()
-            }
+        Button("Log In") {
+            Task { await viewModel.login() }
         }
+        .buttonStyle(.primary(isLoading: viewModel.isLoading))
+        .disabled(viewModel.isLoading)
         
         HStack {
             Rectangle()
@@ -90,12 +87,12 @@ struct LoginView: View {
         }
         .padding(.vertical, 8)
         
-        SocialButton(
-            title: "Google",
-            iconName: "Google",
-            isLoading: viewModel.isLoading,
-            action: viewModel.googleButtonTapped
-        )
+        Button(action: viewModel.googleButtonTapped) {
+            Image("Google")
+            Text("Google")
+        }
+        .buttonStyle(.social(isLoading: viewModel.isLoading))
+        .disabled(viewModel.isLoading)
         
         Button {
             navigate(.register)

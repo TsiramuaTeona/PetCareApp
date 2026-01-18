@@ -62,9 +62,10 @@ struct ProfileView: View {
             
             Divider()
             
-            PrimaryButton(title: "Logout", isLoading: false) {
+            Button("Logout") {
                 Task { await viewModel.signOut() }
             }
+            .buttonStyle(.primary(isLoading: false))
         }
         .shadowCard()
     }
