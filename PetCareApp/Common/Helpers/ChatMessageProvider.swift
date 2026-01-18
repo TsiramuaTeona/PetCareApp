@@ -15,15 +15,15 @@ enum ChatMessageProvider {
         .init(
             role: .assistant,
             text: """
-                Hey 👋 I’m your pet-care helper.
-                
-                You can ask me things like:
-                • “What vaccines are coming up?”
-                • “Summarize Bella’s medication schedule”
-                • “Show weight trends and what they might mean”
-                
-                I’ll always use your pets’ health info when available 🐾
-                """,
+            Hey 👋 I’m your pet-care helper.
+            
+            You can ask me things like:
+            • “What vaccines are coming up?”
+            • “Summarize Bella’s medication schedule”
+            • “Show weight trends and what they might mean”
+            
+            I’ll use your pets’ health info when available 🐾
+            """,
             date: Date()
         )
     }
@@ -41,55 +41,30 @@ enum ChatMessageProvider {
     }
     
     static func emptyReplyFallback() -> ChatMessage {
-        assistant(
-            "Hmm… I didn’t get a clear answer. Want to try asking that another way?"
-        )
+        assistant("Hmm… I didn’t get a clear answer 🤔 Try asking in a different way?")
     }
     
     static func genericError() -> ChatMessage {
-        assistant(
-            "Something went wrong on my side 😕 Please try again in a moment."
-        )
+        assistant("Oops 😿 Something went wrong on my side. Please try again in a moment.")
     }
     
-    // MARK: - System / Status
-    
-    static func syncingHousehold() -> ChatMessage {
-        system("Syncing your household pets and health logs…")
-    }
-    
-    static func householdUpdated(hasHousehold: Bool) -> ChatMessage {
-        system(
-            hasHousehold
-            ? "Household updated. Refreshing pet profiles and health data…"
-            : "No household selected - switching to general pet-care mode."
-        )
-    }
-    
-    static func contextLoaded(petCount: Int, petNames: [String]) -> ChatMessage
-    {
-        if petCount == 0 {
-            return system(
-                "No pets found yet 🐾 I can still help with general care, training, feeding, and safety."
-            )
+    static func systemWithPets(petNames: [String]) -> ChatMessage {
+        let cleaned = petNames
+            .map { $0.trimmed }
+            .filter { !$0.isEmpty }
+        
+        if cleaned.isEmpty {
+            return system("🐾 Pets are connected! Ask me about meds, vaccines, food, or weight trends.")
         }
         
-        let names = petNames.prefix(4).joined(separator: ", ")
-        let extra = petCount > 4 ? " +\(petCount - 4) more" : ""
+        let shown = cleaned.prefix(4).joined(separator: ", ")
+        let extra = cleaned.count > 4 ? " +\(cleaned.count - 4) more" : ""
         
-        return system(
-            "Ready! Loaded \(petCount) pet\(petCount > 1 ? "s" : ""): \(names)\(extra).\nAsk me about meds, vaccines, or weight trends."
-        )
+        return system("🐾 I’ve got \(shown)\(extra) loaded. Ask me anything about their care ✨")
     }
     
-    static func refreshingContext() -> ChatMessage {
-        system("Refreshing pet info… 🐾")
-    }
-    
-    static func fallbackContext() -> ChatMessage {
-        system(
-            "I couldn’t load pet data right now — I’ll answer using general pet-care knowledge."
-        )
+    static func systemWithoutPets() -> ChatMessage {
+        system("🤝 I’m your general pet-care assistant! Ask me about feeding, training, safety, or symptoms 🐶🐱")
     }
     
     // MARK: - Private
