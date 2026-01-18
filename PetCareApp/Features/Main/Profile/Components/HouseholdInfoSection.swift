@@ -35,7 +35,8 @@ struct HouseholdInfoSection: View {
     private var titleSection: some View {
         HStack {
             Label("My Household", systemImage: "house.fill")
-                .font(.appHeader)
+                .font(.appTitle)
+                .foregroundColor(.brandSecondary)
             
             Spacer()
             

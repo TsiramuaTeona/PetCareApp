@@ -26,6 +26,8 @@ enum UserServiceError: LocalizedError {
 protocol UserServiceProtocol {
     func createUserProfile(user: UserProfile) async throws
     func getUser(userId: String) async throws -> UserProfile
+    func updateUserProfile(userId: String, fullName: String?, photoUrl: String?)
+    async throws
     func updateUserHousehold(userId: String, householdId: String?) async throws
     func householdIdPublisher(userId: String) -> AnyPublisher<String?, Never>
 }
@@ -33,6 +35,7 @@ protocol UserServiceProtocol {
 // MARK: - UserService
 
 final class UserService: UserServiceProtocol {
+    
     // MARK: - Properties
     
     private let db = Firestore.firestore()
@@ -53,6 +56,22 @@ final class UserService: UserServiceProtocol {
         }
         
         return try snapshot.data(as: UserProfile.self)
+    }
+    
+    func updateUserProfile(userId: String, fullName: String?, photoUrl: String?) async throws {
+        var data: [String: Any] = [:]
+        
+        if let fullName = fullName, fullName.isEmptyOrWhitespace == false {
+            data["fullName"] = fullName.trimmed
+        }
+        
+        if let photoUrl = photoUrl, photoUrl.isEmptyOrWhitespace == false {
+            data["photoUrl"] = photoUrl.trimmed
+        } else {
+            data["photoUrl"] = FieldValue.delete()
+        }
+        
+        try await db.collection("users").document(userId).updateData(data)
     }
     
     func updateUserHousehold(userId: String, householdId: String?) async throws {

@@ -20,6 +20,13 @@ final class AppDIContainer {
     lazy var aiService: AIChatServiceProtocol = AIChatService()
     lazy var calendarService: CalendarServiceProtocol = CalendarService()
     
+    lazy var themeManager: ThemeManager = {
+        let manager = ThemeManager()
+        manager.applyThemeToAllWindows()
+        return manager
+    }()
+
+    
     lazy var reminderSyncService: ReminderSyncServiceProtocol = {
         ReminderSyncService(petService: petService, healthService: healthService)
     }()
@@ -53,7 +60,9 @@ final class AppDIContainer {
         ProfileViewModel(
             authService: authService,
             userService: userService,
-            householdService: householdService
+            imageStorageService: imageStorageService,
+            householdService: householdService,
+            themeManager: themeManager
         )
     }
     

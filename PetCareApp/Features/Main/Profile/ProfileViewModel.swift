@@ -20,11 +20,30 @@ final class ProfileViewModel: ObservableObject {
     @Published var alert: AppAlert?
     @Published private(set) var state: ScreenState = .loading
     
+    @Published var selectedTheme: AppTheme = .system {
+        didSet { themeManager.setTheme(selectedTheme) }
+    }
+    
+    // MARK: - Editing UI State
+    
+    @Published var isEditingProfile: Bool = false
+    @Published var draftFullName: String = ""
+    @Published var draftImageData: Data? = nil
+    
+    var canSaveProfile: Bool {
+        guard let user else { return false }
+        let nameChanged = draftFullName.trimmed != (user.fullName ?? "").trimmed && !draftFullName.isEmptyOrWhitespace
+        let photoChanged = draftImageData != nil
+        return nameChanged || photoChanged
+    }
+    
     // MARK: - Private Properties
     
     private let authService: AuthServiceProtocol
     private let userService: UserServiceProtocol
+    private let imageStorageService: ImageStorageServiceProtocol
     private let householdService: HouseholdServiceProtocol
+    private let themeManager: ThemeManager
     
     // MARK: - Computed Properties
     
@@ -57,11 +76,17 @@ final class ProfileViewModel: ObservableObject {
     init(
         authService: AuthServiceProtocol,
         userService: UserServiceProtocol,
-        householdService: HouseholdServiceProtocol
+        imageStorageService: ImageStorageServiceProtocol,
+        householdService: HouseholdServiceProtocol,
+        themeManager: ThemeManager
     ) {
         self.authService = authService
         self.userService = userService
+        self.imageStorageService = imageStorageService
         self.householdService = householdService
+        self.themeManager = themeManager
+        
+        self.selectedTheme = themeManager.theme
     }
     
     // MARK: - Methods
@@ -81,9 +106,65 @@ final class ProfileViewModel: ObservableObject {
                 household = nil
             }
             
+            if isEditingProfile == false {
+                draftFullName = userProfile.fullName ?? ""
+                draftImageData = nil
+            }
+            
             state = .loaded
         } catch {
             state = .error(error.localizedDescription)
+        }
+    }
+    
+    func startEditingProfile() {
+        guard let user else { return }
+        draftFullName = user.fullName ?? ""
+        draftImageData = nil
+        isEditingProfile = true
+    }
+    
+    func cancelEditingProfile() {
+        if let user {
+            draftFullName = user.fullName ?? ""
+        }
+        draftImageData = nil
+        isEditingProfile = false
+    }
+    
+    func saveProfileChanges() async {
+        guard let userId = authService.currentUserId else { return }
+        
+        state = .loading
+        
+        do {
+            var newPhotoURL: String? = user?.photoUrl
+            
+            if let data = draftImageData {
+                newPhotoURL =
+                try await imageStorageService.uploadUserProfileImage(
+                    userId: userId,
+                    data: data
+                )
+            }
+            
+            let nameToSave: String? =
+            draftFullName.isEmptyOrWhitespace ? nil : draftFullName.trimmed
+            
+            try await userService.updateUserProfile(
+                userId: userId,
+                fullName: nameToSave,
+                photoUrl: newPhotoURL
+            )
+            
+            isEditingProfile = false
+            draftImageData = nil
+            
+            await loadProfile()
+            state = .loaded
+        } catch {
+            alert = .error(error.localizedDescription)
+            state = .loaded
         }
     }
     
@@ -108,7 +189,9 @@ final class ProfileViewModel: ObservableObject {
             await loadProfile()
             newHouseholdName = ""
             
-            alert = .success("Household created! Share code: \(newHouse.joinCode)")
+            alert = .success(
+                "Household created! Share code: \(newHouse.joinCode)"
+            )
             state = .loaded
             
         } catch {
