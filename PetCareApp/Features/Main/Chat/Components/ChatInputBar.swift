@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 16.01.26.
 //
 
-
 import UIKit
 
 final class ChatInputBar: UIView {
@@ -94,15 +93,18 @@ final class ChatInputBar: UIView {
     // MARK: - Actions
     
     private func setupAction() {
-        sendButton.addAction(UIAction { [weak self] _ in
-            guard let self = self else { return }
-            let text = self.textView.text.trimmed
-            guard !text.isEmpty else { return }
-            
-            self.textView.text = ""
-            self.updateTextViewHeight()
-            self.onSend?(text)
-        }, for: .touchUpInside)
+        sendButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self = self else { return }
+                let text = self.textView.text.trimmed
+                guard !text.isEmpty else { return }
+                
+                self.textView.text = ""
+                self.updateTextViewHeight()
+                self.onSend?(text)
+            },
+            for: .touchUpInside
+        )
     }
     
     // MARK: - Helpers
@@ -110,10 +112,18 @@ final class ChatInputBar: UIView {
     private func updateTextViewHeight() {
         guard textView.bounds.width > 0 else { return }
         
-        let size = CGSize(width: textView.bounds.width, height: .greatestFiniteMagnitude)
+        let size = CGSize(
+            width: textView.bounds.width,
+            height: .greatestFiniteMagnitude
+        )
+        
         let estimatedHeight = textView.sizeThatFits(size).height
         
-        let clamped = min(max(estimatedHeight, minTextViewHeight), maxTextViewHeight)
+        let clamped = min(
+            max(estimatedHeight, minTextViewHeight),
+            maxTextViewHeight
+        )
+        
         textViewHeightConstraint.constant = clamped
         
         textView.isScrollEnabled = estimatedHeight > maxTextViewHeight

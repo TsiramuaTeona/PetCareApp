@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import UIKit
 import Combine
+import UIKit
 
 final class AppCoordinator: Coordinator {
     // MARK: - Flow State
@@ -49,11 +48,6 @@ final class AppCoordinator: Coordinator {
         }
         
         observeAuthState()
-    }
-    
-    func stop() {
-        cancellables.removeAll()
-        clearChildren()
     }
     
     // MARK: - Private Methods

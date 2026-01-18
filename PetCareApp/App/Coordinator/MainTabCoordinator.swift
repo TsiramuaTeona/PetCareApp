@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import UIKit
 import SwiftUI
+import UIKit
 
 final class MainTabCoordinator: Coordinator {
     // MARK: - Properties
@@ -34,7 +33,10 @@ final class MainTabCoordinator: Coordinator {
     
     func start() {
         setupTabs()
-        navigationController.setViewControllers([tabBarController], animated: false)
+        navigationController.setViewControllers(
+            [tabBarController],
+            animated: false
+        )
         navigationController.setNavigationBarHidden(true, animated: false)
     }
     
@@ -69,9 +71,14 @@ final class MainTabCoordinator: Coordinator {
     // MARK: - Private Methods
     
     private func setupTabs() {
-        let controllers = MainTab.allCases.map { tab -> UINavigationController in
+        let controllers = MainTab.allCases.map {
+            tab -> UINavigationController in
             let nav = UINavigationController()
-            nav.tabBarItem = UITabBarItem(title: tab.title, image: tab.icon, tag: tab.rawValue)
+            nav.tabBarItem = UITabBarItem(
+                title: tab.title,
+                image: tab.icon,
+                tag: tab.rawValue
+            )
             
             let root = rootViewController(for: tab)
             nav.setViewControllers([root], animated: false)
@@ -108,12 +115,14 @@ final class MainTabCoordinator: Coordinator {
             
         case .map:
             let viewModel = container.makeMapViewModel()
-            return MapViewController(viewModel: viewModel, locationService: container.locationService)
+            return MapViewController(
+                viewModel: viewModel,
+                locationService: container.locationService
+            )
             
         case .chat:
             let viewModel = container.makeChatViewModel()
             return ChatViewController(viewModel: viewModel)
-
             
         case .profile:
             let viewModel = container.makeProfileViewModel()
@@ -134,7 +143,10 @@ final class MainTabCoordinator: Coordinator {
                 self?.handle(destination)
             }
         
-        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
+        navigation.pushViewController(
+            hostingController(view, hidesBottomBarWhenPushed: true),
+            animated: true
+        )
     }
     
     private func showAddPet(householdId: String) {
@@ -143,7 +155,10 @@ final class MainTabCoordinator: Coordinator {
         let viewModel = container.makeAddPetViewModel(householdId: householdId)
         let view = AddPetView(viewModel: viewModel)
         
-        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
+        navigation.pushViewController(
+            hostingController(view, hidesBottomBarWhenPushed: true),
+            animated: true
+        )
     }
     
     private func showEditPet(pet: Pet, onSave: @escaping (Pet) -> Void) {
@@ -157,11 +172,17 @@ final class MainTabCoordinator: Coordinator {
         navigation.present(viewController, animated: true)
     }
     
-    
-    private func showAddHealthLog(petId: String, category: LogCategory, onSave: @escaping () -> Void) {
+    private func showAddHealthLog(
+        petId: String,
+        category: LogCategory,
+        onSave: @escaping () -> Void
+    ) {
         guard let navigation = currentTabNavigation() else { return }
         
-        let viewModel = container.makeAddHealthLogViewModel(petId: petId, category: category)
+        let viewModel = container.makeAddHealthLogViewModel(
+            petId: petId,
+            category: category
+        )
         viewModel.onSaveSuccess = { [weak navigation] in
             navigation?.dismiss(animated: true)
             onSave()
@@ -171,13 +192,21 @@ final class MainTabCoordinator: Coordinator {
         navigation.present(hostingController(view), animated: true)
     }
     
-    private func showLogDetails(petId: String, petName: String, log: HealthLog) {
+    private func showLogDetails(petId: String, petName: String, log: HealthLog)
+    {
         guard let navigation = currentTabNavigation() else { return }
         
-        let viewModel = container.makeLogDetailsViewModel(petId: petId, petName: petName, log: log)
+        let viewModel = container.makeLogDetailsViewModel(
+            petId: petId,
+            petName: petName,
+            log: log
+        )
         let view = LogDetailsView(viewModel: viewModel)
         
-        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
+        navigation.pushViewController(
+            hostingController(view, hidesBottomBarWhenPushed: true),
+            animated: true
+        )
     }
     
     private func showRemindersList(items: [ReminderItem]) {
@@ -189,6 +218,9 @@ final class MainTabCoordinator: Coordinator {
                 self?.handle(destination)
             }
         
-        navigation.pushViewController(hostingController(view, hidesBottomBarWhenPushed: true), animated: true)
+        navigation.pushViewController(
+            hostingController(view, hidesBottomBarWhenPushed: true),
+            animated: true
+        )
     }
 }

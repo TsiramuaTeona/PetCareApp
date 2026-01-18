@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import Foundation
 
 struct LogScheduler {
@@ -16,7 +15,12 @@ struct LogScheduler {
         currentLog: HealthLog,
         completionDate: Date = Date()
     ) -> HealthLog? {
-        guard let nextDate = calculateNextDate(for: currentLog, completionDate: completionDate) else {
+        guard
+            let nextDate = calculateNextDate(
+                for: currentLog,
+                completionDate: completionDate
+            )
+        else {
             return nil
         }
         
@@ -41,7 +45,10 @@ struct LogScheduler {
     
     // MARK: - Private Methods
     
-    private static func calculateNextDate(for log: HealthLog, completionDate: Date) -> Date? {
+    private static func calculateNextDate(
+        for log: HealthLog,
+        completionDate: Date
+    ) -> Date? {
         let originalDueDate = log.nextDueDate ?? log.date
         if log.isMedication {
             let timesPerDay = Double(max(1, log.timesPerDay ?? 1))
@@ -53,13 +60,13 @@ struct LogScheduler {
         guard let rule = log.recurrence else { return nil }
         
         switch rule {
-        case .daily:            return originalDueDate.adding(days: 1)
-        case .weekly:           return originalDueDate.adding(days: 7)
-        case .monthly:          return originalDueDate.adding(months: 1)
+        case .daily: return originalDueDate.adding(days: 1)
+        case .weekly: return originalDueDate.adding(days: 7)
+        case .monthly: return originalDueDate.adding(months: 1)
         case .everyThreeMonths: return originalDueDate.adding(months: 3)
-        case .everySixMonths:   return originalDueDate.adding(months: 6)
-        case .yearly:           return originalDueDate.adding(years: 1)
-        case .none:             return nil
+        case .everySixMonths: return originalDueDate.adding(months: 6)
+        case .yearly: return originalDueDate.adding(years: 1)
+        case .none: return nil
         }
     }
 }

@@ -5,8 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
-
 import SwiftUI
 
 struct UpcomingAlertsSection: View {
@@ -29,7 +27,13 @@ struct UpcomingAlertsSection: View {
                             Task { await viewModel.resolveLog(log) }
                         }
                         .onTapGesture {
-                            navigate(.logDetails(petId: viewModel.petId, petName: viewModel.pet.name, log: log))
+                            navigate(
+                                .logDetails(
+                                    petId: viewModel.petId,
+                                    petName: viewModel.pet.name,
+                                    log: log
+                                )
+                            )
                         }
                     }
                 }

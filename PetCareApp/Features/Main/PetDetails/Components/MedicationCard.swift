@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
 import SwiftUI
 
 struct MedicationCard: View {
@@ -116,7 +115,6 @@ struct MedicationCard: View {
             Divider()
                 .frame(height: 30)
                 .overlay(Color.white.opacity(0.3))
-            
             
             VStack(alignment: .leading, spacing: 10) {
                 DetailRow(

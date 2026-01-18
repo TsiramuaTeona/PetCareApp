@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 import Foundation
 
 enum AuthError: LocalizedError {

@@ -5,12 +5,11 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import UIKit
-import SwiftUI
-import FirebaseCore
 import FirebaseAuth
+import FirebaseCore
 import GoogleSignIn
+import SwiftUI
+import UIKit
 
 final class AuthCoordinator: Coordinator {
     // MARK: - Properties
@@ -66,7 +65,10 @@ final class AuthCoordinator: Coordinator {
         
         let viewController = UIHostingController(rootView: view)
         
-        navigationController.setViewControllers([viewController], animated: false)
+        navigationController.setViewControllers(
+            [viewController],
+            animated: false
+        )
         navigationController.setNavigationBarHidden(true, animated: false)
     }
     
@@ -89,7 +91,9 @@ final class AuthCoordinator: Coordinator {
     @MainActor
     private func performGoogleSignIn(viewModel: LoginViewModel) async {
         guard let clientID = FirebaseApp.app()?.options.clientID else {
-            viewModel.handleGoogleSignInResult(.failure(AuthError.unknown("Missing Firebase clientID")))
+            viewModel.handleGoogleSignInResult(
+                .failure(AuthError.unknown("Missing Firebase clientID"))
+            )
             return
         }
         
@@ -99,9 +103,13 @@ final class AuthCoordinator: Coordinator {
             let config = GIDConfiguration(clientID: clientID)
             GIDSignIn.sharedInstance.configuration = config
             
-            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
+            let result = try await GIDSignIn.sharedInstance.signIn(
+                withPresenting: presenter
+            )
             
-            guard let idToken = result.user.idToken?.tokenString, !idToken.isEmpty else {
+            guard let idToken = result.user.idToken?.tokenString,
+                  !idToken.isEmpty
+            else {
                 throw AuthError.unknown("Missing ID token")
             }
             
@@ -127,7 +135,9 @@ final class AuthCoordinator: Coordinator {
         guard let firebaseUser = Auth.auth().currentUser else { return }
         
         do {
-            _ = try await container.userService.getUser(userId: firebaseUser.uid)
+            _ = try await container.userService.getUser(
+                userId: firebaseUser.uid
+            )
             return
         } catch {
             let profile = UserProfile(
@@ -147,7 +157,8 @@ final class AuthCoordinator: Coordinator {
             let scene = UIApplication.shared.connectedScenes
                 .compactMap({ $0 as? UIWindowScene })
                 .first(where: { $0.activationState == .foregroundActive }),
-            let root = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController
+            let root = scene.windows.first(where: { $0.isKeyWindow })?
+                .rootViewController
         else {
             return navigationController
         }

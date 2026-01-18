@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 15.01.26.
 //
 
-
-import Foundation
 import FirebaseAILogic
+import Foundation
 
 // MARK: - AIChatServiceProtocol
 
@@ -28,32 +27,32 @@ final class AIChatService: AIChatServiceProtocol {
     
     func startSession(context: String) {
         let systemPrompt = """
-        You are a helpful pet care assistant inside a mobile app.
-        
-        Style:
-        - Be friendly, practical, and concise.
-        - Prefer short paragraphs.
-        - Use emojis as section markers (e.g. 🐶 🐱 💊 📅 ⚖️ ✅ ⚠️).
-        - IMPORTANT: Do NOT use Markdown formatting.
-          - No bullet prefixes like "*" or "-" or "•"
-          - No "**bold**"
-          - No headings like "###"
-        - If you need lists, use plain lines like:
-          🐾 Pet Name (Species)
-          📅 Upcoming: ...
-          💊 Meds: ...
-          ⚖️ Weight: ...
-        
-        Safety rules:
-        - You are not a veterinarian.
-        - If symptoms are severe (trouble breathing, collapse, seizures, bleeding, toxin ingestion),
-          advise urgent vet care immediately.
-        - Do not give medication dosages unless user explicitly provides vet-prescribed instructions.
-        - Ask clarifying questions when needed (species, age, weight, duration).
-        
-        User context (pets + health logs):
-        \(context)
-        """
+            You are a helpful pet care assistant inside a mobile app.
+            
+            Style:
+            - Be friendly, practical, and concise.
+            - Prefer short paragraphs.
+            - Use emojis as section markers (e.g. 🐶 🐱 💊 📅 ⚖️ ✅ ⚠️).
+            - IMPORTANT: Do NOT use Markdown formatting.
+              - No bullet prefixes like "*" or "-" or "•"
+              - No "**bold**"
+              - No headings like "###"
+            - If you need lists, use plain lines like:
+              🐾 Pet Name (Species)
+              📅 Upcoming: ...
+              💊 Meds: ...
+              ⚖️ Weight: ...
+            
+            Safety rules:
+            - You are not a veterinarian.
+            - If symptoms are severe (trouble breathing, collapse, seizures, bleeding, toxin ingestion),
+              advise urgent vet care immediately.
+            - Do not give medication dosages unless user explicitly provides vet-prescribed instructions.
+            - Ask clarifying questions when needed (species, age, weight, duration).
+            
+            User context (pets + health logs):
+            \(context)
+            """
         
         let ai = FirebaseAI.firebaseAI(backend: .googleAI())
         
@@ -70,7 +69,9 @@ final class AIChatService: AIChatServiceProtocol {
             throw NSError(
                 domain: "AIChatService",
                 code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Chat session not started"]
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Chat session not started"
+                ]
             )
         }
         

@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 08.01.26.
 //
 
-
 import SwiftUI
 
 struct EditPetView: View {
@@ -65,7 +64,9 @@ struct EditPetView: View {
                     }
                     .fontWeight(.semibold)
                     .foregroundColor(.brandPrimary)
-                    .disabled(viewModel.state == .loading || viewModel.name.isEmpty)
+                    .disabled(
+                        viewModel.state == .loading || viewModel.name.isEmpty
+                    )
                 }
             }
         }
@@ -144,11 +145,10 @@ struct EditPetView: View {
             .font(.appTitle)
             .foregroundColor(.textPrimary)
             
-            
             Divider()
         }
     }
-
+    
     private var bioSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeaderView(text: "About")
@@ -158,15 +158,19 @@ struct EditPetView: View {
                     .font(.appTitle)
                     .foregroundColor(.textPrimary)
                 
-                TextField("Write a short bio...", text: $viewModel.bio, axis: .vertical)
-                    .lineLimit(4...8)
-                    .padding()
-                    .background(Color.surface)
-                    .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.brandSecondary, lineWidth: 1)
-                    )
+                TextField(
+                    "Write a short bio...",
+                    text: $viewModel.bio,
+                    axis: .vertical
+                )
+                .lineLimit(4...8)
+                .padding()
+                .background(Color.surface)
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.brandSecondary, lineWidth: 1)
+                )
             }
             
             Divider()

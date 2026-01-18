@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 15.01.26.
 //
 
-
 import UIKit
 
 final class ChatViewController: UIViewController {
@@ -242,4 +241,4 @@ extension ChatViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 
-extension ChatViewController: UITableViewDelegate { }
+extension ChatViewController: UITableViewDelegate {}

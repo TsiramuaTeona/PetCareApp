@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
-import SwiftUI
 import Charts
+import SwiftUI
 
 struct WeightChart: View {
     // MARK: - Properties
@@ -81,7 +80,10 @@ struct WeightChart: View {
                     .interpolationMethod(.catmullRom)
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.brandGreen.opacity(0.2), .brandGreen.opacity(0.0)],
+                            colors: [
+                                .brandGreen.opacity(0.2),
+                                .brandGreen.opacity(0.0),
+                            ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -100,7 +102,9 @@ struct WeightChart: View {
                         y: .value("Weight", value)
                     )
                     .symbolSize(150)
-                    .foregroundStyle(selectedLog?.id == log.id ? .brandGreen : .white)
+                    .foregroundStyle(
+                        selectedLog?.id == log.id ? .brandGreen : .white
+                    )
                     .annotation(position: .overlay) {
                         Circle()
                             .stroke(Color.brandGreen, lineWidth: 3)

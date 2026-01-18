@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
 import SwiftUI
 
 struct LogDetailsView: View {
@@ -104,10 +103,13 @@ struct LogDetailsView: View {
     }
     
     private var weightSection: some View {
-        WeightChart(logs: viewModel.chartData, onDelete: { log in
-            Task {
-                await viewModel.deleteLog(log)
+        WeightChart(
+            logs: viewModel.chartData,
+            onDelete: { log in
+                Task {
+                    await viewModel.deleteLog(log)
+                }
             }
-        })
+        )
     }
 }

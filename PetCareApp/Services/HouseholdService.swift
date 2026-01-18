@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 import FirebaseFirestore
 
 // MARK: - HouseholdServiceProtocol
@@ -65,7 +64,10 @@ final class HouseholdService: HouseholdServiceProtocol {
         let householdId = document.documentID
         
         let batch = db.batch()
-        batch.updateData(["memberIds": FieldValue.arrayUnion([userId])], forDocument: householdRef)
+        batch.updateData(
+            ["memberIds": FieldValue.arrayUnion([userId])],
+            forDocument: householdRef
+        )
         
         let userRef = db.collection("users").document(userId)
         batch.updateData(["householdId": householdId], forDocument: userRef)
@@ -81,7 +83,8 @@ final class HouseholdService: HouseholdServiceProtocol {
     }
     
     func getHousehold(id: String) async throws -> Household {
-        let snapshot = try await db.collection("households").document(id).getDocument()
+        let snapshot = try await db.collection("households").document(id)
+            .getDocument()
         return try snapshot.data(as: Household.self)
     }
     
@@ -89,10 +92,16 @@ final class HouseholdService: HouseholdServiceProtocol {
         let batch = db.batch()
         
         let householdRef = db.collection("households").document(id)
-        batch.updateData(["memberIds": FieldValue.arrayRemove([userId])], forDocument: householdRef)
+        batch.updateData(
+            ["memberIds": FieldValue.arrayRemove([userId])],
+            forDocument: householdRef
+        )
         
         let userRef = db.collection("users").document(userId)
-        batch.updateData(["householdId": FieldValue.delete()], forDocument: userRef)
+        batch.updateData(
+            ["householdId": FieldValue.delete()],
+            forDocument: userRef
+        )
         
         try await batch.commit()
     }

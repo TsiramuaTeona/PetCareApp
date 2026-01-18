@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
 import SwiftUI
 
 struct DetailsSection: View {
@@ -82,16 +81,29 @@ struct DetailsSection: View {
                 Label("Dosage - \(dosage)", systemImage: "pills")
             }
             
-            if let value = viewModel.sourceLog.value, !viewModel.isWeightCategory {
-                Label("Value - \(String(format: "%.1f", value)) kg", systemImage: "scalemass")
+            if let value = viewModel.sourceLog.value,
+               !viewModel.isWeightCategory
+            {
+                Label(
+                    "Value - \(String(format: "%.1f", value)) kg",
+                    systemImage: "scalemass"
+                )
             }
             
             if let recurrence = viewModel.sourceLog.recurrence {
-                Label("Freqency - \(recurrence.rawValue.capitalized)", systemImage: "repeat")
+                Label(
+                    "Freqency - \(recurrence.rawValue.capitalized)",
+                    systemImage: "repeat"
+                )
             }
             
-            if let times = viewModel.sourceLog.timesPerDay, times > 0, !viewModel.isWeightCategory {
-                Label("\(times)x per day", systemImage: "clock.arrow.circlepath")
+            if let times = viewModel.sourceLog.timesPerDay, times > 0,
+               !viewModel.isWeightCategory
+            {
+                Label(
+                    "\(times)x per day",
+                    systemImage: "clock.arrow.circlepath"
+                )
             }
             
             if let duration = viewModel.sourceLog.durationDays {

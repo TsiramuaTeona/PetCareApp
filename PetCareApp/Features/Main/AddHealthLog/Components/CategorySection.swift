@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct CategorySection: View {
@@ -77,8 +76,11 @@ struct CategorySection: View {
             DatePicker(
                 "",
                 selection: $viewModel.actionDate,
-                in: viewModel.isWeight ? Date.distantPast...Date() : Date.distantPast...Date.distantFuture,
-                displayedComponents: viewModel.isMedication ? [.date, .hourAndMinute] : [.date]
+                in: viewModel.isWeight
+                ? Date.distantPast...Date()
+                : Date.distantPast...Date.distantFuture,
+                displayedComponents: viewModel.isMedication
+                ? [.date, .hourAndMinute] : [.date]
             )
             .labelsHidden()
             .id(viewModel.isMedication)

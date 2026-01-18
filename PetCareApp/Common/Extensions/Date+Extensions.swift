@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import Foundation
 
 extension Date {
@@ -75,7 +74,10 @@ extension Date {
     
     func replaceDate(with otherDate: Date) -> Date {
         let calendar = Calendar.app
-        let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: self)
+        let timeComponents = calendar.dateComponents(
+            [.hour, .minute, .second],
+            from: self
+        )
         
         return calendar.date(
             bySettingHour: timeComponents.hour ?? 0,
@@ -124,7 +126,11 @@ extension Date {
     
     func ageDescription(to endDate: Date = Date()) -> String {
         let calendar = Calendar.app
-        let components = calendar.dateComponents([.year, .month], from: self, to: endDate)
+        let components = calendar.dateComponents(
+            [.year, .month],
+            from: self,
+            to: endDate
+        )
         
         let years = components.year ?? 0
         let months = components.month ?? 0
@@ -146,8 +152,12 @@ private extension Calendar {
         return cal
     }()
     
-    func addingMonthsClamped(from date: Date, months: Int) -> Date? {
-        let comps = dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+    func addingMonthsClamped(from date: Date, months: Int) -> Date?
+    {
+        let comps = dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: date
+        )
         
         guard
             let year = comps.year,
@@ -158,8 +168,14 @@ private extension Calendar {
         var newMonth = month + months
         var newYear = year
         
-        while newMonth > 12 { newMonth -= 12; newYear += 1 }
-        while newMonth < 1 { newMonth += 12; newYear -= 1 }
+        while newMonth > 12 {
+            newMonth -= 12
+            newYear += 1
+        }
+        while newMonth < 1 {
+            newMonth += 12
+            newYear -= 1
+        }
         
         var monthStart = DateComponents()
         monthStart.year = newYear
@@ -183,7 +199,10 @@ private extension Calendar {
     }
     
     func addingYearsClamped(from date: Date, years: Int) -> Date? {
-        let comps = dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        let comps = dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: date
+        )
         
         guard
             let year = comps.year,

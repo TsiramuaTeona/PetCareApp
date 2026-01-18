@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 06.01.26.
 //
 
-
 import SwiftUI
 
 struct CodeInputView: View {
@@ -58,7 +57,9 @@ struct CodeInputView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(
-                        isFocused && isCurrentIndex ? Color.brandSecondary : Color.textSecondary.opacity(0.4),
+                        isFocused && isCurrentIndex
+                        ? Color.brandSecondary
+                        : Color.textSecondary.opacity(0.4),
                         lineWidth: 1
                     )
             )

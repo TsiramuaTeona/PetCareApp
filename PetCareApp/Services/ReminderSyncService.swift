@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 // MARK: - ReminderSyncServiceProtocol
 
@@ -59,13 +58,22 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                     let petName = pet.name
                     
                     group.addTask(priority: .utility) {
-                        let logs = try await healthService.fetchLogs(petId: petId)
+                        let logs = try await healthService.fetchLogs(
+                            petId: petId
+                        )
                         
                         for log in logs {
-                            if await ReminderSyncService.shouldSchedule(log: log) {
-                                await NotificationManager.shared.scheduleNotification(for: log, petName: petName)
+                            if await ReminderSyncService.shouldSchedule(
+                                log: log
+                            ) {
+                                await NotificationManager.shared
+                                    .scheduleNotification(
+                                        for: log,
+                                        petName: petName
+                                    )
                             } else {
-                                await NotificationManager.shared.cancelNotification(for: log)
+                                await NotificationManager.shared
+                                    .cancelNotification(for: log)
                             }
                         }
                     }
@@ -74,7 +82,7 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                 try await group.waitForAll()
             }
         } catch is CancellationError {
-          
+            
         } catch {
             print("Sync failed: \(error.localizedDescription)")
         }
@@ -84,7 +92,10 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
         do {
             if ReminderSyncService.shouldSchedule(log: log) {
                 let pet = try await petService.getPet(petId: log.petId)
-                notificationManager.scheduleNotification(for: log, petName: pet.name)
+                notificationManager.scheduleNotification(
+                    for: log,
+                    petName: pet.name
+                )
             } else {
                 notificationManager.cancelNotification(for: log)
             }
@@ -120,18 +131,31 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                         guard let snapshot = snapshot else { return }
                         
                         for change in snapshot.documentChanges {
-                            guard let log = try? change.document.data(as: HealthLog.self) else { continue }
+                            guard
+                                let log = try? change.document.data(
+                                    as: HealthLog.self
+                                )
+                            else { continue }
                             
                             switch change.type {
                             case .added, .modified:
-                                if ReminderSyncService.shouldSchedule(log: log) {
-                                    self.notificationManager.scheduleNotification(for: log, petName: petName)
+                                if ReminderSyncService.shouldSchedule(log: log)
+                                {
+                                    self.notificationManager
+                                        .scheduleNotification(
+                                            for: log,
+                                            petName: petName
+                                        )
                                 } else {
-                                    self.notificationManager.cancelNotification(for: log)
+                                    self.notificationManager.cancelNotification(
+                                        for: log
+                                    )
                                 }
                                 
                             case .removed:
-                                self.notificationManager.cancelNotification(for: log)
+                                self.notificationManager.cancelNotification(
+                                    for: log
+                                )
                             }
                         }
                     }

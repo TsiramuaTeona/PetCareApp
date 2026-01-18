@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 04.01.26.
 //
 
-
-import FirebaseFirestore
 import Combine
+import FirebaseFirestore
 
 // MARK: - UserServiceError
 
@@ -77,7 +76,7 @@ final class UserService: UserServiceProtocol {
                 }
                 
                 let householdId = snapshot.get("householdId") as? String
-                let cleaned = householdId?.trimmingCharacters(in: .whitespacesAndNewlines)
+                let cleaned = householdId?.trimmed
                 subject.send(cleaned?.isEmpty == false ? cleaned : nil)
             }
         

@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import UIKit
 import MapKit
+import UIKit
 
 final class MapViewController: UIViewController {
     // MARK: - Properties

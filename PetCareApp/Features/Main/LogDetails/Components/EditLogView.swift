@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
 import SwiftUI
 
 struct EditLogView: View {
@@ -26,9 +25,10 @@ struct EditLogView: View {
     
     // MARK: - Initializer
     
-    init(log: HealthLog,
-         onSave: @escaping (Date, String, String, String) -> Void,
-         onDelete: @escaping () -> Void
+    init(
+        log: HealthLog,
+        onSave: @escaping (Date, String, String, String) -> Void,
+        onDelete: @escaping () -> Void
     ) {
         _editedLog = State(initialValue: log)
         _date = State(initialValue: log.date)

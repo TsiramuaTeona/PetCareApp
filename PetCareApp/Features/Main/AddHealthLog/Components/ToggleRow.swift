@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct ToggleRow: View {

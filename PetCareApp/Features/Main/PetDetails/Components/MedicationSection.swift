@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct MedicationSection: View {
@@ -38,9 +37,12 @@ struct MedicationSection: View {
             Spacer()
             
             Button {
-                navigate(.addHealthLog(petId: viewModel.petId, category: .medication) {
-                    Task { await viewModel.refresh() }
-                })
+                navigate(
+                    .addHealthLog(petId: viewModel.petId, category: .medication)
+                    {
+                        Task { await viewModel.refresh() }
+                    }
+                )
             } label: {
                 Image(systemName: "plus")
                     .foregroundColor(.white)
@@ -59,7 +61,11 @@ struct MedicationSection: View {
                     MedicationCard(log: log)
                         .onTapGesture {
                             navigate(
-                                .logDetails(petId: viewModel.petId, petName: viewModel.pet.name, log: log)
+                                .logDetails(
+                                    petId: viewModel.petId,
+                                    petName: viewModel.pet.name,
+                                    log: log
+                                )
                             )
                         }
                 }
@@ -69,5 +75,4 @@ struct MedicationSection: View {
         }
         .padding(.horizontal, -24)
     }
-        
 }

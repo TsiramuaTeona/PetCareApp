@@ -5,10 +5,9 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import Foundation
 import Combine
 import FirebaseAuth
+import Foundation
 
 @MainActor
 final class HomeViewModel: ObservableObject {

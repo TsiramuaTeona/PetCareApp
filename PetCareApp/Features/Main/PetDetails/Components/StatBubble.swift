@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 09.01.26.
 //
 
-
 import SwiftUI
 
 struct StatBubble: View {

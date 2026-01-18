@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
 import SwiftUI
 
 struct CategoryFilterPill: View {
@@ -36,7 +35,10 @@ struct CategoryFilterPill: View {
             )
             .overlay(
                 Capsule()
-                    .stroke(isSelected ? color : Color.textSecondary.opacity(0.2), lineWidth: 1)
+                    .stroke(
+                        isSelected ? color : Color.textSecondary.opacity(0.2),
+                        lineWidth: 1
+                    )
             )
             .foregroundColor(isSelected ? color : .textSecondary)
         }

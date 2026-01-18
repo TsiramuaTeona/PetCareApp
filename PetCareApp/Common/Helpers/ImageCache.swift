@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 09.01.26.
 //
 
-
-import SwiftUI
 import Combine
+import SwiftUI
 
 // MARK: - Image Cache
 
@@ -35,7 +34,9 @@ class ImageLoader: ObservableObject {
         
         self.urlString = urlString
         
-        if let cachedImage = ImageCache.shared.object(forKey: urlString as NSString) {
+        if let cachedImage = ImageCache.shared.object(
+            forKey: urlString as NSString
+        ) {
             self.image = cachedImage
             return
         }
@@ -47,7 +48,10 @@ class ImageLoader: ObservableObject {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 guard let loadedImage = UIImage(data: data) else { return }
                 
-                ImageCache.shared.setObject(loadedImage, forKey: urlString as NSString)
+                ImageCache.shared.setObject(
+                    loadedImage,
+                    forKey: urlString as NSString
+                )
                 
                 self.image = loadedImage
                 self.isLoading = false

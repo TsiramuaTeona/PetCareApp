@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
 import SwiftUI
 
 struct RemindersView: View {
@@ -89,7 +88,11 @@ struct RemindersView: View {
                         ReminderCard(item: item)
                             .onTapGesture {
                                 navigate(
-                                    .logDetails(petId: item.petId, petName: item.petName, log: item.log)
+                                    .logDetails(
+                                        petId: item.petId,
+                                        petName: item.petName,
+                                        log: item.log
+                                    )
                                 )
                             }
                     }

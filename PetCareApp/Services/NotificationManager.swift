@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
-import UserNotifications
 import UIKit
+import UserNotifications
 
 final class NotificationManager: NSObject {
     
@@ -54,7 +53,9 @@ final class NotificationManager: NSObject {
         else { return }
         
         if let times = log.reminderTimes, !times.isEmpty {
-            let timesSorted = times.sorted { $0.timeIntervalSince1970 < $1.timeIntervalSince1970 }
+            let timesSorted = times.sorted {
+                $0.timeIntervalSince1970 < $1.timeIntervalSince1970
+            }
             
             for (index, time) in timesSorted.enumerated() {
                 scheduleOne(
@@ -113,8 +114,15 @@ final class NotificationManager: NSObject {
         ? calendar.dateComponents([.hour, .minute], from: triggerDate)
         : calendar.dateComponents([.year, .month, .day, .hour, .minute], from: triggerDate)
         
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: repeats)
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: components,
+            repeats: repeats
+        )
+        let request = UNNotificationRequest(
+            identifier: identifier,
+            content: content,
+            trigger: trigger
+        )
         
         center.add(request)
     }

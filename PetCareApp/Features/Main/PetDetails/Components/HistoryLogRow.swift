@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
 import SwiftUI
 
 struct HistoryLogRow: View {
@@ -18,7 +17,7 @@ struct HistoryLogRow: View {
     // MARK: - Body
     
     var body: some View {
-        HStack (spacing: 12) {
+        HStack(spacing: 12) {
             Image(systemName: log.category.icon)
                 .foregroundColor(log.category.color)
                 .font(.appTitle)

@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct StandardDetailsSection: View {
@@ -65,9 +64,13 @@ struct StandardDetailsSection: View {
                 .font(.appBody)
                 .foregroundColor(.textSecondary)
             
-            TextField("Optional notes...", text: $viewModel.note, axis: .vertical)
-                .lineLimit(3...6)
-                .borderedSection()
+            TextField(
+                "Optional notes...",
+                text: $viewModel.note,
+                axis: .vertical
+            )
+            .lineLimit(3...6)
+            .borderedSection()
         }
     }
 }

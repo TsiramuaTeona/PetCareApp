@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import Foundation
 import Combine
+import Foundation
 
 enum RegisterField: Hashable {
     case fullName, email, password, confirmPassword
@@ -101,7 +100,10 @@ final class RegisterViewModel: ObservableObject {
             fieldErrors[.password] = error
         }
         
-        if let error = FieldValidator.confirmPassword(confirmPassword, password: password) {
+        if let error = FieldValidator.confirmPassword(
+            confirmPassword,
+            password: password
+        ) {
             fieldErrors[.confirmPassword] = error
         }
         

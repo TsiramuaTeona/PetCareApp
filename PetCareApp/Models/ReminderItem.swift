@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
 import Foundation
 
 struct ReminderItem: Identifiable, Equatable {

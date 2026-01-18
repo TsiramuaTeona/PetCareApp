@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 04.01.26.
 //
 
-
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 struct Household: Codable, Identifiable {
     @DocumentID var id: String?

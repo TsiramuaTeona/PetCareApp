@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 14.01.26.
 //
 
-
 import SwiftUI
 
 struct FunFactCard: View {

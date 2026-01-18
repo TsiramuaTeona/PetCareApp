@@ -5,10 +5,9 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import Foundation
 import Combine
 import FirebaseAuth
+import Foundation
 import GoogleSignIn
 
 // MARK: - AuthServiceProtocol
@@ -37,7 +36,6 @@ final class AuthService: AuthServiceProtocol {
     
     private let userSessionSubject = CurrentValueSubject<User?, Never>(Auth.auth().currentUser)
     private var handle: AuthStateDidChangeListenerHandle?
-    
     
     var currentUser: User? { Auth.auth().currentUser }
     var currentUserId: String? { Auth.auth().currentUser?.uid }
@@ -85,7 +83,10 @@ final class AuthService: AuthServiceProtocol {
     
     func signUp(email: String, password: String) async throws {
         do {
-            try await Auth.auth().createUser(withEmail: email, password: password)
+            try await Auth.auth().createUser(
+                withEmail: email,
+                password: password
+            )
         } catch {
             throw mapFirebaseError(error)
         }

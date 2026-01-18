@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import Foundation
 import Combine
+import Foundation
 
 @MainActor
 final class PetDetailsViewModel: ObservableObject {
@@ -74,7 +73,7 @@ final class PetDetailsViewModel: ObservableObject {
     }
     
     func resolveLog(_ log: HealthLog) async {
-        guard let _ = log.id else { return }
+        guard log.id != nil else { return }
         
         let now = Date()
         
@@ -84,7 +83,10 @@ final class PetDetailsViewModel: ObservableObject {
         historyLog.date = now
         historyLog.nextDueDate = nil
         
-        if let nextLog = LogScheduler.generateNextLog(currentLog: log, completionDate: now) {
+        if let nextLog = LogScheduler.generateNextLog(
+            currentLog: log,
+            completionDate: now
+        ) {
             await createAndSchedule(nextLog, petName: pet.name)
         }
         
@@ -151,7 +153,10 @@ final class PetDetailsViewModel: ObservableObject {
             let newId = try await healthService.addLog(log)
             var scheduledLog = log
             scheduledLog.id = newId
-            notificationManager.scheduleNotification(for: scheduledLog, petName: petName)
+            notificationManager.scheduleNotification(
+                for: scheduledLog,
+                petName: petName
+            )
         } catch {
             alert = .error("Failed to create next recurrence: \(error.localizedDescription)")
         }

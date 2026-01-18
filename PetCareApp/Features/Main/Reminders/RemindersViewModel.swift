@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
-import Foundation
 import Combine
+import Foundation
 
 @MainActor
 final class RemindersViewModel: ObservableObject {
@@ -20,7 +19,7 @@ final class RemindersViewModel: ObservableObject {
     private let allReminders: [ReminderItem]
     
     var categories: [LogCategory] {
-        LogCategory.allCases.filter {$0 != .weight}
+        LogCategory.allCases.filter { $0 != .weight }
     }
     
     // MARK: - Initializer

@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import Foundation
 
 struct MedicationScheduler {
@@ -20,7 +19,11 @@ struct MedicationScheduler {
         times.reserveCapacity(count)
         
         let calendar = Calendar.app
-        let startComponents = calendar.dateComponents([.hour, .minute], from: start)
+        let startComponents = calendar.dateComponents(
+            [.hour, .minute],
+            from: start
+        )
+        
         let today = Date()
         
         guard let startToday = calendar.date(
@@ -48,7 +51,10 @@ struct MedicationScheduler {
         let calendar = Calendar.app
         
         let todayOccurrences: [Date] = normalized.compactMap { timeAnchor in
-            let comps = calendar.dateComponents([.hour, .minute], from: timeAnchor)
+            let comps = calendar.dateComponents(
+                [.hour, .minute],
+                from: timeAnchor
+            )
             return calendar.date(
                 bySettingHour: comps.hour ?? 0,
                 minute: comps.minute ?? 0,
@@ -62,7 +68,10 @@ struct MedicationScheduler {
         }
         
         guard let firstAnchor = normalized.first else { return nil }
-        let firstComps = calendar.dateComponents([.hour, .minute], from: firstAnchor)
+        let firstComps = calendar.dateComponents(
+            [.hour, .minute],
+            from: firstAnchor
+        )
         
         let tomorrow = now.adding(days: 1)
         return calendar.date(

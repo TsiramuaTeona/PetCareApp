@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 14.01.26.
 //
 
-
 import Foundation
 
 struct FunFactService {
@@ -27,13 +26,21 @@ struct FunFactService {
             return cachedFacts.randomElement() ?? "Pets are amazing!"
         }
         
-        guard let url = Bundle.main.url(forResource: "PetFacts", withExtension: "json") else {
+        guard
+            let url = Bundle.main.url(
+                forResource: "PetFacts",
+                withExtension: "json"
+            )
+        else {
             return "Could not find PetFacts.json"
         }
         
         do {
             let data = try Data(contentsOf: url)
-            let decodedData = try JSONDecoder().decode(FactData.self, from: data)
+            let decodedData = try JSONDecoder().decode(
+                FactData.self,
+                from: data
+            )
             cachedFacts = decodedData.facts
             
             return cachedFacts.randomElement() ?? "Pets are amazing!"

@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 import MapKit
 
 @MainActor
@@ -62,8 +61,14 @@ final class MapViewModel {
     
     private func shouldReload(for coordinate: CLLocationCoordinate2D) -> Bool {
         guard let last = lastCenter else { return true }
-        let lastLoc = CLLocation(latitude: last.latitude, longitude: last.longitude)
-        let newLoc = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let lastLoc = CLLocation(
+            latitude: last.latitude,
+            longitude: last.longitude
+        )
+        let newLoc = CLLocation(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
+        )
         return lastLoc.distance(from: newLoc) > 500
     }
 }

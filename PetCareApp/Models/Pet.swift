@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 struct Pet: Codable, Identifiable {
     @DocumentID var id: String?
@@ -21,7 +20,7 @@ struct Pet: Codable, Identifiable {
     var birthDate: Date
     var photoUrl: String?
     
-    var color: String? 
+    var color: String?
     var bio: String?
     
     let createdAt: Date

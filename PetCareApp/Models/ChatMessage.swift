@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 15.01.26.
 //
 
-
 import Foundation
 
 struct ChatMessage: Identifiable, Equatable {

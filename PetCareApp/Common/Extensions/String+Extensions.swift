@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 09.01.26.
 //
 
-
 import Foundation
 
 extension String {
@@ -27,7 +26,11 @@ extension String {
     
     var normalize: String {
         trimmed
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .replacingOccurrences(
+                of: "\\s+",
+                with: " ",
+                options: .regularExpression
+            )
             .lowercased()
     }
 }

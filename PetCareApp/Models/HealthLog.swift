@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 05.01.26.
 //
 
-
-import Foundation
 import FirebaseFirestore
+import Foundation
 import SwiftUI
 
 struct HealthLog: Codable, Identifiable, Equatable {
@@ -81,13 +80,13 @@ extension HealthLog {
             guard let recurrence = recurrence else { return 0 }
             
             switch recurrence {
-            case .daily:            return 0
-            case .weekly:           return 1
-            case .monthly:          return 5
+            case .daily: return 0
+            case .weekly: return 1
+            case .monthly: return 5
             case .everyThreeMonths: return 7
-            case .everySixMonths:   return 14
-            case .yearly:           return 30
-            case .none:             return 0
+            case .everySixMonths: return 14
+            case .yearly: return 30
+            case .none: return 0
             }
         }()
         

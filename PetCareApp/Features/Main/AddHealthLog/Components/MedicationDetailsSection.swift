@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct MedicationDetailsSection: View {
@@ -55,8 +54,12 @@ struct MedicationDetailsSection: View {
             
             Spacer()
             
-            Stepper("\(viewModel.timesPerDay)x daily", value: $viewModel.timesPerDay, in: 1...4)
-                .labelsHidden()
+            Stepper(
+                "\(viewModel.timesPerDay)x daily",
+                value: $viewModel.timesPerDay,
+                in: 1...4
+            )
+            .labelsHidden()
             
             Text("\(viewModel.timesPerDay)x daily")
                 .foregroundColor(.brandPrimary)

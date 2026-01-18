@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 15.01.26.
 //
 
-
 import Foundation
 
 enum ChatMessageProvider {
@@ -16,15 +15,15 @@ enum ChatMessageProvider {
         .init(
             role: .assistant,
             text: """
-            Hey 👋 I’m your pet-care helper.
-            
-            You can ask me things like:
-            • “What vaccines are coming up?”
-            • “Summarize Bella’s medication schedule”
-            • “Show weight trends and what they might mean”
-            
-            I’ll always use your pets’ health info when available 🐾
-            """,
+                Hey 👋 I’m your pet-care helper.
+                
+                You can ask me things like:
+                • “What vaccines are coming up?”
+                • “Summarize Bella’s medication schedule”
+                • “Show weight trends and what they might mean”
+                
+                I’ll always use your pets’ health info when available 🐾
+                """,
             date: Date()
         )
     }
@@ -42,11 +41,15 @@ enum ChatMessageProvider {
     }
     
     static func emptyReplyFallback() -> ChatMessage {
-        assistant("Hmm… I didn’t get a clear answer. Want to try asking that another way?")
+        assistant(
+            "Hmm… I didn’t get a clear answer. Want to try asking that another way?"
+        )
     }
     
     static func genericError() -> ChatMessage {
-        assistant("Something went wrong on my side 😕 Please try again in a moment.")
+        assistant(
+            "Something went wrong on my side 😕 Please try again in a moment."
+        )
     }
     
     // MARK: - System / Status
@@ -63,7 +66,8 @@ enum ChatMessageProvider {
         )
     }
     
-    static func contextLoaded(petCount: Int, petNames: [String]) -> ChatMessage {
+    static func contextLoaded(petCount: Int, petNames: [String]) -> ChatMessage
+    {
         if petCount == 0 {
             return system(
                 "No pets found yet 🐾 I can still help with general care, training, feeding, and safety."
@@ -83,7 +87,9 @@ enum ChatMessageProvider {
     }
     
     static func fallbackContext() -> ChatMessage {
-        system("I couldn’t load pet data right now — I’ll answer using general pet-care knowledge.")
+        system(
+            "I couldn’t load pet data right now — I’ll answer using general pet-care knowledge."
+        )
     }
     
     // MARK: - Private

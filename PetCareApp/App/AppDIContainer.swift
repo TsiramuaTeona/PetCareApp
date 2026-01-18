@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 final class AppDIContainer {
     
     // MARK: - Services
@@ -82,7 +81,9 @@ final class AppDIContainer {
         )
     }
     
-    func makeAddHealthLogViewModel(petId: String, category: LogCategory) -> AddHealthLogViewModel {
+    func makeAddHealthLogViewModel(petId: String, category: LogCategory)
+    -> AddHealthLogViewModel
+    {
         AddHealthLogViewModel(
             petId: petId,
             category: category,
@@ -91,7 +92,9 @@ final class AppDIContainer {
         )
     }
     
-    func makeLogDetailsViewModel(petId: String, petName: String, log: HealthLog) -> LogDetailsViewModel {
+    func makeLogDetailsViewModel(petId: String, petName: String, log: HealthLog)
+    -> LogDetailsViewModel
+    {
         LogDetailsViewModel(
             petId: petId,
             petName: petName,
@@ -117,5 +120,4 @@ final class AppDIContainer {
             aiService: aiService
         )
     }
-
 }

@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
 import FirebaseFirestore
 
 // MARK: - HealthServiceProtocol
@@ -28,7 +27,8 @@ final class HealthService: HealthServiceProtocol {
     // MARK: - Methods
     
     func addLog(_ log: HealthLog) async throws -> String {
-        let ref = db
+        let ref =
+        db
             .collection("pets")
             .document(log.petId)
             .collection(collection)
@@ -39,14 +39,17 @@ final class HealthService: HealthServiceProtocol {
     }
     
     func fetchLogs(petId: String) async throws -> [HealthLog] {
-        let snapshot = try await db
+        let snapshot =
+        try await db
             .collection("pets")
             .document(petId)
             .collection(collection)
             .order(by: "date", descending: true)
             .getDocuments()
         
-        return snapshot.documents.compactMap { try? $0.data(as: HealthLog.self) }
+        return snapshot.documents.compactMap {
+            try? $0.data(as: HealthLog.self)
+        }
     }
     
     func updateLog(_ log: HealthLog) async throws {

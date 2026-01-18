@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 06.01.26.
 //
 
-
 import CoreLocation
 
 // MARK: - LocationServiceDelegate
@@ -58,7 +57,9 @@ extension LocationService: CLLocationManagerDelegate {
     // MARK: - Methods
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+        if manager.authorizationStatus == .authorizedWhenInUse
+            || manager.authorizationStatus == .authorizedAlways
+        {
             manager.startUpdatingLocation()
         }
     }

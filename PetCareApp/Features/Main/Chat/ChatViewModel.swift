@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 15.01.26.
 //
 
-
-import Foundation
 import Combine
+import Foundation
 
 final class ChatViewModel {
     
@@ -115,7 +114,9 @@ final class ChatViewModel {
     private func startHouseholdListening() {
         stopHouseholdListening()
         
-        guard let userId = authService.currentUserId, !userId.isEmpty else {  return }
+        guard let userId = authService.currentUserId, !userId.isEmpty else {
+            return
+        }
         
         post(ChatMessageProvider.syncingHousehold())
         
@@ -133,7 +134,11 @@ final class ChatViewModel {
     
     private func handleHouseholdChange(_ householdId: String?) {
         guard householdId != currentHouseholdId else {
-            post(ChatMessageProvider.householdUpdated(hasHousehold: householdId?.isEmpty == false))
+            post(
+                ChatMessageProvider.householdUpdated(
+                    hasHousehold: householdId?.isEmpty == false
+                )
+            )
             return
         }
         
@@ -142,7 +147,11 @@ final class ChatViewModel {
         contextLoadTask?.cancel()
         contextLoadTask = nil
         
-        post(ChatMessageProvider.householdUpdated(hasHousehold: householdId?.isEmpty == false))
+        post(
+            ChatMessageProvider.householdUpdated(
+                hasHousehold: householdId?.isEmpty == false
+            )
+        )
         
         contextLoadTask = Task { [weak self] in
             guard let self else { return }
@@ -156,7 +165,10 @@ final class ChatViewModel {
         
         do {
             guard let householdId, !householdId.isEmpty else {
-                let context = AIChatContextBuilder.build(pets: [], logsByPetId: [:])
+                let context = AIChatContextBuilder.build(
+                    pets: [],
+                    logsByPetId: [:]
+                )
                 aiService.startSession(context: context)
                 post(ChatMessageProvider.householdUpdated(hasHousehold: false))
                 return
@@ -171,7 +183,9 @@ final class ChatViewModel {
                 for pet in pets {
                     guard let petId = pet.id, !petId.isEmpty else { continue }
                     group.addTask(priority: .utility) { [healthService] in
-                        let logs = try await healthService.fetchLogs(petId: petId)
+                        let logs = try await healthService.fetchLogs(
+                            petId: petId
+                        )
                         return (petId, logs)
                     }
                 }
@@ -181,12 +195,21 @@ final class ChatViewModel {
                 }
             }
             
-            let context = AIChatContextBuilder.build(pets: pets, logsByPetId: logsByPetId)
+            let context = AIChatContextBuilder.build(
+                pets: pets,
+                logsByPetId: logsByPetId
+            )
+            
             aiService.startSession(context: context)
             
             await MainActor.run {
                 let names = pets.map(\.name)
-                self.post(ChatMessageProvider.contextLoaded(petCount: pets.count, petNames: names))
+                self.post(
+                    ChatMessageProvider.contextLoaded(
+                        petCount: pets.count,
+                        petNames: names
+                    )
+                )
             }
             
         } catch is CancellationError {

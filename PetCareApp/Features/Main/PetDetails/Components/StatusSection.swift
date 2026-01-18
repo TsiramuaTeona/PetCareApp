@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct StatusSection: View {
@@ -54,9 +53,11 @@ struct StatusSection: View {
             Spacer()
             
             Button("Add Log") {
-                navigate(.addHealthLog(petId: viewModel.petId) {
-                    Task { await viewModel.refresh() }
-                })
+                navigate(
+                    .addHealthLog(petId: viewModel.petId) {
+                        Task { await viewModel.refresh() }
+                    }
+                )
             }
             .font(.appCaption)
             .fontWeight(.bold)
@@ -72,7 +73,11 @@ struct StatusSection: View {
                     log: log,
                     onInfoTap: {
                         navigate(
-                            .logDetails(petId: viewModel.petId, petName: viewModel.pet.name, log: log)
+                            .logDetails(
+                                petId: viewModel.petId,
+                                petName: viewModel.pet.name,
+                                log: log
+                            )
                         )
                     },
                     onDelete: {

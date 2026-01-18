@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 16.01.26.
 //
 
-
-import Foundation
 import EventKit
+import Foundation
 
 // MARK: - CalendarError
 
@@ -122,7 +121,7 @@ final class CalendarService: CalendarServiceProtocol {
         lines.append("🐾 Category: \(log.category.rawValue)")
         lines.append("📝 Title: \(log.title)")
         
-        if let note = log.note, !note.isEmptyOrWhitespace{
+        if let note = log.note, !note.isEmptyOrWhitespace {
             lines.append("")
             lines.append("📌 Notes:")
             lines.append(note.trimmed)
@@ -143,7 +142,9 @@ final class CalendarService: CalendarServiceProtocol {
         
         if let due = log.nextDueDate {
             lines.append("")
-            lines.append("⏰ Next due: \(due.formatted(.dateTime.year().month().day().hour().minute()))")
+            lines.append(
+                "⏰ Next due: \(due.formatted(.dateTime.year().month().day().hour().minute()))"
+            )
         }
         
         return lines.joined(separator: "\n")

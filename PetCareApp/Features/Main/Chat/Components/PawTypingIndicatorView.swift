@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 16.01.26.
 //
 
-
 import UIKit
 
 final class PawTypingIndicatorView: UIView {
@@ -29,7 +28,6 @@ final class PawTypingIndicatorView: UIView {
     }()
     
     private var pawViews: [UIImageView] = []
-    
     
     // MARK: - Initializers
     

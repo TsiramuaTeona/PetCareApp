@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 import FirebaseFirestore
 
 // MARK: - PetServiceProtocol
@@ -29,7 +28,7 @@ final class PetService: PetServiceProtocol {
     
     // MARK: - Methods
     
-    func addPet(_ pet: Pet) async throws -> String  {
+    func addPet(_ pet: Pet) async throws -> String {
         let ref = db.collection(collection).document()
         try ref.setData(from: pet)
         return ref.documentID
@@ -50,13 +49,17 @@ final class PetService: PetServiceProtocol {
     }
     
     func getPet(petId: String) async throws -> Pet {
-        let snapshot = try await db.collection(collection).document(petId).getDocument()
+        let snapshot = try await db.collection(collection).document(petId)
+            .getDocument()
         return try snapshot.data(as: Pet.self)
     }
     
     func updatePet(_ pet: Pet) async throws {
         guard let id = pet.id else { return }
-        try db.collection(collection).document(id).setData(from: pet, merge: true)
+        try db.collection(collection).document(id).setData(
+            from: pet,
+            merge: true
+        )
     }
     
     func deletePet(petId: String) async throws {

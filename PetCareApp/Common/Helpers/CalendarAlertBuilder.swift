@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 16.01.26.
 //
 
-
 import SwiftUI
 
 struct CalendarAlertBuilder {
@@ -42,7 +41,9 @@ struct CalendarAlertBuilder {
         lines.append("📝 Title: \(log.title)")
         
         let whenDate = (log.nextDueDate ?? log.date)
-        lines.append("📅 When: \(whenDate.formatted(.dateTime.year().month().day().hour().minute()))")
+        lines.append(
+            "📅 When: \(whenDate.formatted(.dateTime.year().month().day().hour().minute()))"
+        )
         
         if log.category == .medication {
             if let dosage = log.dosage, !dosage.trimmed.isEmpty {

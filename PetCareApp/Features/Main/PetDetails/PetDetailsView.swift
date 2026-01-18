@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 import SwiftUI
 
 struct PetDetailsView: View {
@@ -17,7 +16,7 @@ struct PetDetailsView: View {
     
     let columns = [
         GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: 12),
     ]
     
     // MARK: - Body
@@ -51,7 +50,6 @@ struct PetDetailsView: View {
                         .padding(.bottom, -40)
                     
                     aboutSection
-                    
                     
                     if !viewModel.upcomingAlerts.isEmpty {
                         UpcomingAlertsSection(viewModel: viewModel)
@@ -154,8 +152,14 @@ struct PetDetailsView: View {
                 LazyVGrid(columns: columns, spacing: 12) {
                     StatBubble(label: "Age", value: viewModel.pet.ageFormatted)
                     StatBubble(label: "Weight", value: viewModel.weightText)
-                    StatBubble(label: "Breed", value: viewModel.pet.displayBreed)
-                    StatBubble(label: "Color", value: viewModel.pet.displayColor)
+                    StatBubble(
+                        label: "Breed",
+                        value: viewModel.pet.displayBreed
+                    )
+                    StatBubble(
+                        label: "Color",
+                        value: viewModel.pet.displayColor
+                    )
                 }
             }
         }

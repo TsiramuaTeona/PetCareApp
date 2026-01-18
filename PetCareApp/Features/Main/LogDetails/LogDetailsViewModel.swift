@@ -5,9 +5,8 @@
 //  Created by Teona Tsiramua on 13.01.26.
 //
 
-
-import Foundation
 import Combine
+import Foundation
 
 @MainActor
 final class LogDetailsViewModel: ObservableObject {

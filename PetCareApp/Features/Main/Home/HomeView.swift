@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 03.01.26.
 //
 
-
 import SwiftUI
 
 struct HomeView: View {
@@ -90,9 +89,12 @@ struct HomeView: View {
     private var petsHeader: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
-                Label(viewModel.household?.name ?? "Home", systemImage: "house.fill")
-                    .font(.appTitle)
-                    .foregroundColor(.textSecondary)
+                Label(
+                    viewModel.household?.name ?? "Home",
+                    systemImage: "house.fill"
+                )
+                .font(.appTitle)
+                .foregroundColor(.textSecondary)
                 
                 Text("My Pets")
                     .font(.appDisplay)
@@ -108,7 +110,9 @@ struct HomeView: View {
             } label: {
                 Image(systemName: "plus.circle.fill")
                     .font(.appDisplay)
-                    .foregroundColor(householdId.isEmpty ? .textSecondary : .brandPrimary)
+                    .foregroundColor(
+                        householdId.isEmpty ? .textSecondary : .brandPrimary
+                    )
             }
             .disabled(householdId.isEmpty)
         }
@@ -150,7 +154,11 @@ struct HomeView: View {
                         Spacer()
                         
                         Button {
-                            navigate(.remindersList(items: viewModel.upcomingReminders))
+                            navigate(
+                                .remindersList(
+                                    items: viewModel.upcomingReminders
+                                )
+                            )
                         } label: {
                             Text("See All")
                                 .font(.appBody)
@@ -162,7 +170,13 @@ struct HomeView: View {
                         ForEach(viewModel.upcomingReminders.prefix(3)) { item in
                             ReminderCard(item: item)
                                 .onTapGesture {
-                                    navigate(.logDetails(petId: item.petId, petName: item.petName, log: item.log))
+                                    navigate(
+                                        .logDetails(
+                                            petId: item.petId,
+                                            petName: item.petName,
+                                            log: item.log
+                                        )
+                                    )
                                 }
                         }
                     }

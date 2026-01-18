@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 12.01.26.
 //
 
-
 import SwiftUI
 
 struct WeightSection: View {
@@ -20,7 +19,7 @@ struct WeightSection: View {
         VStack(alignment: .leading, spacing: 16) {
             title
             
-            if viewModel.weightLogs.isEmpty{
+            if viewModel.weightLogs.isEmpty {
                 noDataView
             } else {
                 WeightChart(
@@ -45,9 +44,11 @@ struct WeightSection: View {
             Spacer()
             
             Button {
-                navigate(.addHealthLog(petId: viewModel.petId, category: .weight) {
-                    Task { await viewModel.refresh() }
-                })
+                navigate(
+                    .addHealthLog(petId: viewModel.petId, category: .weight) {
+                        Task { await viewModel.refresh() }
+                    }
+                )
             } label: {
                 Image(systemName: "plus")
                     .foregroundColor(.white)

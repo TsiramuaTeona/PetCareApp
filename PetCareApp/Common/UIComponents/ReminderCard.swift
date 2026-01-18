@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
 import SwiftUI
 
 struct ReminderCard: View {
@@ -29,7 +28,7 @@ struct ReminderCard: View {
     
     // MARK: - Subviews
     
-    private var content:  some View {
+    private var content: some View {
         VStack(alignment: .leading, spacing: 8) {
             headerSection
             infoSection

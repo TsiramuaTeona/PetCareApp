@@ -5,7 +5,6 @@
 //  Created by Teona Tsiramua on 10.01.26.
 //
 
-
 import SwiftUI
 
 struct AddHealthLogView: View {
@@ -22,7 +21,9 @@ struct AddHealthLogView: View {
                 content
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(viewModel.isMedication ? "Add Medication" : "Add Health Log")
+            .navigationTitle(
+                viewModel.isMedication ? "Add Medication" : "Add Health Log"
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -63,9 +64,11 @@ struct AddHealthLogView: View {
     }
     
     private var infoMessage: some View {
-        Text("Please fill in the details below to add a new \(viewModel.isMedication ? "medication" : "health log").")
-            .font(.appBody)
-            .foregroundColor(.textSecondary)
-            .multilineTextAlignment(.center)
+        Text(
+            "Please fill in the details below to add a new \(viewModel.isMedication ? "medication" : "health log")."
+        )
+        .font(.appBody)
+        .foregroundColor(.textSecondary)
+        .multilineTextAlignment(.center)
     }
 }
