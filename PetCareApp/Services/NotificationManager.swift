@@ -10,11 +10,12 @@ import UserNotifications
 
 final class NotificationManager: NSObject {
     
-    // MARK: - Singleton
+    // MARK: - Properties
     
     static let shared = NotificationManager()
-    
     private let center = UNUserNotificationCenter.current()
+    
+    // MARK: - Initializer
     
     private override init() {
         super.init()

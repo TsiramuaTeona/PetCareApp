@@ -165,7 +165,7 @@ final class LogDetailsViewModel: ObservableObject {
             
             notificationManager.cancelNotification(for: log)
             
-            if let nextLog = LogScheduler.generateNextLog(currentLog: log, completionDate: now) {
+            if let nextLog = LogScheduler.generateNextLog(currentLog: log) {
                 let newId = try await healthService.addLog(nextLog)
                 
                 var scheduledNextLog = nextLog

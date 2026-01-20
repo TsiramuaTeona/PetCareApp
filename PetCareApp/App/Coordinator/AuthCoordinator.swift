@@ -107,6 +107,8 @@ final class AuthCoordinator: Coordinator {
                 withPresenting: presenter
             )
             
+            let googlePhotoUrl = result.user.profile?.imageURL(withDimension: 256)?.absoluteString
+            
             guard let idToken = result.user.idToken?.tokenString,
                   !idToken.isEmpty
             else {
@@ -123,15 +125,16 @@ final class AuthCoordinator: Coordinator {
                 accessToken: accessToken
             )
             
-            try await ensureUserProfileExists()
+            try await ensureUserProfileExists(photoUrl: googlePhotoUrl)
             
             viewModel.handleGoogleSignInResult(.success(()))
         } catch {
+            try? container.authService.signOut()
             viewModel.handleGoogleSignInResult(.failure(error))
         }
     }
     
-    private func ensureUserProfileExists() async throws {
+    private func ensureUserProfileExists(photoUrl: String?) async throws {
         guard let firebaseUser = Auth.auth().currentUser else { return }
         
         do {
@@ -145,6 +148,7 @@ final class AuthCoordinator: Coordinator {
                 email: firebaseUser.email ?? "",
                 fullName: firebaseUser.displayName,
                 householdId: nil,
+                photoUrl: photoUrl,
                 createdAt: Date()
             )
             

@@ -70,15 +70,25 @@ final class RegisterViewModel: ObservableObject {
         do {
             try await authService.signUp(email: email, password: password)
             
-            if let uid = authService.currentUserId {
-                let newProfile = UserProfile(
-                    id: uid,
-                    email: email,
-                    fullName: fullName,
-                    householdId: nil,
-                    createdAt: Date()
-                )
+            guard let uid = authService.currentUserId else {
+                try? authService.signOut()
+                formError = "Registration failed. Please try again."
+                return
+            }
+            
+            let newProfile = UserProfile(
+                id: uid,
+                email: email,
+                fullName: fullName,
+                householdId: nil,
+                createdAt: Date()
+            )
+            
+            do {
                 try await userService.createUserProfile(user: newProfile)
+            } catch {
+                try? authService.signOut()
+                throw error
             }
             
             showSuccessAlert = true

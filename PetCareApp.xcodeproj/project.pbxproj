@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E4BC2E582F1D147D0021DD1F /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4BC2E582F1D147D0021DD1F /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PetCareApp.app; path = "/Users/teonatsiramua/Documents/Projects/iOS/TBC/PetCareApp/build/Debug-iphoneos/PetCareApp.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -65,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				E41800A82F092E8300758D9F /* PetCareApp */,
-				E4BC2E582F1D147D0021DD1F /* PetCareApp.app */,
 			);
 			sourceTree = "<group>";
 		};

@@ -29,7 +29,7 @@ enum FieldValidator {
             return .required
         }
         
-        let pattern = #"(?=.*[A-Z])(?=.*[0-9]).{8,}"#
+        let pattern = #"(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"#
         let isMatch = text.range(of: pattern, options: .regularExpression) != nil
         
         return isMatch ? nil : .weakPassword

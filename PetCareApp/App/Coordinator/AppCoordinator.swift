@@ -43,6 +43,8 @@ final class AppCoordinator: Coordinator {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         
+        notificationManager.configure()
+        
         Task {
             await notificationManager.requestAuthorization()
         }
@@ -69,10 +71,13 @@ final class AppCoordinator: Coordinator {
         currentFlow = flow
         
         navigationController.dismiss(animated: false)
-        
         navigationController.setViewControllers([], animated: false)
-        
         clearChildren()
+        
+        if flow == .auth {
+            container.reminderSyncService.stopListening()
+            notificationManager.cancelAllPendingReminders()
+        }
         
         switch flow {
         case .auth:
