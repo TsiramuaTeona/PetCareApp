@@ -105,13 +105,10 @@ final class LogDetailsViewModel: ObservableObject {
             
             if logToUpdate.category == .medication {
                 let frequency = logToUpdate.timesPerDay ?? 1
-                let schedule = MedicationScheduler.generateSchedule(
-                    start: newDate,
-                    frequency: frequency
-                )
+                let schedule = MedicationScheduler.generateSchedule(start: newDate, frequency: frequency)
                 
                 logToUpdate.reminderTimes = schedule
-                logToUpdate.nextDueDate = schedule.first
+                logToUpdate.nextDueDate = newDate
                 
             } else {
                 logToUpdate.nextDueDate = newDate
@@ -122,7 +119,7 @@ final class LogDetailsViewModel: ObservableObject {
         do {
             try await healthService.updateLog(logToUpdate)
             
-            notificationManager.cancelNotification(for: logToUpdate)
+            notificationManager.cancelNotification(for: originalLog)
             
             if !logToUpdate.isResolved {
                 await reminderService.scheduleReminder(for: logToUpdate)

@@ -27,7 +27,6 @@ struct LogScheduler {
             }
         }
 
-        
         var newLog = currentLog
         newLog.medicationCourseStart = currentLog.medicationCourseStart
         newLog.id = nil

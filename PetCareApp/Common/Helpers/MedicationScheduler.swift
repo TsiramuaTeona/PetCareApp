@@ -19,24 +19,19 @@ struct MedicationScheduler {
         times.reserveCapacity(count)
         
         let calendar = Calendar.app
-        let startComponents = calendar.dateComponents(
-            [.hour, .minute],
-            from: start
-        )
+        let startComponents = calendar.dateComponents([.hour, .minute], from: start)
         
-        let today = Date()
-        
-        guard let startToday = calendar.date(
+        guard let startBase = calendar.date(
             bySettingHour: startComponents.hour ?? 0,
             minute: startComponents.minute ?? 0,
             second: 0,
-            of: today
+            of: start
         ) else {
             return []
         }
         
         for i in 0..<count {
-            let time = startToday.adding(minutes: i * intervalMinutes)
+            let time = startBase.adding(minutes: i * intervalMinutes)
             times.append(time)
         }
         
