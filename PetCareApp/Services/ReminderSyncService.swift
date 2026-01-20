@@ -177,12 +177,25 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
     private static func shouldSchedule(log: HealthLog) -> Bool {
         guard !log.isResolved else { return false }
         
-        if let times = log.reminderTimes, !times.isEmpty {
-            return true
+        let now = Date()
+        
+        if log.isMedication, let times = log.reminderTimes, !times.isEmpty {
+            guard let next = MedicationScheduler.findNextDose(from: times, now: now) else {
+                return false
+            }
+            
+            if let duration = log.durationDays {
+                let start = (log.medicationCourseStart ?? log.date).startOfDay
+                let lastDay = start.adding(days: max(0, duration - 1))
+                let end = lastDay.endOfDay
+                return next <= end
+            }
+            
+            return next > now
         }
         
-        if let due = log.nextDueDate, due > Date() {
-            return true
+        if let due = log.nextDueDate {
+            return due > now
         }
         
         return false

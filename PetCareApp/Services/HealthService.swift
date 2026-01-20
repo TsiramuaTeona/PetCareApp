@@ -14,6 +14,7 @@ protocol HealthServiceProtocol {
     func fetchLogs(petId: String) async throws -> [HealthLog]
     func updateLog(_ log: HealthLog) async throws
     func deleteLog(petId: String, logId: String) async throws
+    func deleteAllLogs(petId: String) async throws
 }
 
 // MARK: - HealthService
@@ -69,5 +70,21 @@ final class HealthService: HealthServiceProtocol {
             .document(petId)
             .collection(collection)
             .document(logId).delete()
+    }
+    
+    func deleteAllLogs(petId: String) async throws {
+        let logsRef = db
+            .collection("pets")
+            .document(petId)
+            .collection(collection)
+        
+        let snapshot = try await logsRef.getDocuments()
+        
+        let batch = db.batch()
+        for doc in snapshot.documents {
+            batch.deleteDocument(doc.reference)
+        }
+        
+        try await batch.commit()
     }
 }

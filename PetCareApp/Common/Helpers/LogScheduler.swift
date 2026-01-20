@@ -11,18 +11,9 @@ struct LogScheduler {
     
     // MARK: - Public Methods
     
-    static func generateNextLog(
-        currentLog: HealthLog,
-        completionDate: Date = Date()
-    ) -> HealthLog? {
+    static func generateNextLog(currentLog: HealthLog) -> HealthLog? {
         guard
-            let nextDate = calculateNextDate(
-                for: currentLog,
-                completionDate: completionDate
-            )
-        else {
-            return nil
-        }
+            let nextDate = calculateNextDate(for: currentLog) else { return nil }
         
         if currentLog.isMedication, let duration = currentLog.durationDays {
             let start = currentLog.medicationCourseStart ?? currentLog.date
@@ -50,10 +41,7 @@ struct LogScheduler {
     
     // MARK: - Private Methods
     
-    private static func calculateNextDate(
-        for log: HealthLog,
-        completionDate: Date
-    ) -> Date? {
+    private static func calculateNextDate(for log: HealthLog) -> Date? {
         let originalDueDate = log.nextDueDate ?? log.date
         if log.isMedication {
             let timesPerDay = Double(max(1, log.timesPerDay ?? 1))

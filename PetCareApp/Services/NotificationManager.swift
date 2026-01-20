@@ -53,19 +53,25 @@ final class NotificationManager: NSObject {
         else { return }
         
         if let times = log.reminderTimes, !times.isEmpty {
-            let timesSorted = times.sorted {
-                $0.timeIntervalSince1970 < $1.timeIntervalSince1970
+            let now = Date()
+            let next = MedicationScheduler.findNextDose(from: times, now: now)
+            
+            guard let next else { return }
+            
+            if log.isMedication, let duration = log.durationDays {
+                let start = (log.medicationCourseStart ?? log.date).startOfDay
+                let lastDay = start.adding(days: max(0, duration - 1))
+                let end = lastDay.endOfDay
+                guard next <= end else { return }
             }
             
-            for (index, time) in timesSorted.enumerated() {
-                scheduleOne(
-                    identifier: "\(logId)_\(index)",
-                    title: "\(petName): \(log.title)",
-                    body: notificationBody(for: log),
-                    triggerDate: time,
-                    repeats: true
-                )
-            }
+            scheduleOne(
+                identifier: logId,
+                title: "\(petName): \(log.title)",
+                body: notificationBody(for: log),
+                triggerDate: next,
+                repeats: false
+            )
             return
         }
         

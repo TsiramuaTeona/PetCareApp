@@ -83,25 +83,25 @@ final class PetDetailsViewModel: ObservableObject {
         historyLog.date = now
         historyLog.nextDueDate = nil
         
-        if let nextLog = LogScheduler.generateNextLog(
-            currentLog: log,
-            completionDate: now
-        ) {
-            await createAndSchedule(nextLog, petName: pet.name)
-        }
-        
         do {
             try await healthService.updateLog(historyLog)
             notificationManager.cancelNotification(for: log)
+            
+            if let nextLog = LogScheduler.generateNextLog(currentLog: log) {
+                await createAndSchedule(nextLog, petName: pet.name)
+            }
+            
             await refresh()
         } catch {
             alert = .error("Failed to update log status.")
         }
+
     }
     
     func deleteLog(_ log: HealthLog) async {
         guard let id = log.id, let petId = pet.id else { return }
         do {
+            notificationManager.cancelNotification(for: log)
             try await healthService.deleteLog(petId: petId, logId: id)
             await refresh()
         } catch {
@@ -128,13 +128,23 @@ final class PetDetailsViewModel: ObservableObject {
     
     private func deletePet(onSuccess: () -> Void) async {
         guard let petId = pet.id else { return }
+        
         do {
+            let logs = try await healthService.fetchLogs(petId: petId)
+            for log in logs {
+                notificationManager.cancelNotification(for: log)
+            }
+            
+            try await healthService.deleteAllLogs(petId: petId)
+            
             try await petService.deletePet(petId: petId)
+            
             onSuccess()
         } catch {
             alert = .error(error.localizedDescription)
         }
     }
+
     
     private func processLogs(_ logs: [HealthLog]) {
         let today = Date()
