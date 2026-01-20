@@ -49,10 +49,27 @@ final class AppCoordinator: Coordinator {
             await notificationManager.requestAuthorization()
         }
         
-        observeAuthState()
+        if !OnboardingState.hasSeen {
+            startOnboardingFlow()
+        } else {
+            observeAuthState()
+        }
     }
     
     // MARK: - Private Methods
+    
+    private func startOnboardingFlow() {
+        let onboarding = OnboardingCoordinator(
+            navigationController: navigationController
+        ) { [weak self] in
+            guard let self else { return }
+            self.childCoordinators.removeAll(where: { $0 is OnboardingCoordinator })
+            self.observeAuthState()
+        }
+        
+        childCoordinators.append(onboarding)
+        onboarding.start()
+    }
     
     private func observeAuthState() {
         container.authService.userSessionPublisher
