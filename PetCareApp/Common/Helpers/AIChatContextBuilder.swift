@@ -9,8 +9,13 @@ import Foundation
 
 struct AIChatContextBuilder {
     
-    static func build(pets: [Pet], logsByPetId: [String: [HealthLog]]) -> String
-    {
+    static func build(
+        pets: [Pet],
+        logsByPetId: [String: [HealthLog]],
+        includeResolved: Bool = true,
+        historyDays: Int? = nil,
+        maxHistoryLinesPerPet: Int = 40
+    ) -> String {
         guard !pets.isEmpty else {
             return "No pets available in household. Provide general pet care info."
         }
@@ -20,7 +25,23 @@ struct AIChatContextBuilder {
         
         for pet in pets {
             let petId = pet.id ?? ""
-            let logs = logsByPetId[petId] ?? []
+            var logs = logsByPetId[petId] ?? []
+            
+            if !includeResolved {
+                logs = logs.filter { !$0.isResolved }
+            }
+            
+            if let historyDays {
+                let cutoff =
+                Calendar.current.date(
+                    byAdding: .day,
+                    value: -historyDays,
+                    to: Date()
+                ) ?? .distantPast
+                logs = logs.filter { $0.date >= cutoff }
+            }
+            
+            logs.sort(by: { $0.date > $1.date })
             
             lines.append("")
             lines.append("Pet: \(pet.name)")
@@ -35,7 +56,14 @@ struct AIChatContextBuilder {
             }
             if let bio = pet.bio, !bio.isEmpty { lines.append("- Bio: \(bio)") }
             
-            lines.append(contentsOf: summarizeHealth(logs: logs))
+            lines.append(contentsOf: summarizeHealthSummary(logs: logs))
+            
+            lines.append(
+                contentsOf: summarizeHistoryLines(
+                    logs: logs,
+                    maxLines: maxHistoryLinesPerPet
+                )
+            )
         }
         
         lines.append("")
@@ -48,16 +76,14 @@ struct AIChatContextBuilder {
     
     // MARK: - Private
     
-    private static func summarizeHealth(logs: [HealthLog]) -> [String] {
+    private static func summarizeHealthSummary(logs: [HealthLog]) -> [String] {
         guard !logs.isEmpty else { return ["- Health: no logs yet"] }
         
         var out: [String] = []
         
-        if let lastWeight =
-            logs
+        if let lastWeight = logs
             .filter({ $0.category == .weight })
-            .sorted(by: { $0.date > $1.date })
-            .first,
+            .first(where: { $0.value != nil }),
            let value = lastWeight.value
         {
             out.append(
@@ -65,8 +91,7 @@ struct AIChatContextBuilder {
             )
         }
         
-        let activeMeds =
-        logs
+        let activeMeds = logs
             .filter { $0.category == .medication && !$0.isResolved }
             .sorted {
                 ($0.nextDueDate ?? .distantFuture)
@@ -86,8 +111,7 @@ struct AIChatContextBuilder {
             }
         }
         
-        let upcoming =
-        logs
+        let upcoming = logs
             .filter {
                 $0.category != .medication && !$0.isResolved
                 && $0.nextDueDate != nil
@@ -107,6 +131,55 @@ struct AIChatContextBuilder {
                     "  - \(item.category.rawValue): \(item.title) – due: \(due)"
                 )
             }
+        }
+        
+        return out
+    }
+    
+    private static func summarizeHistoryLines(logs: [HealthLog], maxLines: Int)
+    -> [String]
+    {
+        guard !logs.isEmpty else { return [] }
+        
+        var out: [String] = []
+        out.append("- Recent history (most recent first):")
+        
+        for log in logs.prefix(maxLines) {
+            let date = log.date.formatted(.dateTime.year().month().day())
+            let cat = log.category.rawValue
+            
+            let valuePart: String = {
+                if let value = log.value {
+                    return " value=\(String(format: "%.1f", value))"
+                }
+                return ""
+            }()
+            
+            let dosagePart: String = {
+                if let dosage = log.dosage, !dosage.isEmpty {
+                    return " dose=\(dosage)"
+                }
+                return ""
+            }()
+            
+            let nextDuePart: String = {
+                if let due = log.nextDueDate {
+                    return " nextDue=\(due.formatted(.dateTime.year().month().day()))"
+                }
+                return ""
+            }()
+            
+            let resolvedPart = log.isResolved ? " resolved=yes" : " resolved=no"
+            
+            out.append(
+                "  - \(date) \(cat): \(log.title)\(valuePart)\(dosagePart)\(nextDuePart)\(resolvedPart)"
+            )
+        }
+        
+        if logs.count > maxLines {
+            out.append(
+                "  - (and \(logs.count - maxLines) older items not shown)"
+            )
         }
         
         return out
