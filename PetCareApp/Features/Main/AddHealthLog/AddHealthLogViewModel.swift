@@ -47,7 +47,7 @@ final class AddHealthLogViewModel: ObservableObject {
     
     var isMedication: Bool { category == .medication }
     var isWeight: Bool { category == .weight }
-    var isHistoryLog: Bool { actionDate.startOfDay <= Date().startOfDay }
+    var isHistoryLog: Bool { actionDate <= Date() }
     var titlePlaceholder: String { category.titlePlaceholder }
     var titleSuggestions: [String] { category.titleSuggestions }
     var reminderLabel: String { category.reminderLabel(isHistory: isHistoryLog) }
@@ -195,11 +195,15 @@ final class AddHealthLogViewModel: ObservableObject {
         var startTargetDate = isHistoryLog ? nextDueDate : actionDate
         
         if isMedication && isHistoryLog {
-            if let next = MedicationScheduler.findNextDose(from: schedule ?? []) {
-                startTargetDate = next
-            } else {
+            guard let next = MedicationScheduler.findNextDose(from: schedule ?? [], now: Date()) else {
                 return
             }
+            
+            if !isChronic, let end = medicationCourseEndDate(), next > end {
+                return
+            }
+            
+            startTargetDate = next
         }
         
         let log = HealthLog(
@@ -217,7 +221,8 @@ final class AddHealthLogViewModel: ObservableObject {
             dosage: isMedication ? dosage : nil,
             timesPerDay: isMedication ? timesPerDay : nil,
             reminderTimes: schedule,
-            durationDays: (isMedication && !isChronic) ? Int(durationDays) : nil
+            durationDays: (isMedication && !isChronic) ? Int(durationDays) : nil,
+            medicationCourseStart: (isMedication && !isChronic) ? actionDate.startOfDay : nil
         )
         
         let id = try await healthService.addLog(log)

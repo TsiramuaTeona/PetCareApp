@@ -25,15 +25,20 @@ struct LogScheduler {
         }
         
         if currentLog.isMedication, let duration = currentLog.durationDays {
-            let startAnchor = (currentLog.nextDueDate ?? currentLog.date)
-            let endDate = startAnchor.adding(days: duration)
+            let start = currentLog.medicationCourseStart ?? currentLog.date
+            let startDay = start.startOfDay
             
-            if nextDate > endDate {
+            let lastDay = startDay.adding(days: max(0, duration - 1))
+            let end = lastDay.endOfDay
+            
+            if nextDate > end {
                 return nil
             }
         }
+
         
         var newLog = currentLog
+        newLog.medicationCourseStart = currentLog.medicationCourseStart
         newLog.id = nil
         newLog.isResolved = false
         newLog.completedDate = nil

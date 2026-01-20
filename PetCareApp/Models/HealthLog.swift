@@ -30,6 +30,7 @@ struct HealthLog: Codable, Identifiable, Equatable {
     var timesPerDay: Int?
     var reminderTimes: [Date]?
     var durationDays: Int?
+    var medicationCourseStart: Date?
 }
 
 extension HealthLog {
