@@ -113,6 +113,10 @@ final class ChatViewModel {
         contextLoadTask?.cancel()
         contextLoadTask = nil
         
+        Task { @MainActor in
+            self.resetChatForRefresh()
+        }
+        
         contextLoadTask = Task { [weak self] in
             guard let self else { return }
             await self.loadContext(householdId: self.currentHouseholdId)
@@ -153,6 +157,17 @@ final class ChatViewModel {
             guard let self else { return }
             await self.loadContext(householdId: householdId)
         }
+    }
+    
+    @MainActor
+    private func resetChatForRefresh() {
+        setSending(false)
+        
+        messages.removeAll()
+        post(ChatMessageProvider.welcome())
+        
+        let emptyContext = AIChatContextBuilder.build(pets: [], logsByPetId: [:])
+        aiService.startSession(context: emptyContext)
     }
     
     private func loadContext(householdId: String?) async {
