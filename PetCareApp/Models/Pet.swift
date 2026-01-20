@@ -8,7 +8,7 @@
 import FirebaseFirestore
 import Foundation
 
-struct Pet: Codable, Identifiable {
+struct Pet: Codable, Identifiable, Equatable {
     @DocumentID var id: String?
     let householdId: String
     

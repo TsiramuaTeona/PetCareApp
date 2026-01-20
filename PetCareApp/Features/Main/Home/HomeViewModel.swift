@@ -19,6 +19,7 @@ final class HomeViewModel: ObservableObject {
     @Published var pets: [Pet] = []
     @Published var upcomingReminders: [ReminderItem] = []
     @Published var dailyFact: String = ""
+    @Published var selectedPetId: String?
     
     @Published private(set) var state: ScreenState = .loading
     
@@ -38,6 +39,17 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Listening State
     
     private var listeningHouseholdId: String?
+    
+    // MARK: - Computed Properties
+    
+    var selectedPet: Pet? {
+        if let id = selectedPetId,
+           let match = pets.first(where: { $0.id == id })
+        {
+            return match
+        }
+        return pets.first
+    }
     
     // MARK: - Initializer
     
@@ -79,6 +91,21 @@ final class HomeViewModel: ObservableObject {
     
     func refreshFact() {
         dailyFact = FunFactService.getRandomFact()
+    }
+    
+    func setSelectedPetId(_ id: String?) {
+        selectedPetId = id
+        
+        guard !pets.isEmpty else {
+            selectedPetId = nil
+            return
+        }
+        
+        if let id = selectedPetId, pets.contains(where: { $0.id == id }) {
+            return
+        }
+        
+        selectedPetId = pets.first?.id
     }
     
     // MARK: - Private Methods

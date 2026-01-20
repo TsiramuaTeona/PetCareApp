@@ -61,15 +61,15 @@ struct HomeView: View {
             .foregroundColor(.brandSecondary)
         }
         .padding(.horizontal, 24)
-        .padding(.vertical, 16)
+        .padding(.vertical, 8)
     }
     
     private var dashboard: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                petsHeader
-                
-                petsList
+            VStack(alignment: .leading, spacing: 24) {
+                petsSection
+                upcomingSection
+                quickHealthSection
                 
                 FunFactCard(fact: viewModel.dailyFact) {
                     withAnimation {
@@ -78,49 +78,45 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
                 
-                upcomingSection
-                
                 Spacer(minLength: 40)
             }
-            .padding(.top, 8)
+            .padding(.top)
         }
     }
     
-    private var petsHeader: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 6) {
-                Label(
-                    viewModel.household?.name ?? "Home",
-                    systemImage: "house.fill"
-                )
-                .font(.appTitle)
-                .foregroundColor(.textSecondary)
-                
-                Text("My Pets")
-                    .font(.appDisplay)
-            }
-            
-            Spacer()
-            
-            let householdId = viewModel.household?.id ?? ""
-            
-            Button {
-                guard !householdId.isEmpty else { return }
-                navigate(.addPet(householdId: householdId))
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(.appDisplay)
-                    .foregroundColor(
-                        householdId.isEmpty ? .textSecondary : .brandPrimary
+    private var petsSection: some View {
+        VStack(spacing: 0) {
+            HStack {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label(
+                        viewModel.household?.name ?? "Home",
+                        systemImage: "house.fill"
                     )
+                    .font(.appTitle)
+                    .foregroundColor(.textSecondary)
+                    
+                    Text("My Pets")
+                        .font(.appDisplay)
+                }
+                
+                Spacer()
+                
+                let householdId = viewModel.household?.id ?? ""
+                
+                Button {
+                    guard !householdId.isEmpty else { return }
+                    navigate(.addPet(householdId: householdId))
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.appDisplay)
+                        .foregroundColor(
+                            householdId.isEmpty ? .textSecondary : .brandPrimary
+                        )
+                }
+                .disabled(householdId.isEmpty)
             }
-            .disabled(householdId.isEmpty)
-        }
-        .padding(.horizontal, 24)
-    }
-    
-    private var petsList: some View {
-        Group {
+            .padding(.horizontal, 24)
+            
             if viewModel.pets.isEmpty {
                 Text("No pets yet. Tap ⊕ to add one!")
                     .foregroundColor(.textSecondary)
@@ -136,7 +132,8 @@ struct HomeView: View {
                                 }
                         }
                     }
-                    .padding(24)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical)
                 }
             }
         }
@@ -181,7 +178,27 @@ struct HomeView: View {
                         }
                     }
                 }
-                .padding(24)
+                .padding(.horizontal, 24)
+            }
+        }
+    }
+    
+    private var quickHealthSection: some View {
+        Group {
+            if !viewModel.pets.isEmpty {
+                QuickAddSection(
+                    pets: viewModel.pets,
+                    selectedPet: viewModel.selectedPet,
+                    selectedPetId: Binding(
+                        get: { viewModel.selectedPetId ?? (viewModel.pets.first?.id ?? "") },
+                        set: { viewModel.setSelectedPetId($0.isEmpty ? nil : $0) }
+                    )
+                ) { petId, category in
+                    navigate(.addHealthLog(petId: petId, category: category, onSave: {
+                        Task { await viewModel.loadData() }
+                    }))
+                }
+                .padding(.horizontal, 24)
             }
         }
     }
