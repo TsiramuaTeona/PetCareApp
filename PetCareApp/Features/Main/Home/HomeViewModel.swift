@@ -31,6 +31,7 @@ final class HomeViewModel: ObservableObject {
     private let petService: PetServiceProtocol
     private let healthService: HealthServiceProtocol
     private let reminderSyncService: ReminderSyncServiceProtocol
+    private let notificationManager = NotificationManager.shared
     
     // MARK: - Task Management
     
@@ -142,6 +143,7 @@ final class HomeViewModel: ObservableObject {
             
             guard let householdId = userProfile.householdId, !householdId.isEmpty else {
                 stopHouseholdListeningIfNeeded()
+                notificationManager.cancelAllPendingReminders()
                 household = nil
                 pets = []
                 upcomingReminders = []
@@ -161,6 +163,9 @@ final class HomeViewModel: ObservableObject {
             self.upcomingReminders = reminders
             
             if listeningHouseholdId != householdId {
+                stopHouseholdListeningIfNeeded()
+                notificationManager.cancelAllPendingReminders()
+                
                 await reminderSyncService.syncAllReminders(forHousehold: householdId)
                 await reminderSyncService.startListeningForHousehold(householdId)
                 listeningHouseholdId = householdId
@@ -176,6 +181,7 @@ final class HomeViewModel: ObservableObject {
     
     private func clearHomeDataForLogout() {
         stopHouseholdListeningIfNeeded()
+        notificationManager.cancelAllPendingReminders()
         
         user = nil
         household = nil
