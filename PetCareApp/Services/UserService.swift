@@ -26,8 +26,7 @@ enum UserServiceError: LocalizedError {
 protocol UserServiceProtocol {
     func createUserProfile(user: UserProfile) async throws
     func getUser(userId: String) async throws -> UserProfile
-    func updateUserProfile(userId: String, fullName: String?, photoUrl: String?)
-    async throws
+    func updateUserProfile(userId: String, fullName: String?, photoUrl: String?) async throws
     func updateUserHousehold(userId: String, householdId: String?) async throws
     func householdIdPublisher(userId: String) -> AnyPublisher<String?, Never>
 }

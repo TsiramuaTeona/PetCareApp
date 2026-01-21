@@ -12,6 +12,7 @@ import Foundation
 final class AddHealthLogViewModel: ObservableObject {
     
     // MARK: - Published Properties
+    
     @Published var category: LogCategory = .weight {
         didSet {
             guard oldValue != category else { return }
@@ -114,6 +115,7 @@ final class AddHealthLogViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
+    
     private func onCategoryChanged(from old: LogCategory, to new: LogCategory) {
         errorMessage = nil
         title = ""
@@ -241,14 +243,6 @@ final class AddHealthLogViewModel: ObservableObject {
         if isMedication {
             if dosage.isEmptyOrWhitespace {
                 errorMessage = "Please enter dosage."
-                return false
-            }
-            if timesPerDay < 1 || timesPerDay > 4 {
-                errorMessage = "Frequency must be between 1 and 4."
-                return false
-            }
-            if !isChronic, Int(durationDays) <= 0 {
-                errorMessage = "Please choose duration."
                 return false
             }
         }
