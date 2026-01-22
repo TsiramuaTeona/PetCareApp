@@ -62,7 +62,7 @@ final class CalendarService: CalendarServiceProtocol {
         let event = EKEvent(eventStore: store)
         event.calendar = store.defaultCalendarForNewEvents
         
-        let prefix = (petName?.isEmpty == false) ? "\(petName!): " : ""
+        let prefix = (petName?.isEmpty == false) ? "\(petName ?? ""): " : ""
         event.title = "\(prefix)\(log.category.rawValue) - \(log.title)"
         
         event.startDate = start
