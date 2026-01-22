@@ -6,6 +6,7 @@
 //
 
 import FirebaseFirestore
+import os
 
 // MARK: - HealthServiceProtocol
 
@@ -40,17 +41,28 @@ final class HealthService: HealthServiceProtocol {
     }
     
     func fetchLogs(petId: String) async throws -> [HealthLog] {
-        let snapshot =
-        try await db
+        let snapshot = try await db
             .collection("pets")
             .document(petId)
             .collection(collection)
             .order(by: "date", descending: true)
             .getDocuments()
         
-        return snapshot.documents.compactMap {
-            try? $0.data(as: HealthLog.self)
+        var result: [HealthLog] = []
+        result.reserveCapacity(snapshot.documents.count)
+        
+        for doc in snapshot.documents {
+            do {
+                let log = try doc.data(as: HealthLog.self)
+                result.append(log)
+            } catch {
+                AppLogger.firestore.error(
+                    "Failed to decode HealthLog. petId=\(petId, privacy: .public) docId=\(doc.documentID, privacy: .public) error=\(String(describing: error), privacy: .public)"
+                )
+            }
         }
+        
+        return result
     }
     
     func updateLog(_ log: HealthLog) async throws {
