@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E4DE3C512F1FF2CA00BEAFA4 /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PetCareApp.app; path = "/Users/teonatsiramua/Documents/Projects/iOS/TBC/PetCareApp/build/Debug-iphoneos/PetCareApp.app"; sourceTree = "<absolute>"; };
+		E40320EF2F229A12002A1969 /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PetCareApp.app; path = "/Users/teonatsiramua/Documents/Projects/iOS/TBC/PetCareApp/build/Debug-iphoneos/PetCareApp.app"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -98,7 +98,7 @@
 				E4BB74D52F17FFFA00ECB834 /* FirebaseAILogic */,
 			);
 			productName = PetCareApp;
-			productReference = E4DE3C512F1FF2CA00BEAFA4 /* PetCareApp.app */;
+			productReference = E40320EF2F229A12002A1969 /* PetCareApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

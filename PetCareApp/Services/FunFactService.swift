@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 struct FunFactService {
     
@@ -45,7 +46,7 @@ struct FunFactService {
             
             return cachedFacts.randomElement() ?? "Pets are amazing!"
         } catch {
-            print("Error parsing PetFacts.json: \(error)")
+            AppLogger.services.log("Failed to load or decode PetFacts.json: \(error)")
             return "Did you know? Pets make life better!"
         }
     }

@@ -6,6 +6,7 @@
 //
 
 import MapKit
+import os
 
 @MainActor
 final class MapViewModel {
@@ -55,7 +56,7 @@ final class MapViewModel {
             self.annotations = newAnnotations
             lastCenter = location.coordinate
         } catch {
-            print("Search failed: \(error.localizedDescription)")
+            AppLogger.map.error("Vet search failed: \(error.localizedDescription, privacy: .public)")
         }
     }
     

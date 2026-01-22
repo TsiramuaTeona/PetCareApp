@@ -7,6 +7,7 @@
 
 import FirebaseFirestore
 import Foundation
+import os
 
 // MARK: - ReminderSyncServiceProtocol
 
@@ -84,7 +85,7 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
         } catch is CancellationError {
             
         } catch {
-            print("Sync failed: \(error.localizedDescription)")
+            AppLogger.services.error("Reminder sync failed: \(error.localizedDescription)")
         }
     }
     
@@ -100,7 +101,7 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                 notificationManager.cancelNotification(for: log)
             }
         } catch {
-            print("Failed to schedule reminder: \(error.localizedDescription)")
+            AppLogger.services.error("Failed to schedule reminder: \(error.localizedDescription)")
         }
     }
     
@@ -124,7 +125,7 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                         guard let self = self else { return }
                         
                         if let error = error {
-                            print("Listener error: \(error.localizedDescription)")
+                            AppLogger.services.error("Listener error: \(error.localizedDescription)")
                             return
                         }
                         
@@ -163,7 +164,7 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                 listeners.append(reg)
             }
         } catch {
-            print("Failed to start listening: \(error.localizedDescription)")
+            AppLogger.services.error("Failed to start listening: \(error.localizedDescription)" )
         }
     }
     

@@ -7,6 +7,7 @@
 
 import MapKit
 import UIKit
+import os
 
 final class MapViewController: UIViewController {
     // MARK: - Properties
@@ -135,7 +136,7 @@ extension MapViewController: LocationServiceDelegate {
     }
     
     func didFailWithError(_ error: Error) {
-        print("Location Error: \(error.localizedDescription)")
+        AppLogger.location.error("Location error: \(error.localizedDescription, privacy: .public)")
     }
 }
 

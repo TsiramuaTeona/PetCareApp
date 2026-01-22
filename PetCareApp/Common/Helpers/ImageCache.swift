@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+import os
 
 // MARK: - Image Cache
 
@@ -56,7 +57,7 @@ class ImageLoader: ObservableObject {
                 self.image = loadedImage
                 self.isLoading = false
             } catch {
-                print("Image Load Error: \(error)")
+                AppLogger.images.error("Image load error: \(String(describing: error), privacy: .public)")
                 self.isLoading = false
             }
         }
