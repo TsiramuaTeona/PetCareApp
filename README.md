@@ -68,9 +68,9 @@ Collections used:
 
 ## Project Structure
 
-- `App/` — Coordinators, app lifecycle, DI container
-- `Features/` — UI + ViewModels grouped by feature
-- `Models/` — Core domain models (Pet, HealthLog, Household, etc.)
-- `Services/` — Firebase + system services (Auth, Firestore, Notifications, Map, AI)
-- `Common/` — shared UI components, helpers, extensions
-- `PetCareAppTests/` — unit tests + mocks
+- `App/` - Coordinators, app lifecycle, DI container
+- `Features/` - UI + ViewModels grouped by feature
+- `Models/` - Core domain models (Pet, HealthLog, Household, etc.)
+- `Services/` - Firebase + system services (Auth, Firestore, Notifications, Map, AI)
+- `Common/` - shared UI components, helpers, extensions
+- `PetCareAppTests/` - unit tests + mocks
