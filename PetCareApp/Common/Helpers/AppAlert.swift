@@ -7,15 +7,32 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct AppAlert: Identifiable {
+    enum ActionStyle {
+        case `default`
+        case cancel
+        case destructive
+    }
+    
+    struct Action {
+        let title: String
+        let style: ActionStyle
+        let handler: (() -> Void)?
+    }
+    
     let id = UUID()
     let title: String
     let message: String?
-    let primaryButton: Alert.Button
-    let secondaryButton: Alert.Button?
-
+    
+    let primary: Action
+    let secondary: Action?
+    
     func toAlert() -> Alert {
-        if let secondaryButton {
+        let primaryButton = toAlertButton(primary)
+        if let secondary {
+            let secondaryButton = toAlertButton(secondary)
             return Alert(
                 title: Text(title),
                 message: message.map(Text.init),
@@ -30,6 +47,21 @@ struct AppAlert: Identifiable {
             )
         }
     }
+    
+    private func toAlertButton(_ action: Action) -> Alert.Button {
+        switch action.style {
+        case .default:
+            return .default(Text(action.title), action: action.handler)
+        case .cancel:
+            if let handler = action.handler {
+                return .cancel(Text(action.title), action: handler)
+            } else {
+                return .cancel(Text(action.title))
+            }
+        case .destructive:
+            return .destructive(Text(action.title), action: action.handler)
+        }
+    }
 }
 
 extension AppAlert {
@@ -37,8 +69,8 @@ extension AppAlert {
         AppAlert(
             title: "Error",
             message: message,
-            primaryButton: .default(Text("OK")),
-            secondaryButton: nil
+            primary: .init(title: "OK", style: .default, handler: nil),
+            secondary: nil
         )
     }
     
@@ -46,8 +78,8 @@ extension AppAlert {
         AppAlert(
             title: "Success",
             message: message,
-            primaryButton: .default(Text("OK")),
-            secondaryButton: nil
+            primary: .init(title: "OK", style: .default, handler: nil),
+            secondary: nil
         )
     }
     
@@ -59,8 +91,8 @@ extension AppAlert {
         AppAlert(
             title: title,
             message: message,
-            primaryButton: .destructive(Text("Delete"), action: onConfirm),
-            secondaryButton: .cancel()
+            primary: .init(title: "Delete", style: .destructive, handler: onConfirm),
+            secondary: .init(title: "Cancel", style: .cancel, handler: nil)
         )
     }
     
@@ -71,11 +103,11 @@ extension AppAlert {
         AppAlert(
             title: title,
             message: message,
-            primaryButton: .default(Text("Open Settings"), action: {
+            primary: .init(title: "Open Settings", style: .default, handler: {
                 guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                 UIApplication.shared.open(url)
             }),
-            secondaryButton: .cancel(Text("Cancel"))
+            secondary: .init(title: "Cancel", style: .cancel, handler: nil)
         )
     }
 }

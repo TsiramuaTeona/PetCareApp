@@ -23,8 +23,8 @@ struct CalendarAlertBuilder {
         return AppAlert(
             title: title,
             message: message,
-            primaryButton: .default(Text("Add"), action: onConfirm),
-            secondaryButton: .cancel(Text("Cancel"))
+            primary: .init(title: "Add", style: .default, handler: onConfirm),
+            secondary: .init(title: "Cancel", style: .cancel, handler: nil)
         )
     }
     
