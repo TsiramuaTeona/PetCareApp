@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AuthError: LocalizedError {
+enum AuthError: LocalizedError, Equatable {
     case required
     case invalidEmail
     case weakPassword

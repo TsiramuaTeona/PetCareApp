@@ -17,8 +17,19 @@
 		E4BB74D62F17FFFA00ECB834 /* FirebaseAILogic in Frameworks */ = {isa = PBXBuildFile; productRef = E4BB74D52F17FFFA00ECB834 /* FirebaseAILogic */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E40328F52F22D369002A1969 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E418009E2F092E8300758D9F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E41800A52F092E8300758D9F;
+			remoteInfo = PetCareApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		E40320EF2F229A12002A1969 /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PetCareApp.app; path = "/Users/teonatsiramua/Documents/Projects/iOS/TBC/PetCareApp/build/Debug-iphoneos/PetCareApp.app"; sourceTree = "<absolute>"; };
+		E40328F12F22D369002A1969 /* PetCareAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PetCareAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4EB37652F2395FF0056A415 /* PetCareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PetCareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -32,6 +43,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		E40328F22F22D369002A1969 /* PetCareAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PetCareAppTests;
+			sourceTree = "<group>";
+		};
 		E41800A82F092E8300758D9F /* PetCareApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -43,6 +59,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E40328EE2F22D369002A1969 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E41800A32F092E8300758D9F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -65,12 +88,38 @@
 			isa = PBXGroup;
 			children = (
 				E41800A82F092E8300758D9F /* PetCareApp */,
+				E40328F12F22D369002A1969 /* PetCareAppTests.xctest */,
+				E40328F22F22D369002A1969 /* PetCareAppTests */,
+				E4EB37652F2395FF0056A415 /* PetCareApp.app */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E40328F02F22D369002A1969 /* PetCareAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E40328F72F22D369002A1969 /* Build configuration list for PBXNativeTarget "PetCareAppTests" */;
+			buildPhases = (
+				E40328ED2F22D369002A1969 /* Sources */,
+				E40328EE2F22D369002A1969 /* Frameworks */,
+				E40328EF2F22D369002A1969 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E40328F62F22D369002A1969 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E40328F22F22D369002A1969 /* PetCareAppTests */,
+			);
+			name = PetCareAppTests;
+			packageProductDependencies = (
+			);
+			productName = PetCareAppTests;
+			productReference = E40328F12F22D369002A1969 /* PetCareAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E41800A52F092E8300758D9F /* PetCareApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E41800B92F092E8600758D9F /* Build configuration list for PBXNativeTarget "PetCareApp" */;
@@ -98,7 +147,7 @@
 				E4BB74D52F17FFFA00ECB834 /* FirebaseAILogic */,
 			);
 			productName = PetCareApp;
-			productReference = E40320EF2F229A12002A1969 /* PetCareApp.app */;
+			productReference = E4EB37652F2395FF0056A415 /* PetCareApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -111,6 +160,10 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					E40328F02F22D369002A1969 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = E41800A52F092E8300758D9F;
+					};
 					E41800A52F092E8300758D9F = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -135,11 +188,19 @@
 			projectRoot = "";
 			targets = (
 				E41800A52F092E8300758D9F /* PetCareApp */,
+				E40328F02F22D369002A1969 /* PetCareAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E40328EF2F22D369002A1969 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E41800A42F092E8300758D9F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -150,6 +211,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E40328ED2F22D369002A1969 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E41800A22F092E8300758D9F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -159,7 +227,55 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E40328F62F22D369002A1969 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E41800A52F092E8300758D9F /* PetCareApp */;
+			targetProxy = E40328F52F22D369002A1969 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		E40328F82F22D369002A1969 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.PetCareAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PetCareApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PetCareApp";
+			};
+			name = Debug;
+		};
+		E40328F92F22D369002A1969 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.PetCareAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PetCareApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PetCareApp";
+			};
+			name = Release;
+		};
 		E41800BA2F092E8600758D9F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -358,6 +474,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E40328F72F22D369002A1969 /* Build configuration list for PBXNativeTarget "PetCareAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E40328F82F22D369002A1969 /* Debug */,
+				E40328F92F22D369002A1969 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E41800A12F092E8300758D9F /* Build configuration list for PBXProject "PetCareApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

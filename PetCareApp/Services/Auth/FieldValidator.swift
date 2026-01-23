@@ -19,7 +19,8 @@ enum FieldValidator {
         }
         
         let pattern = #"^\S+@\S+\.\S+$"#
-        let isMatch = text.range(of: pattern, options: .regularExpression) != nil
+        let normalized = text.trimmed
+        let isMatch = normalized.range(of: pattern, options: .regularExpression) != nil
         
         return isMatch ? nil : .invalidEmail
     }
