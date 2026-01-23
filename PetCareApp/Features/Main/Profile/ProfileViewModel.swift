@@ -43,7 +43,7 @@ final class ProfileViewModel: ObservableObject {
     private let userService: UserServiceProtocol
     private let imageStorageService: ImageStorageServiceProtocol
     private let householdService: HouseholdServiceProtocol
-    private let themeManager: ThemeManager
+    private let themeManager: ThemeManaging
     
     // MARK: - Computed Properties
     
@@ -78,7 +78,7 @@ final class ProfileViewModel: ObservableObject {
         userService: UserServiceProtocol,
         imageStorageService: ImageStorageServiceProtocol,
         householdService: HouseholdServiceProtocol,
-        themeManager: ThemeManager
+        themeManager: ThemeManaging
     ) {
         self.authService = authService
         self.userService = userService

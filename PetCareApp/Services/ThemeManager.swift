@@ -9,8 +9,14 @@ import Combine
 import Foundation
 import UIKit
 
+protocol ThemeManaging: AnyObject {
+    var theme: AppTheme { get }
+    func setTheme(_ theme: AppTheme)
+    func applyThemeToAllWindows()
+}
+
 @MainActor
-final class ThemeManager: ObservableObject {
+final class ThemeManager: ObservableObject, ThemeManaging {
 
     // MARK: - Properties
 
