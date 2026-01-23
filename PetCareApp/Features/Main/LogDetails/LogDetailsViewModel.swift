@@ -27,7 +27,7 @@ final class LogDetailsViewModel: ObservableObject {
     private let healthService: HealthServiceProtocol
     private let reminderService: ReminderSyncServiceProtocol
     private let calendarService: CalendarServiceProtocol
-    private let notificationManager = NotificationManager.shared
+    private let notificationService: NotificationServiceProtocol
     
     private var groupingKey: String {
         if sourceLog.category == .weight {
@@ -55,7 +55,8 @@ final class LogDetailsViewModel: ObservableObject {
         sourceLog: HealthLog,
         healthService: HealthServiceProtocol,
         calendarService: CalendarServiceProtocol,
-        reminderService: ReminderSyncServiceProtocol
+        reminderService: ReminderSyncServiceProtocol,
+        notificationService: NotificationServiceProtocol
     ) {
         self.petId = petId
         self.petName = petName
@@ -63,6 +64,7 @@ final class LogDetailsViewModel: ObservableObject {
         self.healthService = healthService
         self.calendarService = calendarService
         self.reminderService = reminderService
+        self.notificationService = notificationService
     }
     
     // MARK: - Data Loading Methods
@@ -119,7 +121,7 @@ final class LogDetailsViewModel: ObservableObject {
         do {
             try await healthService.updateLog(logToUpdate)
             
-            notificationManager.cancelNotification(for: originalLog)
+            notificationService.cancelNotification(for: originalLog)
             
             if !logToUpdate.isResolved {
                 await reminderService.scheduleReminder(for: logToUpdate)
@@ -134,7 +136,7 @@ final class LogDetailsViewModel: ObservableObject {
     func deleteLog(_ log: HealthLog) async {
         guard let id = log.id else { return }
         
-        notificationManager.cancelNotification(for: log)
+        notificationService.cancelNotification(for: log)
         
         do {
             try await healthService.deleteLog(petId: petId, logId: id)
@@ -160,7 +162,7 @@ final class LogDetailsViewModel: ObservableObject {
         do {
             try await healthService.updateLog(historyLog)
             
-            notificationManager.cancelNotification(for: log)
+            notificationService.cancelNotification(for: log)
             
             if let nextLog = LogScheduler.generateNextLog(currentLog: log) {
                 let newId = try await healthService.addLog(nextLog)

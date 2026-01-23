@@ -1,5 +1,5 @@
 //
-//  NotificationManager.swift
+//  NotificationService.swift
 //  PetCareApp
 //
 //  Created by Teona Tsiramua on 10.01.26.
@@ -8,16 +8,26 @@
 import UIKit
 import UserNotifications
 
-final class NotificationManager: NSObject {
+protocol NotificationServiceProtocol: AnyObject {
+    func configure()
+    func requestAuthorization() async -> Bool
+    func authorizationStatus() async -> UNAuthorizationStatus
+    
+    func scheduleNotification(for log: HealthLog, petName: String)
+    func cancelNotification(for log: HealthLog)
+    func cancelAllPendingReminders()
+}
+
+final class NotificationService: NSObject, NotificationServiceProtocol {
     
     // MARK: - Properties
-    
-    static let shared = NotificationManager()
-    private let center = UNUserNotificationCenter.current()
+    static let shared = NotificationService()
+    private let center: UNUserNotificationCenter
     
     // MARK: - Initializer
     
     private override init() {
+        self.center = .current()
         super.init()
     }
     
@@ -146,7 +156,7 @@ final class NotificationManager: NSObject {
 
 // MARK: - Foreground Presentation
 
-extension NotificationManager: UNUserNotificationCenterDelegate {
+extension NotificationService: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,

@@ -66,11 +66,11 @@ final class EditPetViewModel: ObservableObject {
         var updatedPet = originalPet
         updatedPet.name = name.trimmed
         updatedPet.species = species
-        updatedPet.breed = breed.nilIfEmpty
+        updatedPet.breed = breed.trimmed.nilIfEmpty
         updatedPet.gender = gender
         updatedPet.birthDate = birthDate
-        updatedPet.color = color.nilIfEmpty
-        updatedPet.bio = bio
+        updatedPet.color = color.trimmed.nilIfEmpty
+        updatedPet.bio = bio.trimmed.nilIfEmpty
         
         do {
             try await petService.updatePet(updatedPet)

@@ -6,7 +6,6 @@
 //
 
 import Combine
-import FirebaseAuth
 import Foundation
 
 @MainActor
@@ -31,7 +30,8 @@ final class HomeViewModel: ObservableObject {
     private let petService: PetServiceProtocol
     private let healthService: HealthServiceProtocol
     private let reminderSyncService: ReminderSyncServiceProtocol
-    private let notificationManager = NotificationManager.shared
+    private let notificationService: NotificationServiceProtocol
+    private let firebaseUserProvider: FirebaseUserProviding
     
     // MARK: - Task Management
     
@@ -60,7 +60,9 @@ final class HomeViewModel: ObservableObject {
         householdService: HouseholdServiceProtocol,
         petService: PetServiceProtocol,
         healthService: HealthServiceProtocol,
-        reminderSyncService: ReminderSyncServiceProtocol
+        reminderSyncService: ReminderSyncServiceProtocol,
+        notificationService: NotificationServiceProtocol,
+        firebaseUserProvider: FirebaseUserProviding
     ) {
         self.authService = authService
         self.userService = userService
@@ -68,6 +70,8 @@ final class HomeViewModel: ObservableObject {
         self.petService = petService
         self.healthService = healthService
         self.reminderSyncService = reminderSyncService
+        self.notificationService = notificationService
+        self.firebaseUserProvider = firebaseUserProvider
     }
     
     // MARK: - Deinitializer
@@ -127,11 +131,10 @@ final class HomeViewModel: ObservableObject {
             do {
                 userProfile = try await userService.getUser(userId: userId)
             } catch UserServiceError.userDocumentMissing {
-                let firebaseUser = Auth.auth().currentUser
                 let profile = UserProfile(
                     id: userId,
-                    email: firebaseUser?.email ?? "",
-                    fullName: firebaseUser?.displayName,
+                    email: firebaseUserProvider.email ?? "",
+                    fullName: firebaseUserProvider.displayName,
                     householdId: nil,
                     createdAt: Date()
                 )
@@ -143,7 +146,7 @@ final class HomeViewModel: ObservableObject {
             
             guard let householdId = userProfile.householdId, !householdId.isEmpty else {
                 stopHouseholdListeningIfNeeded()
-                notificationManager.cancelAllPendingReminders()
+                notificationService.cancelAllPendingReminders()
                 household = nil
                 pets = []
                 upcomingReminders = []
@@ -164,7 +167,7 @@ final class HomeViewModel: ObservableObject {
             
             if listeningHouseholdId != householdId {
                 stopHouseholdListeningIfNeeded()
-                notificationManager.cancelAllPendingReminders()
+                notificationService.cancelAllPendingReminders()
                 
                 await reminderSyncService.syncAllReminders(forHousehold: householdId)
                 await reminderSyncService.startListeningForHousehold(householdId)
@@ -181,7 +184,7 @@ final class HomeViewModel: ObservableObject {
     
     private func clearHomeDataForLogout() {
         stopHouseholdListeningIfNeeded()
-        notificationManager.cancelAllPendingReminders()
+        notificationService.cancelAllPendingReminders()
         
         user = nil
         household = nil

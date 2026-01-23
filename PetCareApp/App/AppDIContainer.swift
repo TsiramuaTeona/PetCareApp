@@ -19,8 +19,10 @@ final class AppDIContainer {
     lazy var healthService: HealthServiceProtocol = HealthService()
     lazy var aiService: AIChatServiceProtocol = AIChatService()
     lazy var calendarService: CalendarServiceProtocol = CalendarService()
+    lazy var notificationService: NotificationServiceProtocol = NotificationService.shared
+    lazy var firebaseUserProvider: FirebaseUserProviding = FirebaseUserProvider()
     
-    lazy var themeManager: ThemeManager = {
+    lazy var themeManager: ThemeManaging = {
         let manager = ThemeManager()
         manager.applyThemeToAllWindows()
         return manager
@@ -28,7 +30,11 @@ final class AppDIContainer {
 
     
     lazy var reminderSyncService: ReminderSyncServiceProtocol = {
-        ReminderSyncService(petService: petService, healthService: healthService)
+        ReminderSyncService(
+            petService: petService,
+            healthService: healthService,
+            notificationService: notificationService
+        )
     }()
     
     // MARK: - ViewModels
@@ -52,7 +58,9 @@ final class AppDIContainer {
             householdService: householdService,
             petService: petService,
             healthService: healthService,
-            reminderSyncService: reminderSyncService
+            reminderSyncService: reminderSyncService,
+            notificationService: notificationService,
+            firebaseUserProvider: firebaseUserProvider
         )
     }
     
@@ -78,7 +86,8 @@ final class AppDIContainer {
         PetDetailsViewModel(
             pet: pet,
             petService: petService,
-            healthService: healthService
+            healthService: healthService,
+            notificationService: notificationService
         )
     }
     
@@ -110,7 +119,8 @@ final class AppDIContainer {
             sourceLog: log,
             healthService: healthService,
             calendarService: calendarService,
-            reminderService: reminderSyncService
+            reminderService: reminderSyncService,
+            notificationService: notificationService
         )
     }
     

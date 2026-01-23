@@ -22,7 +22,7 @@ final class PetDetailsViewModel: ObservableObject {
     
     private let petService: PetServiceProtocol
     private let healthService: HealthServiceProtocol
-    private let notificationManager = NotificationManager.shared
+    private let notificationService: NotificationServiceProtocol
     
     // MARK: - Computed Properties
     
@@ -47,11 +47,13 @@ final class PetDetailsViewModel: ObservableObject {
     init(
         pet: Pet,
         petService: PetServiceProtocol,
-        healthService: HealthServiceProtocol
+        healthService: HealthServiceProtocol,
+        notificationService: NotificationServiceProtocol
     ) {
         self.pet = pet
         self.petService = petService
         self.healthService = healthService
+        self.notificationService = notificationService
     }
     
     // MARK: - Public Methods
@@ -85,7 +87,7 @@ final class PetDetailsViewModel: ObservableObject {
         
         do {
             try await healthService.updateLog(historyLog)
-            notificationManager.cancelNotification(for: log)
+            notificationService.cancelNotification(for: log)
             
             if let nextLog = LogScheduler.generateNextLog(currentLog: log) {
                 await createAndSchedule(nextLog, petName: pet.name)
@@ -101,7 +103,7 @@ final class PetDetailsViewModel: ObservableObject {
     func deleteLog(_ log: HealthLog) async {
         guard let id = log.id, let petId = pet.id else { return }
         do {
-            notificationManager.cancelNotification(for: log)
+            notificationService.cancelNotification(for: log)
             try await healthService.deleteLog(petId: petId, logId: id)
             await refresh()
         } catch {
@@ -132,7 +134,7 @@ final class PetDetailsViewModel: ObservableObject {
         do {
             let logs = try await healthService.fetchLogs(petId: petId)
             for log in logs {
-                notificationManager.cancelNotification(for: log)
+                notificationService.cancelNotification(for: log)
             }
             
             try await healthService.deleteAllLogs(petId: petId)
@@ -163,7 +165,7 @@ final class PetDetailsViewModel: ObservableObject {
             let newId = try await healthService.addLog(log)
             var scheduledLog = log
             scheduledLog.id = newId
-            notificationManager.scheduleNotification(
+            notificationService.scheduleNotification(
                 for: scheduledLog,
                 petName: petName
             )

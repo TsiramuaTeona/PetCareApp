@@ -135,18 +135,18 @@ final class AuthCoordinator: Coordinator {
     }
     
     private func ensureUserProfileExists(photoUrl: String?) async throws {
-        guard let firebaseUser = Auth.auth().currentUser else { return }
+        guard let firebaseUserUid = container.firebaseUserProvider.uid else { return }
         
         do {
             _ = try await container.userService.getUser(
-                userId: firebaseUser.uid
+                userId: firebaseUserUid
             )
             return
         } catch {
             let profile = UserProfile(
-                id: firebaseUser.uid,
-                email: firebaseUser.email ?? "",
-                fullName: firebaseUser.displayName,
+                id: firebaseUserUid,
+                email: container.firebaseUserProvider.email ?? "",
+                fullName: container.firebaseUserProvider.displayName,
                 householdId: nil,
                 photoUrl: photoUrl,
                 createdAt: Date()

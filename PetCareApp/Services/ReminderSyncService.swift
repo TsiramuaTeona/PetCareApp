@@ -27,16 +27,21 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
     
     private let petService: PetServiceProtocol
     private let healthService: HealthServiceProtocol
-    private let notificationManager = NotificationManager.shared
+    private let notificationService: NotificationServiceProtocol
     
     private let db = Firestore.firestore()
     private var listeners: [ListenerRegistration] = []
     
     // MARK: - Initializer
     
-    init(petService: PetServiceProtocol, healthService: HealthServiceProtocol) {
+    init(
+        petService: PetServiceProtocol,
+        healthService: HealthServiceProtocol,
+        notificationService: NotificationServiceProtocol
+    ) {
         self.petService = petService
         self.healthService = healthService
+        self.notificationService = notificationService
     }
     
     // MARK: - Deinitializer
@@ -51,7 +56,7 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
         do {
             let pets = try await petService.getPets(forHousehold: householdId)
             
-            notificationManager.cancelAllPendingReminders()
+            notificationService.cancelAllPendingReminders()
             
             try await withThrowingTaskGroup(of: Void.self) { [healthService] group in
                 for pet in pets {
@@ -67,14 +72,12 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                             if await ReminderSyncService.shouldSchedule(
                                 log: log
                             ) {
-                                await NotificationManager.shared
-                                    .scheduleNotification(
+                                await self.notificationService.scheduleNotification(
                                         for: log,
                                         petName: petName
                                     )
                             } else {
-                                await NotificationManager.shared
-                                    .cancelNotification(for: log)
+                                await self.notificationService.cancelNotification(for: log)
                             }
                         }
                     }
@@ -93,12 +96,12 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
         do {
             if ReminderSyncService.shouldSchedule(log: log) {
                 let pet = try await petService.getPet(petId: log.petId)
-                notificationManager.scheduleNotification(
+                notificationService.scheduleNotification(
                     for: log,
                     petName: pet.name
                 )
             } else {
-                notificationManager.cancelNotification(for: log)
+                notificationService.cancelNotification(for: log)
             }
         } catch {
             AppLogger.services.error("Failed to schedule reminder: \(error.localizedDescription)")
@@ -140,21 +143,19 @@ final class ReminderSyncService: ReminderSyncServiceProtocol {
                             
                             switch change.type {
                             case .added, .modified:
-                                if ReminderSyncService.shouldSchedule(log: log)
-                                {
-                                    self.notificationManager
-                                        .scheduleNotification(
+                                if ReminderSyncService.shouldSchedule(log: log) {
+                                    self.notificationService.scheduleNotification(
                                             for: log,
                                             petName: petName
                                         )
                                 } else {
-                                    self.notificationManager.cancelNotification(
+                                    self.notificationService.cancelNotification(
                                         for: log
                                     )
                                 }
                                 
                             case .removed:
-                                self.notificationManager.cancelNotification(
+                                self.notificationService.cancelNotification(
                                     for: log
                                 )
                             }

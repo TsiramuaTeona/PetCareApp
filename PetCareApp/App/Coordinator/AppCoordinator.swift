@@ -25,7 +25,6 @@ final class AppCoordinator: Coordinator {
     
     private let window: UIWindow
     private let container: AppDIContainer
-    private let notificationManager = NotificationManager.shared
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -43,10 +42,10 @@ final class AppCoordinator: Coordinator {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         
-        notificationManager.configure()
+        container.notificationService.configure()
         
         Task {
-            await notificationManager.requestAuthorization()
+            await container.notificationService.requestAuthorization()
         }
         
         if !OnboardingState.hasSeen {
@@ -93,7 +92,7 @@ final class AppCoordinator: Coordinator {
         
         if flow == .auth {
             container.reminderSyncService.stopListening()
-            notificationManager.cancelAllPendingReminders()
+            container.notificationService.cancelAllPendingReminders()
         }
         
         switch flow {
