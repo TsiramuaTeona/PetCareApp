@@ -51,15 +51,25 @@ struct AppAlert: Identifiable {
     private func toAlertButton(_ action: Action) -> Alert.Button {
         switch action.style {
         case .default:
-            return .default(Text(action.title), action: action.handler)
+            if let handler = action.handler {
+                return .default(Text(action.title), action: handler)
+            } else {
+                return .default(Text(action.title))
+            }
+            
         case .cancel:
             if let handler = action.handler {
                 return .cancel(Text(action.title), action: handler)
             } else {
                 return .cancel(Text(action.title))
             }
+            
         case .destructive:
-            return .destructive(Text(action.title), action: action.handler)
+            if let handler = action.handler {
+                return .destructive(Text(action.title), action: handler)
+            } else {
+                return .destructive(Text(action.title))
+            }
         }
     }
 }
