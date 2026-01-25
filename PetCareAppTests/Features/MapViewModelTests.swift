@@ -136,11 +136,10 @@ private func makeLocation(_ lat: CLLocationDegrees, _ lon: CLLocationDegrees) ->
     CLLocation(latitude: lat, longitude: lon)
 }
 
-func makeAnnotation(id: String, lat: Double, lon: Double) -> VetAnnotation {
-    let location = CLLocation(latitude: lat, longitude: lon)
-    
-    let item = MKMapItem(location: location, address: nil)
+private func makeAnnotation(id: String, lat: Double, lon: Double) -> VetAnnotation {
+    let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    let placemark = MKPlacemark(coordinate: coordinate)
+    let item = MKMapItem(placemark: placemark)
     item.name = "Vet \(id)"
-    
     return VetAnnotation(mapItem: item)
 }
