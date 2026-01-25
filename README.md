@@ -1,8 +1,18 @@
 # PetCare (iOS)
 ![iOS](https://img.shields.io/badge/iOS-17.6+-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9+-orange)
+![SwiftUI+UIKit](https://img.shields.io/badge/UI-SwiftUI%20%2B%20UIKit-brightgreen)
+![Architecture](https://img.shields.io/badge/Architecture-MVVM%20%7C%20Coordinator-black)
+![Tests](https://img.shields.io/badge/Tests-Swift%20Testing-success)
+
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore%20%7C%20Storage-yellow)
 ![Firebase AI Logic](https://img.shields.io/badge/Firebase%20AI%20Logic-Gemini-purple)
+![Google Sign-In](https://img.shields.io/badge/Google%20Sign--In-Enabled-red)
+![MapKit](https://img.shields.io/badge/MapKit-Nearby%20Vets-blueviolet)
+![CoreLocation](https://img.shields.io/badge/CoreLocation-Location-blueviolet)
+![UserNotifications](https://img.shields.io/badge/UserNotifications-Reminders-informational)
+![EventKit](https://img.shields.io/badge/EventKit-Calendar-informational)
+![Concurrency](https://img.shields.io/badge/Concurrency-Combine%20%7C%20Async%2FAwait-teal)
 
 PetCare is an iOS app for managing household pets: profiles, health logs (including medication schedules and weight tracking), reminders with local notifications, nearby vet discovery on a map, and an in-app AI helper that can summarize pet health context.
 
